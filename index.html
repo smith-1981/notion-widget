@@ -391,7 +391,7 @@
       el.textContent = 'Loading…';
     
       // Replace with your Worker URL
-      const workerUrl = 'https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project%20Manager&assignedField=Assigned';
+      const workerUrl = 'https://wrike-proxy.dustinjsmith.workers.dev?pmField=Project%20Manager&assignedField=Assigned';
     
       const res = await fetch(workerUrl);
       const data = await res.json();
