@@ -336,6 +336,12 @@
               <span class="tag">Due today</span>
             </div>
 
+        <!-- Wrike projects -->
+        <div class="card" style="grid-column: span 12;">
+          <div class="label" style="font-size:12px;color:var(--muted);">My Wrike Projects</div>
+          <div id="wrikeProjects" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+
             <div class="item">
               <div class="left">
                 <input type="checkbox" />
@@ -380,6 +386,39 @@
     };
     setTime();
     setInterval(setTime, 1000 * 10);
+    async function loadWrikeProjects(){
+      const el = document.getElementById('wrikeProjects');
+      el.textContent = 'Loading…';
+    
+      // Replace with your Worker URL
+      const workerUrl = 'https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project%20Manager&assignedField=Assigned';
+    
+      const res = await fetch(workerUrl);
+      const data = await res.json();
+    
+      if (!res.ok || data.error) {
+        el.textContent = 'Error: ' + (data.error || 'Unknown');
+        return;
+      }
+    
+      if (!data.projects?.length) {
+        el.textContent = 'No matching projects found.';
+        return;
+      }
+    
+      el.innerHTML = data.projects.slice(0, 20).map(p => `
+        <div class="item">
+          <div class="left">
+            <div class="text">
+              <div class="main">${p.title || '(Untitled project)'}</div>
+              <div class="meta">${(p.project?.status || '')}${p.project?.endDate ? ' • End ' + p.project.endDate : ''}</div>
+            </div>
+          </div>
+          <span class="tag">${p.id}</span>
+        </div>
+      `).join('');
+    }
+    loadWrikeProjects();
 
     // Example progress bars
     document.getElementById('bar1').style.width = '62%';
