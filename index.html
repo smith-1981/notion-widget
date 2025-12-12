@@ -40,7 +40,13 @@
                   var(--bg);
       color: var(--text);
     }
-
+    a.item{
+      text-decoration: none;
+      color: inherit;
+      }
+    a.item:hover{
+      transform: translateY(-1px);
+    }
     .wrap{
       padding: 18px;
       max-width: 980px;
@@ -406,17 +412,20 @@
         return;
       }
     
+     const openBase = 'https://www.wrike.com/open.htm?id=';
+
       el.innerHTML = data.projects.slice(0, 20).map(p => `
-        <div class="item">
+        <a class="item" href="${openBase}${p.id}" target="_blank" rel="noreferrer">
           <div class="left">
             <div class="text">
               <div class="main">${p.title || '(Untitled project)'}</div>
               <div class="meta">${(p.project?.status || '')}${p.project?.endDate ? ' • End ' + p.project.endDate : ''}</div>
             </div>
           </div>
-          <span class="tag">${p.id}</span>
-        </div>
+          <span class="tag">Open</span>
+        </a>
       `).join('');
+
     }
     loadWrikeProjects();
 
