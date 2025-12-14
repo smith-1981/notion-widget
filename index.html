@@ -76,25 +76,6 @@
       font-weight: 700;
     }
 
-    .subtitle{
-      font-size: 12px;
-      color: var(--muted);
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap: wrap;
-    }
-
-    .pill{
-      font-size: 12px;
-      color: var(--muted);
-      padding: 6px 10px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: rgba(255,255,255,.03);
-      white-space: nowrap;
-    }
-
     .grid{
       padding: 16px;
       display:grid;
@@ -125,9 +106,9 @@
       flex-direction:column;
       gap: 8px;
 
-      max-height: 520px;      /* adjust as you like */
+      max-height: 520px;
       overflow-y: auto;
-      padding-right: 6px;     /* keeps content from hiding under scrollbar */
+      padding-right: 6px;
     }
 
     .projects-list::-webkit-scrollbar{
@@ -212,11 +193,7 @@
       <header>
         <div class="title">
           <h1>Wrike Projects</h1>
-          <div class="subtitle">
-            <span class="pill" id="today">Loading date…</span>
-          </div>
         </div>
-        <div class="pill" id="clock">--:--</div>
       </header>
 
       <div class="grid">
@@ -229,18 +206,6 @@
   </div>
 
   <script>
-    // Date + clock
-    const pad = (n) => String(n).padStart(2,'0');
-    const fmtDate = (d) => d.toLocaleDateString(undefined, { weekday:'long', year:'numeric', month:'short', day:'numeric' });
-
-    const setTime = () => {
-      const d = new Date();
-      document.getElementById('today').textContent = fmtDate(d);
-      document.getElementById('clock').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    };
-    setTime();
-    setInterval(setTime, 1000 * 10);
-
     async function loadWrikeProjects(){
       const el = document.getElementById('wrikeProjects');
       el.textContent = 'Loading…';
