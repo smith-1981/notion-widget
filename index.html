@@ -237,4 +237,66 @@
     };
 
     async function loadWrikeProjects(){
-      const el = document.
+      const el = document.getElementById('wrikeProjects');
+      el.textContent = 'Loading…';
+
+      const workerUrl =
+        'https://wrike-proxy.dustinjsmith.workers.dev' +
+        '?pmField=Project%20Manager' +
+        '&assignedField=Assigned' +
+        '&includeLatestComment=1' +
+        '&limit=25' +
+        '&commentChars=160';
+
+      try {
+        const res = await fetch(workerUrl, { cache: "no-store" });
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          el.textContent = 'Error: ' + (data.error || 'Unknown');
+          return;
+        }
+
+        if (!data.projects?.length) {
+          el.textContent = 'No matching projects found.';
+          return;
+        }
+
+        el.innerHTML = data.projects.map(p => {
+          const metaParts = [];
+          const statusText = p.statusLabel || p.status;
+          if (statusText) metaParts.push(`Status ${statusText}`);
+          if (p.endDate) metaParts.push(`End ${p.endDate}`);
+          const metaText = metaParts.length ? esc(metaParts.join(" • ")) : "";
+
+          const last = p.lastComment;
+          const commentLine = last?.text
+            ? `Latest: ${last.text}${last.updatedDate ? ' • ' + fmtDate(last.updatedDate) : ''}`
+            : '';
+
+          return `
+            <a class="item" href="${esc(p.link)}" target="_blank" rel="noreferrer">
+              <div class="left">
+                <div class="text">
+                  <div class="main">${esc(p.title || '(Untitled project)')}</div>
+                  ${metaText ? `<div class="meta">${metaText}</div>` : ``}
+                  ${commentLine ? `<div class="comment">${esc(commentLine)}</div>` : ``}
+                </div>
+              </div>
+
+              <div class="right">
+                <span class="tag">Open</span>
+              </div>
+            </a>
+          `;
+        }).join('');
+
+      } catch (e) {
+        el.textContent = 'Error: ' + String(e);
+      }
+    }
+
+    loadWrikeProjects();
+  </script>
+</body>
+</html>
