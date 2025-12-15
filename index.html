@@ -193,6 +193,20 @@
       background: rgba(255,255,255,.02);
       white-space: nowrap;
     }
+    .status{
+      font-size: 12px;
+      color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      white-space: nowrap;
+    }
+    .right{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
   </style>
 </head>
 
@@ -261,21 +275,25 @@
             ? `Latest: ${last.text}${last.updatedDate ? ' • ' + fmtDate(last.updatedDate) : ''}`
             : '';
 
-          return `
-            <a class="item" href="${esc(p.link)}" target="_blank" rel="noreferrer">
-              <div class="left">
-                <div class="text">
-                  <div class="main">${esc(p.title || '(Untitled project)')}</div>
-                  <div class="meta">
-                    ${esc(p.status ? p.status : '')}
-                    ${esc(p.endDate ? ' • End ' + p.endDate : '')}
-                  </div>
-                  ${commentLine ? `<div class="comment">${esc(commentLine)}</div>` : ``}
+        return `
+          <a class="item" href="${esc(p.link)}" target="_blank" rel="noreferrer">
+            <div class="left">
+              <div class="text">
+                <div class="main">${esc(p.title || '(Untitled project)')}</div>
+                <div class="meta">
+                  ${esc(p.endDate ? 'End ' + p.endDate : '')}
                 </div>
+                ${commentLine ? `<div class="comment">${esc(commentLine)}</div>` : ``}
               </div>
+            </div>
+        
+            <div class="right">
+              ${p.status ? `<span class="status">${esc(p.status)}</span>` : ``}
               <span class="tag">Open</span>
-            </a>
-          `;
+            </div>
+          </a>
+        `;
+
         }).join('');
       } catch (e) {
         el.textContent = 'Error: ' + String(e);
