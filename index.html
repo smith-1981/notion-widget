@@ -202,19 +202,28 @@
   </div>
 
   <script>
-    const escapeHtml = (s) =>
-      String(s ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    const esc = (s) => String(s ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+
+    const fmtMD = (iso) => {
+      if (!iso) return "";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return "";
+      return `${d.getMonth() + 1}/${d.getDate()}`;
+    };
 
     async function loadWrikeProjects(){
       const el = document.getElementById('wrikeProjects');
       el.textContent = 'Loading…';
 
-      const workerUrl = 'https://wrike-proxy.dustinjsmith.workers.dev?pmField=Project%20Manager&assignedField=Assigned';
+      const workerUrl =
+        'https://wrike-proxy.dustinjsmith.workers.dev' +
+        '?pmField=Project%20Manager' +
+        '&assignedField=Assigned';
 
       try {
         const res = await fetch(workerUrl, { cache: "no-store" });
@@ -231,32 +240,19 @@
         }
 
         el.innerHTML = data.projects.map(p => {
-          const title = escapeHtml(p.title || '(Untitled project)');
-          const status = escapeHtml(p.statusLabel || p.status || '');
-          const end = escapeHtml(p.endDate || '');
-          const latestText = (p.latestCommentText || '').trim();
-          const latestAuthor = (p.latestCommentAuthor || '').trim();
-          const latestMD = (p.latestCommentMD || '').trim();
-
-          const line1 = [
-            status ? `Status ${status}` : '',
-            end ? `End ${end}` : ''
-          ].filter(Boolean).join(' • ');
-
-          let line2 = '';
-          if (latestText) {
-            const who = latestAuthor ? ` @${escapeHtml(latestAuthor)}` : '';
-            const when = latestMD ? ` • ${escapeHtml(latestMD)}` : '';
-            line2 = `Latest: ${escapeHtml(latestText)}${who}${when}`;
-          }
+          const endLine = p.endDate ? `End ${esc(p.endDate)}` : '';
+          const c = p.lastComment;
+          const latestLine = c?.text
+            ? `Latest: ${esc(c.text)}${c.updatedDate ? ' • ' + esc(fmtMD(c.updatedDate)) : ''}`
+            : '';
 
           return `
-            <a class="item" href="${p.link}" target="_blank" rel="noreferrer">
+            <a class="item" href="${esc(p.link)}" target="_blank" rel="noreferrer">
               <div class="left">
                 <div class="text">
-                  <div class="main">${title}</div>
-                  <div class="meta">${line1}</div>
-                  ${line2 ? `<div class="meta">${line2}</div>` : ``}
+                  <div class="main">${esc(p.title || '(Untitled project)')}</div>
+                  ${endLine ? `<div class="meta">${endLine}</div>` : ``}
+                  ${latestLine ? `<div class="meta">${latestLine}</div>` : ``}
                 </div>
               </div>
               <span class="tag">Open</span>
