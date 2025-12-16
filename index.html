@@ -124,13 +124,6 @@
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#39;");
 
-    const fmtMD = (iso) => {
-      if (!iso) return "";
-      const d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return "";
-      return `${d.getMonth() + 1}/${d.getDate()}`;
-    };
-
     async function loadWrikeProjects(){
       const el = document.getElementById('wrikeProjects');
       el.textContent = 'Loading…';
@@ -138,7 +131,8 @@
       const workerUrl =
         'https://wrike-proxy.dustinjsmith.workers.dev' +
         '?pmField=Project%20Manager' +
-        '&assignedField=Assigned';
+        '&assignedField=Assigned' +
+        '&limit=25';
 
       try {
         const res = await fetch(workerUrl, { cache: "no-store" });
@@ -155,10 +149,6 @@
 
         el.innerHTML = data.projects.map(p => {
           const endLine = p.endDate ? `End ${esc(p.endDate)}` : '';
-          const c = p.lastComment;
-          const latestLine = c?.text
-            ? `Latest: ${esc(c.text)}${c.updatedDate ? ' • ' + esc(fmtMD(c.updatedDate)) : ''}`
-            : '';
 
           const repoEnabled = !!p.repoUrl;
           const repoBtn = repoEnabled
@@ -170,7 +160,6 @@
               <div class="left">
                 <div class="main">${esc(p.title || '(Untitled project)')}</div>
                 ${endLine ? `<div class="meta">${endLine}</div>` : ``}
-                ${latestLine ? `<div class="meta">${latestLine}</div>` : ``}
               </div>
               <div class="right">
                 <a class="btn" href="${esc(p.link)}" target="_blank" rel="noreferrer">Open</a>
