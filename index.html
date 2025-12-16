@@ -16,7 +16,6 @@
       --shadow: 0 12px 40px rgba(0,0,0,.35);
       --radius: 18px;
     }
-
     @media (prefers-color-scheme: light){
       :root{
         --bg:#f6f7fb;
@@ -28,9 +27,7 @@
         --shadow: 0 10px 25px rgba(0,0,0,.12);
       }
     }
-
     * { box-sizing: border-box; }
-
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
@@ -39,13 +36,7 @@
                   var(--bg);
       color: var(--text);
     }
-
-    .wrap{
-      padding: 18px;
-      max-width: 980px;
-      margin: 0 auto;
-    }
-
+    .wrap{ padding: 18px; max-width: 980px; margin: 0 auto; }
     .shell{
       border: 1px solid var(--border);
       background: linear-gradient(180deg, var(--card2), var(--card));
@@ -53,72 +44,31 @@
       border-radius: var(--radius);
       overflow: hidden;
     }
-
     header{
       padding: 18px 18px 12px;
       display:flex;
-      align-items:flex-start;
       justify-content:space-between;
-      gap: 12px;
       border-bottom: 1px solid var(--border);
     }
-
-    .title{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-
-    .title h1{
-      margin:0;
-      font-size: 16px;
-      letter-spacing:.2px;
-      font-weight: 700;
-    }
-
-    .grid{
-      padding: 16px;
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 12px;
-    }
-
+    .title h1{ margin:0; font-size: 16px; font-weight: 700; }
+    .grid{ padding: 16px; display:grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
     .card{
       border: 1px solid var(--border);
       background: rgba(255,255,255,.04);
       border-radius: 16px;
       padding: 14px;
-      min-height: 90px;
-    }
-
-    .projects-card{
       grid-column: span 12;
     }
-
-    .label{
-      font-size: 12px;
-      color: var(--muted);
-    }
-
+    .label{ font-size: 12px; color: var(--muted); }
     .projects-list{
       margin-top: 10px;
       display:flex;
       flex-direction:column;
       gap: 8px;
-
       max-height: 520px;
       overflow-y: auto;
       padding-right: 6px;
     }
-
-    .projects-list::-webkit-scrollbar{ width: 10px; }
-    .projects-list::-webkit-scrollbar-thumb{
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 999px;
-    }
-    .projects-list::-webkit-scrollbar-track{ background: transparent; }
-
     .item{
       display:flex;
       align-items:center;
@@ -129,56 +79,26 @@
       border-radius: 14px;
       padding: 10px 12px;
     }
+    .left{ min-width: 0; }
+    .main{ font-size: 13px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .meta{ font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .right{ display:flex; gap: 8px; flex-shrink: 0; }
 
-    a.item{
-      text-decoration:none;
-      color: inherit;
-      transition: transform .08s ease, background .15s ease;
-    }
-
-    a.item:hover{
-      background: rgba(255,255,255,.06);
-      transform: translateY(-1px);
-    }
-
-    .left{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      min-width: 0;
-    }
-
-    .text{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      min-width: 0;
-    }
-
-    .text .main{
-      font-size: 13px;
-      font-weight: 650;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .text .meta{
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .tag{
+    .btn{
       font-size: 12px;
       color: var(--muted);
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.02);
-      white-space: nowrap;
+      text-decoration: none;
+      display:inline-flex;
+      align-items:center;
+    }
+    .btn:hover{ background: rgba(255,255,255,.06); }
+    .btn.disabled{
+      opacity: .45;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -186,14 +106,9 @@
 <body>
   <div class="wrap">
     <div class="shell">
-      <header>
-        <div class="title">
-          <h1>Wrike Projects</h1>
-        </div>
-      </header>
-
+      <header><div class="title"><h1>Wrike Projects</h1></div></header>
       <div class="grid">
-        <div class="card projects-card">
+        <div class="card">
           <div class="label">My Wrike Projects</div>
           <div id="wrikeProjects" class="projects-list"></div>
         </div>
@@ -233,7 +148,6 @@
           el.textContent = 'Error: ' + (data.error || 'Unknown');
           return;
         }
-
         if (!data.projects?.length) {
           el.textContent = 'No matching projects found.';
           return;
@@ -246,17 +160,23 @@
             ? `Latest: ${esc(c.text)}${c.updatedDate ? ' • ' + esc(fmtMD(c.updatedDate)) : ''}`
             : '';
 
+          const repoEnabled = !!p.repoUrl;
+          const repoBtn = repoEnabled
+            ? `<a class="btn" href="${esc(p.repoUrl)}" target="_blank" rel="noreferrer">Repo</a>`
+            : `<span class="btn disabled">Repo</span>`;
+
           return `
-            <a class="item" href="${esc(p.link)}" target="_blank" rel="noreferrer">
+            <div class="item">
               <div class="left">
-                <div class="text">
-                  <div class="main">${esc(p.title || '(Untitled project)')}</div>
-                  ${endLine ? `<div class="meta">${endLine}</div>` : ``}
-                  ${latestLine ? `<div class="meta">${latestLine}</div>` : ``}
-                </div>
+                <div class="main">${esc(p.title || '(Untitled project)')}</div>
+                ${endLine ? `<div class="meta">${endLine}</div>` : ``}
+                ${latestLine ? `<div class="meta">${latestLine}</div>` : ``}
               </div>
-              <span class="tag">Open</span>
-            </a>
+              <div class="right">
+                <a class="btn" href="${esc(p.link)}" target="_blank" rel="noreferrer">Open</a>
+                ${repoBtn}
+              </div>
+            </div>
           `;
         }).join('');
 
