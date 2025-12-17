@@ -47,16 +47,19 @@
     header{
       padding: 18px 18px 12px;
       display:flex;
+      align-items:flex-start;
       justify-content:space-between;
+      gap: 12px;
       border-bottom: 1px solid var(--border);
     }
-    .title h1{ margin:0; font-size: 16px; font-weight: 700; }
+    .title h1{ margin:0; font-size: 16px; letter-spacing:.2px; font-weight: 700; }
     .grid{ padding: 16px; display:grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
     .card{
       border: 1px solid var(--border);
       background: rgba(255,255,255,.04);
       border-radius: 16px;
       padding: 14px;
+      min-height: 90px;
       grid-column: span 12;
     }
     .label{ font-size: 12px; color: var(--muted); }
@@ -69,6 +72,14 @@
       overflow-y: auto;
       padding-right: 6px;
     }
+    .projects-list::-webkit-scrollbar{ width: 10px; }
+    .projects-list::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+    }
+    .projects-list::-webkit-scrollbar-track{ background: transparent; }
+
     .item{
       display:flex;
       align-items:center;
@@ -79,11 +90,24 @@
       border-radius: 14px;
       padding: 10px 12px;
     }
-    .left{ min-width: 0; }
-    .main{ font-size: 13px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .meta{ font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .right{ display:flex; gap: 8px; flex-shrink: 0; }
+    .left{ display:flex; align-items:center; gap: 10px; min-width: 0; }
+    .text{ display:flex; flex-direction:column; gap:2px; min-width: 0; }
+    .text .main{
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .text .meta{
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
+    .actions{ display:flex; align-items:center; gap: 8px; }
     .btn{
       font-size: 12px;
       color: var(--muted);
@@ -91,22 +115,26 @@
       border-radius: 999px;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.02);
+      white-space: nowrap;
       text-decoration: none;
-      display:inline-flex;
-      align-items:center;
+      cursor: pointer;
     }
     .btn:hover{ background: rgba(255,255,255,.06); }
-    .btn.disabled{
-      opacity: .45;
-      pointer-events: none;
-    }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; }
+    .btn-danger{ color: rgba(255,200,200,.9); }
+    .tag-muted{ opacity:.7; }
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <div class="shell">
-      <header><div class="title"><h1>Wrike Projects</h1></div></header>
+      <header>
+        <div class="title">
+          <h1>Wrike Projects</h1>
+        </div>
+      </header>
+
       <div class="grid">
         <div class="card">
           <div class="label">My Wrike Projects</div>
@@ -117,74 +145,101 @@
   </div>
 
   <script>
-    const esc = (s) => String(s ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
+    const workerBase = "https://wrike-proxy.dustinjsmith.workers.dev";
+    const listUrl = `${workerBase}?pmField=Project%20Manager&assignedField=Assigned&limit=25`;
 
-    function uniqueById(arr){
-      const seen = new Set();
-      const out = [];
-      for (const x of (arr || [])){
-        if (!x?.id) continue;
-        if (seen.has(x.id)) continue;
-        seen.add(x.id);
-        out.push(x);
-      }
-      return out;
+    function getAdminKey() {
+      const existing = sessionStorage.getItem("wrike_adminKey");
+      if (existing) return existing;
+      const k = prompt("Enter admin key to archive/move repo pages:");
+      if (!k) return "";
+      sessionStorage.setItem("wrike_adminKey", k);
+      return k;
     }
 
-    async function loadWrikeProjects(){
-      const el = document.getElementById('wrikeProjects');
-      el.textContent = 'Loading…';
+    async function archiveRepo(projectId, btnEl) {
+      const adminKey = getAdminKey();
+      if (!adminKey) return;
 
-      const workerUrl =
-        'https://wrike-proxy.dustinjsmith.workers.dev' +
-        '?pmField=Project%20Manager' +
-        '&assignedField=Assigned' +
-        '&limit=25';
+      btnEl.disabled = true;
+      btnEl.textContent = "Archiving…";
 
       try {
-        const res = await fetch(workerUrl, { cache: "no-store" });
+        const res = await fetch(`${workerBase}?action=archiveRepo&adminKey=${encodeURIComponent(adminKey)}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ projectId })
+        });
         const data = await res.json();
 
         if (!res.ok || data.error) {
-          el.textContent = 'Error: ' + (data.error || 'Unknown');
+          btnEl.disabled = false;
+          btnEl.textContent = "Archive";
+          alert("Archive failed: " + (data.error || "Unknown error"));
           return;
         }
 
-        const projects = uniqueById(data.projects || []);
-        if (!projects.length) {
-          el.textContent = 'No matching projects found.';
+        btnEl.textContent = "Archived";
+        btnEl.classList.add("tag-muted");
+      } catch (e) {
+        btnEl.disabled = false;
+        btnEl.textContent = "Archive";
+        alert("Archive failed: " + String(e));
+      }
+    }
+
+    async function loadWrikeProjects(){
+      const el = document.getElementById("wrikeProjects");
+      el.textContent = "Loading…";
+
+      try {
+        const res = await fetch(listUrl, { cache: "no-store" });
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          el.textContent = "Error: " + (data.error || "Unknown");
           return;
         }
 
-        el.innerHTML = projects.map(p => {
-          const endLine = p.endDate ? `End ${esc(p.endDate)}` : '';
+        if (!data.projects?.length) {
+          el.textContent = "No matching projects found.";
+          return;
+        }
 
-          const repoEnabled = !!p.repoUrl;
-          const repoBtn = repoEnabled
-            ? `<a class="btn" href="${esc(p.repoUrl)}" target="_blank" rel="noreferrer">Repo</a>`
-            : `<span class="btn disabled">Repo</span>`;
+        el.innerHTML = data.projects.slice(0, 25).map(p => {
+          const meta = [
+            p.endDate ? `End ${p.endDate}` : "",
+            p.repoArchived ? "Repo archived" : ""
+          ].filter(Boolean).join(" • ");
+
+          const repoBtn = p.repoUrl
+            ? `<a class="btn" href="${p.repoUrl}" target="_blank" rel="noreferrer">Repo</a>`
+            : `<button class="btn" disabled>Repo</button>`;
 
           return `
             <div class="item">
               <div class="left">
-                <div class="main">${esc(p.title || '(Untitled project)')}</div>
-                ${endLine ? `<div class="meta">${endLine}</div>` : ``}
+                <div class="text">
+                  <div class="main">${p.title || "(Untitled project)"}</div>
+                  <div class="meta">${meta || ""}</div>
+                </div>
               </div>
-              <div class="right">
-                <a class="btn" href="${esc(p.link)}" target="_blank" rel="noreferrer">Open</a>
+              <div class="actions">
                 ${repoBtn}
+                <a class="btn" href="${p.link}" target="_blank" rel="noreferrer">Open</a>
+                <button class="btn btn-danger" data-archive="${p.id}">Archive</button>
               </div>
             </div>
           `;
-        }).join('');
+        }).join("");
+
+        // wire archive buttons
+        el.querySelectorAll("button[data-archive]").forEach(btn => {
+          btn.addEventListener("click", () => archiveRepo(btn.dataset.archive, btn));
+        });
 
       } catch (e) {
-        el.textContent = 'Error: ' + String(e);
+        el.textContent = "Error: " + String(e);
       }
     }
 
