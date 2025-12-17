@@ -15,7 +15,9 @@
       --border: rgba(255,255,255,.10);
       --shadow: 0 12px 40px rgba(0,0,0,.35);
       --radius: 18px;
+      --danger: rgba(255,200,200,.9);
     }
+
     @media (prefers-color-scheme: light){
       :root{
         --bg:#f6f7fb;
@@ -25,8 +27,10 @@
         --muted: rgba(0,0,0,.58);
         --border: rgba(0,0,0,.10);
         --shadow: 0 10px 25px rgba(0,0,0,.12);
+        --danger: rgba(170,40,40,.9);
       }
     }
+
     * { box-sizing: border-box; }
     body{
       margin:0;
@@ -36,7 +40,9 @@
                   var(--bg);
       color: var(--text);
     }
+
     .wrap{ padding: 18px; max-width: 980px; margin: 0 auto; }
+
     .shell{
       border: 1px solid var(--border);
       background: linear-gradient(180deg, var(--card2), var(--card));
@@ -44,6 +50,7 @@
       border-radius: var(--radius);
       overflow: hidden;
     }
+
     header{
       padding: 18px 18px 12px;
       display:flex;
@@ -52,8 +59,46 @@
       gap: 12px;
       border-bottom: 1px solid var(--border);
     }
-    .title h1{ margin:0; font-size: 16px; letter-spacing:.2px; font-weight: 700; }
-    .grid{ padding: 16px; display:grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
+
+    .title h1{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.2px;
+      font-weight: 700;
+    }
+
+    .admin{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+
+    .admin input{
+      width: 180px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      outline: none;
+      font-size: 12px;
+    }
+
+    .admin .hint{
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .grid{
+      padding: 16px;
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+
     .card{
       border: 1px solid var(--border);
       background: rgba(255,255,255,.04);
@@ -62,7 +107,9 @@
       min-height: 90px;
       grid-column: span 12;
     }
+
     .label{ font-size: 12px; color: var(--muted); }
+
     .projects-list{
       margin-top: 10px;
       display:flex;
@@ -72,6 +119,7 @@
       overflow-y: auto;
       padding-right: 6px;
     }
+
     .projects-list::-webkit-scrollbar{ width: 10px; }
     .projects-list::-webkit-scrollbar-thumb{
       background: rgba(255,255,255,.18);
@@ -90,8 +138,10 @@
       border-radius: 14px;
       padding: 10px 12px;
     }
+
     .left{ display:flex; align-items:center; gap: 10px; min-width: 0; }
     .text{ display:flex; flex-direction:column; gap:2px; min-width: 0; }
+
     .text .main{
       font-size: 13px;
       font-weight: 650;
@@ -99,6 +149,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .text .meta{
       font-size: 12px;
       color: var(--muted);
@@ -107,7 +158,17 @@
       text-overflow: ellipsis;
     }
 
+    .text .statusline{
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
     .actions{ display:flex; align-items:center; gap: 8px; }
+
     .btn{
       font-size: 12px;
       color: var(--muted);
@@ -118,20 +179,47 @@
       white-space: nowrap;
       text-decoration: none;
       cursor: pointer;
+      user-select: none;
     }
     .btn:hover{ background: rgba(255,255,255,.06); }
     .btn:disabled{ opacity:.55; cursor:not-allowed; }
-    .btn-danger{ color: rgba(255,200,200,.9); }
-    .tag-muted{ opacity:.7; }
-    .errorBox{
+    .btn-danger{ color: var(--danger); }
+    .muted{ opacity: .7; }
+
+    /* Modal */
+    .modal-backdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9999;
+    }
+    .modal{
+      width: min(520px, 100%);
       border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius: 14px;
-      padding: 12px;
+      background: linear-gradient(180deg, var(--card2), var(--card));
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .modal h2{
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+    .modal p{
+      margin: 0 0 12px;
       color: var(--muted);
+      font-size: 12px;
       line-height: 1.35;
     }
-    .errorBox a{ color: inherit; }
+    .modal .row{
+      display:flex;
+      gap: 8px;
+      justify-content:flex-end;
+    }
   </style>
 </head>
 
@@ -141,6 +229,11 @@
       <header>
         <div class="title">
           <h1>Wrike Projects</h1>
+        </div>
+
+        <div class="admin">
+          <input id="adminKey" type="password" placeholder="Admin key (for Archive)" />
+          <span id="adminHint" class="hint"></span>
         </div>
       </header>
 
@@ -153,70 +246,98 @@
     </div>
   </div>
 
+  <!-- Modal -->
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 id="modalTitle">Archive repo page?</h2>
+      <p id="modalText"></p>
+      <div class="row">
+        <button id="modalCancel" class="btn">Cancel</button>
+        <button id="modalOk" class="btn btn-danger">Archive</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const workerBase = "https://wrike-proxy.dustinjsmith.workers.dev";
+    const STORAGE_KEY = "wrike_adminKey";
 
     function buildListUrl() {
       const u = new URL(workerBase);
-      u.pathname = "/"; // ensure it always hits the Worker route
+      u.pathname = "/";
       u.searchParams.set("pmField", "Project Manager");
       u.searchParams.set("assignedField", "Assigned");
       u.searchParams.set("limit", "25");
       return u.toString();
     }
 
-    function getAdminKey() {
-      const existing = sessionStorage.getItem("wrike_adminKey");
-      if (existing) return existing;
-      const k = prompt("Enter admin key to move repo pages to Project Archive:");
-      if (!k) return "";
-      sessionStorage.setItem("wrike_adminKey", k);
-      return k;
+    function escapeHtml(s) {
+      return String(s ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
-    // Uses GET to avoid CORS preflight headaches in embedded iframes
-    async function archiveRepo(projectId, projectTitle, btnEl, metaEl) {
-      const ok = confirm(`Move "${projectTitle}" repo page to Project Archive?`);
-      if (!ok) return;
+    // Admin key input
+    const adminInput = document.getElementById("adminKey");
+    const adminHint = document.getElementById("adminHint");
 
-      const adminKey = getAdminKey();
-      if (!adminKey) return;
+    function refreshAdminHint() {
+      const v = (adminInput.value || "").trim();
+      adminHint.textContent = v ? "Key set" : "Key required for Archive";
+    }
 
-      btnEl.disabled = true;
-      btnEl.textContent = "Archiving…";
+    adminInput.value = localStorage.getItem(STORAGE_KEY) || "";
+    refreshAdminHint();
 
-      try {
-        const u = new URL(workerBase);
-        u.pathname = "/";
-        u.searchParams.set("action", "archiveRepo");
-        u.searchParams.set("projectId", projectId);
-        u.searchParams.set("adminKey", adminKey);
+    adminInput.addEventListener("input", () => {
+      localStorage.setItem(STORAGE_KEY, adminInput.value);
+      refreshAdminHint();
+    });
 
-        const res = await fetch(u.toString(), { cache: "no-store" });
-        const data = await res.json().catch(() => ({}));
+    function getAdminKey() {
+      const v = (adminInput.value || "").trim();
+      return v;
+    }
 
-        if (!res.ok || data.error) {
-          btnEl.disabled = false;
-          btnEl.textContent = "Archive";
-          alert("Archive failed: " + (data.error || `HTTP ${res.status}`));
-          return;
-        }
+    // Modal helpers
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalText = document.getElementById("modalText");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalCancel = document.getElementById("modalCancel");
+    const modalOk = document.getElementById("modalOk");
 
-        btnEl.textContent = "Archive";
-        btnEl.classList.add("tag-muted");
-        btnEl.title = "Moved to Project Archive";
+    function openModal({ title, text, onOk }) {
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modalBackdrop.style.display = "flex";
 
-        if (metaEl) {
-          const curr = (metaEl.textContent || "").trim();
-          if (!curr.includes("Repo archived")) {
-            metaEl.textContent = curr ? `${curr} • Repo archived` : "Repo archived";
-          }
-        }
-      } catch (e) {
-        btnEl.disabled = false;
-        btnEl.textContent = "Archive";
-        alert("Archive failed: " + String(e));
-      }
+      const cleanup = () => {
+        modalBackdrop.style.display = "none";
+        modalCancel.onclick = null;
+        modalOk.onclick = null;
+      };
+
+      modalCancel.onclick = () => cleanup();
+      modalBackdrop.onclick = (e) => { if (e.target === modalBackdrop) cleanup(); };
+
+      modalOk.onclick = async () => {
+        cleanup();
+        await onOk();
+      };
+    }
+
+    async function callArchive(projectId, adminKey) {
+      const u = new URL(workerBase);
+      u.pathname = "/";
+      u.searchParams.set("action", "archiveRepo");
+      u.searchParams.set("projectId", projectId);
+      u.searchParams.set("adminKey", adminKey);
+      const res = await fetch(u.toString(), { cache: "no-store" });
+      const data = await res.json().catch(() => ({}));
+      return { ok: res.ok && !data.error, status: res.status, data };
     }
 
     async function loadWrikeProjects(){
@@ -229,13 +350,7 @@
         const data = await res.json();
 
         if (!res.ok || data.error) {
-          el.innerHTML = `
-            <div class="errorBox">
-              Could not load projects.<br/>
-              Status: ${res.status}<br/>
-              Error: ${(data.error || "Unknown")}<br/>
-              Test the Worker URL: <a href="${listUrl}" target="_blank" rel="noreferrer">${listUrl}</a>
-            </div>`;
+          el.textContent = "Error: " + (data.error || ("HTTP " + res.status));
           return;
         }
 
@@ -245,6 +360,7 @@
         }
 
         el.innerHTML = data.projects.slice(0, 25).map(p => {
+          const title = escapeHtml(p.title || "(Untitled project)");
           const metaParts = [];
           if (p.endDate) metaParts.push(`End ${p.endDate}`);
           if (p.repoArchived) metaParts.push("Repo archived");
@@ -254,29 +370,28 @@
             ? `<a class="btn" href="${p.repoUrl}" target="_blank" rel="noreferrer">Repo</a>`
             : `<button class="btn" disabled>Repo</button>`;
 
-          const archiveDisabled = p.repoArchived ? "disabled" : "";
-          const archiveMuted = p.repoArchived ? "tag-muted" : "";
-
-          const safeTitle = (p.title || "(Untitled project)")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#39;");
+          const canArchive = !!p.repoUrl; // only makes sense if we have a repo page
+          const archiveDisabled = (p.repoArchived || !canArchive) ? "disabled" : "";
+          const archiveMuted = (p.repoArchived || !canArchive) ? "muted" : "";
 
           return `
             <div class="item">
               <div class="left">
                 <div class="text">
-                  <div class="main">${safeTitle}</div>
-                  <div class="meta" data-meta="${p.id}">${meta || ""}</div>
+                  <div class="main">${title}</div>
+                  <div class="meta" data-meta="${p.id}">${escapeHtml(meta)}</div>
+                  <div class="statusline" data-status="${p.id}"></div>
                 </div>
               </div>
               <div class="actions">
                 ${repoBtn}
                 <a class="btn" href="${p.link}" target="_blank" rel="noreferrer">Open</a>
-                <button class="btn btn-danger ${archiveMuted}" ${archiveDisabled}
-                        data-archive="${p.id}" data-title="${safeTitle}">Archive</button>
+                <button class="btn btn-danger ${archiveMuted}"
+                        ${archiveDisabled}
+                        data-archive="${p.id}"
+                        data-title="${title}">
+                  Archive
+                </button>
               </div>
             </div>
           `;
@@ -287,19 +402,45 @@
             const projectId = btn.dataset.archive;
             const projectTitle = btn.dataset.title || "this project";
             const metaEl = el.querySelector(`[data-meta="${projectId}"]`);
-            archiveRepo(projectId, projectTitle, btn, metaEl);
+            const statusEl = el.querySelector(`[data-status="${projectId}"]`);
+
+            openModal({
+              title: "Archive repo page?",
+              text: `Move "${projectTitle}" repo page to the Project Archive page in Notion.`,
+              onOk: async () => {
+                const adminKey = getAdminKey();
+                if (!adminKey) {
+                  statusEl.textContent = "Missing admin key (top right).";
+                  return;
+                }
+
+                btn.disabled = true;
+                statusEl.textContent = "Archiving…";
+
+                const result = await callArchive(projectId, adminKey);
+
+                if (!result.ok) {
+                  btn.disabled = false;
+                  statusEl.textContent = "Archive failed: " + (result.data?.error || ("HTTP " + result.status));
+                  return;
+                }
+
+                // Keep project in list; just annotate + mute button
+                btn.disabled = true;
+                btn.classList.add("muted");
+                statusEl.textContent = "Moved to Project Archive.";
+
+                const curr = (metaEl.textContent || "").trim();
+                if (!curr.includes("Repo archived")) {
+                  metaEl.textContent = curr ? `${curr} • Repo archived` : "Repo archived";
+                }
+              }
+            });
           });
         });
 
       } catch (e) {
-        el.innerHTML = `
-          <div class="errorBox">
-            <b>Failed to fetch</b><br/>
-            This usually means the Worker URL is unreachable, blocked by CORS, or returning an error page without CORS headers.<br/><br/>
-            Test the Worker URL in a new tab:<br/>
-            <a href="${buildListUrl()}" target="_blank" rel="noreferrer">${buildListUrl()}</a><br/><br/>
-            Details: ${String(e)}
-          </div>`;
+        el.textContent = "Error: " + String(e);
       }
     }
 
