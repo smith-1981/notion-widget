@@ -124,6 +124,18 @@
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#39;");
 
+    function uniqueById(arr){
+      const seen = new Set();
+      const out = [];
+      for (const x of (arr || [])){
+        if (!x?.id) continue;
+        if (seen.has(x.id)) continue;
+        seen.add(x.id);
+        out.push(x);
+      }
+      return out;
+    }
+
     async function loadWrikeProjects(){
       const el = document.getElementById('wrikeProjects');
       el.textContent = 'Loading…';
@@ -142,12 +154,14 @@
           el.textContent = 'Error: ' + (data.error || 'Unknown');
           return;
         }
-        if (!data.projects?.length) {
+
+        const projects = uniqueById(data.projects || []);
+        if (!projects.length) {
           el.textContent = 'No matching projects found.';
           return;
         }
 
-        el.innerHTML = data.projects.map(p => {
+        el.innerHTML = projects.map(p => {
           const endLine = p.endDate ? `End ${esc(p.endDate)}` : '';
 
           const repoEnabled = !!p.repoUrl;
