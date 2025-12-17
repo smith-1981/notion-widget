@@ -151,13 +151,16 @@
     function getAdminKey() {
       const existing = sessionStorage.getItem("wrike_adminKey");
       if (existing) return existing;
-      const k = prompt("Enter admin key to archive/move repo pages:");
+      const k = prompt("Enter admin key to move repo pages to Project Archive:");
       if (!k) return "";
       sessionStorage.setItem("wrike_adminKey", k);
       return k;
     }
 
-    async function archiveRepo(projectId, btnEl) {
+    async function archiveRepo(projectId, projectTitle, btnEl, metaEl) {
+      const ok = confirm(`Move "${projectTitle}" repo page to Project Archive?`);
+      if (!ok) return;
+
       const adminKey = getAdminKey();
       if (!adminKey) return;
 
@@ -179,8 +182,17 @@
           return;
         }
 
-        btnEl.textContent = "Archived";
+        // Keep the project in the list. Just disable + mute the button and annotate the row.
+        btnEl.textContent = "Archive";
         btnEl.classList.add("tag-muted");
+        btnEl.title = "Moved to Project Archive";
+
+        if (metaEl) {
+          const curr = (metaEl.textContent || "").trim();
+          if (!curr.includes("Repo archived")) {
+            metaEl.textContent = curr ? `${curr} • Repo archived` : "Repo archived";
+          }
+        }
       } catch (e) {
         btnEl.disabled = false;
         btnEl.textContent = "Archive";
@@ -207,35 +219,50 @@
         }
 
         el.innerHTML = data.projects.slice(0, 25).map(p => {
-          const meta = [
-            p.endDate ? `End ${p.endDate}` : "",
-            p.repoArchived ? "Repo archived" : ""
-          ].filter(Boolean).join(" • ");
+          const metaParts = [];
+          if (p.endDate) metaParts.push(`End ${p.endDate}`);
+          if (p.repoArchived) metaParts.push("Repo archived");
+          const meta = metaParts.join(" • ");
 
           const repoBtn = p.repoUrl
             ? `<a class="btn" href="${p.repoUrl}" target="_blank" rel="noreferrer">Repo</a>`
             : `<button class="btn" disabled>Repo</button>`;
 
+          const archiveDisabled = p.repoArchived ? "disabled" : "";
+          const archiveMuted = p.repoArchived ? "tag-muted" : "";
+
+          const safeTitle = (p.title || "(Untitled project)")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+
           return `
             <div class="item">
               <div class="left">
                 <div class="text">
-                  <div class="main">${p.title || "(Untitled project)"}</div>
-                  <div class="meta">${meta || ""}</div>
+                  <div class="main">${safeTitle}</div>
+                  <div class="meta" data-meta="${p.id}">${meta || ""}</div>
                 </div>
               </div>
               <div class="actions">
                 ${repoBtn}
                 <a class="btn" href="${p.link}" target="_blank" rel="noreferrer">Open</a>
-                <button class="btn btn-danger" data-archive="${p.id}">Archive</button>
+                <button class="btn btn-danger ${archiveMuted}" ${archiveDisabled}
+                        data-archive="${p.id}" data-title="${safeTitle}">Archive</button>
               </div>
             </div>
           `;
         }).join("");
 
-        // wire archive buttons
         el.querySelectorAll("button[data-archive]").forEach(btn => {
-          btn.addEventListener("click", () => archiveRepo(btn.dataset.archive, btn));
+          btn.addEventListener("click", () => {
+            const projectId = btn.dataset.archive;
+            const projectTitle = btn.dataset.title || "this project";
+            const metaEl = el.querySelector(`[data-meta="${projectId}"]`);
+            archiveRepo(projectId, projectTitle, btn, metaEl);
+          });
         });
 
       } catch (e) {
