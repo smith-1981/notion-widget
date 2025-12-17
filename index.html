@@ -123,6 +123,15 @@
     .btn:disabled{ opacity:.55; cursor:not-allowed; }
     .btn-danger{ color: rgba(255,200,200,.9); }
     .tag-muted{ opacity:.7; }
+    .errorBox{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .errorBox a{ color: inherit; }
   </style>
 </head>
 
@@ -146,7 +155,15 @@
 
   <script>
     const workerBase = "https://wrike-proxy.dustinjsmith.workers.dev";
-    const listUrl = `${workerBase}?pmField=Project%20Manager&assignedField=Assigned&limit=25`;
+
+    function buildListUrl() {
+      const u = new URL(workerBase);
+      u.pathname = "/"; // ensure it always hits the Worker route
+      u.searchParams.set("pmField", "Project Manager");
+      u.searchParams.set("assignedField", "Assigned");
+      u.searchParams.set("limit", "25");
+      return u.toString();
+    }
 
     function getAdminKey() {
       const existing = sessionStorage.getItem("wrike_adminKey");
@@ -157,6 +174,7 @@
       return k;
     }
 
+    // Uses GET to avoid CORS preflight headaches in embedded iframes
     async function archiveRepo(projectId, projectTitle, btnEl, metaEl) {
       const ok = confirm(`Move "${projectTitle}" repo page to Project Archive?`);
       if (!ok) return;
@@ -168,21 +186,22 @@
       btnEl.textContent = "Archiving…";
 
       try {
-        const res = await fetch(`${workerBase}?action=archiveRepo&adminKey=${encodeURIComponent(adminKey)}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ projectId })
-        });
-        const data = await res.json();
+        const u = new URL(workerBase);
+        u.pathname = "/";
+        u.searchParams.set("action", "archiveRepo");
+        u.searchParams.set("projectId", projectId);
+        u.searchParams.set("adminKey", adminKey);
+
+        const res = await fetch(u.toString(), { cache: "no-store" });
+        const data = await res.json().catch(() => ({}));
 
         if (!res.ok || data.error) {
           btnEl.disabled = false;
           btnEl.textContent = "Archive";
-          alert("Archive failed: " + (data.error || "Unknown error"));
+          alert("Archive failed: " + (data.error || `HTTP ${res.status}`));
           return;
         }
 
-        // Keep the project in the list. Just disable + mute the button and annotate the row.
         btnEl.textContent = "Archive";
         btnEl.classList.add("tag-muted");
         btnEl.title = "Moved to Project Archive";
@@ -202,6 +221,7 @@
 
     async function loadWrikeProjects(){
       const el = document.getElementById("wrikeProjects");
+      const listUrl = buildListUrl();
       el.textContent = "Loading…";
 
       try {
@@ -209,7 +229,13 @@
         const data = await res.json();
 
         if (!res.ok || data.error) {
-          el.textContent = "Error: " + (data.error || "Unknown");
+          el.innerHTML = `
+            <div class="errorBox">
+              Could not load projects.<br/>
+              Status: ${res.status}<br/>
+              Error: ${(data.error || "Unknown")}<br/>
+              Test the Worker URL: <a href="${listUrl}" target="_blank" rel="noreferrer">${listUrl}</a>
+            </div>`;
           return;
         }
 
@@ -266,7 +292,14 @@
         });
 
       } catch (e) {
-        el.textContent = "Error: " + String(e);
+        el.innerHTML = `
+          <div class="errorBox">
+            <b>Failed to fetch</b><br/>
+            This usually means the Worker URL is unreachable, blocked by CORS, or returning an error page without CORS headers.<br/><br/>
+            Test the Worker URL in a new tab:<br/>
+            <a href="${buildListUrl()}" target="_blank" rel="noreferrer">${buildListUrl()}</a><br/><br/>
+            Details: ${String(e)}
+          </div>`;
       }
     }
 
