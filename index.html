@@ -4,10 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Wrike Projects</title>
-
   <style>
     :root{
-      /* ASU-inspired palette */
       --asu-maroon: #8C1D40;
       --asu-gold: #FFC627;
 
@@ -21,7 +19,7 @@
       --radius: 18px;
 
       --danger: rgba(255,200,200,.92);
-      --focus: rgba(255,198,39,.45); /* gold focus ring */
+      --focus: rgba(255,198,39,.45);
     }
 
     @media (prefers-color-scheme: light){
@@ -44,22 +42,14 @@
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-
-      /* ASU-ish background treatment: maroon + gold glows */
       background:
         radial-gradient(1100px 680px at 20% 0%, rgba(140,29,64,.35), transparent 55%),
         radial-gradient(900px 600px at 88% 32%, rgba(255,198,39,.18), transparent 52%),
         var(--bg);
-
       color: var(--text);
     }
 
-    /* IMPORTANT: no fixed max-width; let it fill the iframe */
-    .wrap{
-      padding: 14px;
-      width: 100%;
-      margin: 0;
-    }
+    .wrap{ padding: 14px; width: 100%; margin: 0; }
 
     .shell{
       width: 100%;
@@ -80,7 +70,6 @@
       position: relative;
     }
 
-    /* subtle ASU maroon top bar */
     header:before{
       content:"";
       position:absolute;
@@ -90,21 +79,9 @@
       opacity: .95;
     }
 
-    .title h1{
-      margin:0;
-      font-size: 16px;
-      letter-spacing:.2px;
-      font-weight: 800;
-    }
+    .title h1{ margin:0; font-size: 16px; letter-spacing:.2px; font-weight: 800; }
 
-    .admin{
-      display:flex;
-      align-items:center;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-    }
-
+    .admin{ display:flex; align-items:center; gap: 8px; flex-wrap: wrap; justify-content:flex-end; }
     .admin input{
       width: 190px;
       padding: 8px 10px;
@@ -115,24 +92,10 @@
       outline: none;
       font-size: 12px;
     }
+    .admin input:focus{ box-shadow: 0 0 0 3px var(--focus); border-color: rgba(255,198,39,.6); }
+    .admin .hint{ font-size: 12px; color: var(--muted); white-space: nowrap; }
 
-    .admin input:focus{
-      box-shadow: 0 0 0 3px var(--focus);
-      border-color: rgba(255,198,39,.6);
-    }
-
-    .admin .hint{
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .grid{
-      padding: 14px;
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 12px;
-    }
+    .grid{ padding: 14px; display:grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
 
     .card{
       grid-column: span 12;
@@ -154,14 +117,6 @@
       overflow-y: auto;
       padding-right: 6px;
     }
-
-    .projects-list::-webkit-scrollbar{ width: 10px; }
-    .projects-list::-webkit-scrollbar-thumb{
-      background: rgba(255,198,39,.18);
-      border: 1px solid rgba(255,198,39,.22);
-      border-radius: 999px;
-    }
-    .projects-list::-webkit-scrollbar-track{ background: transparent; }
 
     .item{
       display:flex;
@@ -185,21 +140,12 @@
       text-overflow: ellipsis;
     }
 
-    .text .meta{
+    .text .meta, .text .statusline{
       font-size: 12px;
       color: var(--muted);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    .text .statusline{
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 2px;
     }
 
     .actions{ display:flex; align-items:center; gap: 8px; }
@@ -218,37 +164,29 @@
     }
     .btn:hover{ background: rgba(255,255,255,.06); }
 
-    /* ASU accent buttons */
     .btn-primary{
       color: rgba(255,255,255,.92);
       border-color: rgba(140,29,64,.55);
       background: rgba(140,29,64,.18);
     }
-    .btn-primary:hover{
-      background: rgba(140,29,64,.26);
-    }
+    .btn-primary:hover{ background: rgba(140,29,64,.26); }
 
     .btn-gold{
       color: rgba(0,0,0,.78);
       border-color: rgba(255,198,39,.65);
       background: rgba(255,198,39,.85);
     }
-    .btn-gold:hover{
-      background: rgba(255,198,39,.95);
-    }
+    .btn-gold:hover{ background: rgba(255,198,39,.95); }
 
     .btn:disabled{ opacity:.55; cursor:not-allowed; }
     .btn-danger{ color: var(--danger); border-color: rgba(255,200,200,.35); }
     .muted{ opacity: .7; }
 
-    /* Modal */
     .modal-backdrop{
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(0,0,0,.55);
       display: none;
-      align-items: center;
-      justify-content: center;
+      align-items: center; justify-content: center;
       padding: 16px;
       z-index: 9999;
     }
@@ -260,22 +198,9 @@
       box-shadow: var(--shadow);
       padding: 14px;
     }
-    .modal h2{
-      margin: 0 0 8px;
-      font-size: 14px;
-      font-weight: 800;
-    }
-    .modal p{
-      margin: 0 0 12px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.35;
-    }
-    .modal .row{
-      display:flex;
-      gap: 8px;
-      justify-content:flex-end;
-    }
+    .modal h2{ margin: 0 0 8px; font-size: 14px; font-weight: 800; }
+    .modal p{ margin: 0 0 12px; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .modal .row{ display:flex; gap: 8px; justify-content:flex-end; }
   </style>
 </head>
 
@@ -283,10 +208,7 @@
   <div class="wrap">
     <div class="shell">
       <header>
-        <div class="title">
-          <h1>Wrike Projects</h1>
-        </div>
-
+        <div class="title"><h1>Wrike Projects</h1></div>
         <div class="admin">
           <input id="adminKey" type="password" placeholder="Admin key (Archive)" />
           <span id="adminHint" class="hint"></span>
@@ -302,7 +224,6 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <h2 id="modalTitle">Archive repo page?</h2>
@@ -318,12 +239,59 @@
     const workerBase = "https://wrike-proxy.dustinjsmith.workers.dev";
     const STORAGE_KEY = "wrike_adminKey";
 
+    // localStorage can be blocked in some embed contexts — make it safe
+    const safeStorage = {
+      get(key){ try { return localStorage.getItem(key); } catch { return ""; } },
+      set(key, val){ try { localStorage.setItem(key, val); } catch {} },
+    };
+
+    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    async function fetchJsonWithRetry(url, { retries = 2, timeoutMs = 12000 } = {}) {
+      let lastErr = null;
+
+      for (let attempt = 0; attempt <= retries; attempt++) {
+        const controller = new AbortController();
+        const t = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+          const res = await fetch(url, {
+            cache: "no-store",
+            mode: "cors",
+            credentials: "omit",
+            signal: controller.signal
+          });
+          clearTimeout(t);
+
+          const text = await res.text();
+          let data = {};
+          try { data = JSON.parse(text); } catch { data = { raw: text }; }
+
+          if (!res.ok || data.error) {
+            throw new Error(data.error || `HTTP ${res.status}`);
+          }
+          return data;
+        } catch (e) {
+          clearTimeout(t);
+          lastErr = e;
+          if (attempt < retries) {
+            const backoff = 350 * Math.pow(2, attempt) + Math.floor(Math.random() * 250);
+            await sleep(backoff);
+            continue;
+          }
+        }
+      }
+      throw lastErr || new Error("Failed to fetch");
+    }
+
     function buildListUrl() {
       const u = new URL(workerBase);
       u.pathname = "/";
       u.searchParams.set("pmField", "Project Manager");
       u.searchParams.set("assignedField", "Assigned");
       u.searchParams.set("limit", "25");
+      // Optional: repo creation cap per refresh
+      // u.searchParams.set("createLimit", "2");
       return u.toString();
     }
 
@@ -336,7 +304,6 @@
         .replace(/'/g, "&#39;");
     }
 
-    // Admin key input
     const adminInput = document.getElementById("adminKey");
     const adminHint = document.getElementById("adminHint");
 
@@ -345,11 +312,11 @@
       adminHint.textContent = v ? "Key set" : "Key required";
     }
 
-    adminInput.value = localStorage.getItem(STORAGE_KEY) || "";
+    adminInput.value = safeStorage.get(STORAGE_KEY) || "";
     refreshAdminHint();
 
     adminInput.addEventListener("input", () => {
-      localStorage.setItem(STORAGE_KEY, adminInput.value);
+      safeStorage.set(STORAGE_KEY, adminInput.value);
       refreshAdminHint();
     });
 
@@ -357,7 +324,6 @@
       return (adminInput.value || "").trim();
     }
 
-    // Modal helpers
     const modalBackdrop = document.getElementById("modalBackdrop");
     const modalText = document.getElementById("modalText");
     const modalTitle = document.getElementById("modalTitle");
@@ -390,31 +356,35 @@
       u.searchParams.set("action", "archiveRepo");
       u.searchParams.set("projectId", projectId);
       u.searchParams.set("adminKey", adminKey);
-
-      const res = await fetch(u.toString(), { cache: "no-store" });
-      const data = await res.json().catch(() => ({}));
-      return { ok: res.ok && !data.error, status: res.status, data };
+      // archive should be reliable too
+      const data = await fetchJsonWithRetry(u.toString(), { retries: 1, timeoutMs: 15000 });
+      return data;
     }
+
+    let didAutoRefreshOnce = false;
 
     async function loadWrikeProjects(){
       const el = document.getElementById("wrikeProjects");
       el.textContent = "Loading…";
 
       try {
-        const res = await fetch(buildListUrl(), { cache: "no-store" });
-        const data = await res.json();
-
-        if (!res.ok || data.error) {
-          el.textContent = "Error: " + (data.error || ("HTTP " + res.status));
-          return;
-        }
+        const data = await fetchJsonWithRetry(buildListUrl(), { retries: 2, timeoutMs: 12000 });
 
         if (!data.projects?.length) {
           el.textContent = "No matching projects found.";
           return;
         }
 
-        el.innerHTML = data.projects.slice(0, 25).map(p => {
+        const hasMissingRepos = data.projects.some(p => !p.repoUrl);
+
+        el.innerHTML = (hasMissingRepos ? `
+          <div class="item" style="justify-content:flex-start;">
+            <div class="text">
+              <div class="main">Creating repo pages in the background…</div>
+              <div class="meta">If some Repo buttons are disabled, they should appear after a refresh.</div>
+            </div>
+          </div>
+        ` : ``) + data.projects.slice(0, 25).map(p => {
           const title = escapeHtml(p.title || "(Untitled project)");
           const metaParts = [];
           if (p.endDate) metaParts.push(`End ${p.endDate}`);
@@ -472,29 +442,44 @@
                 btn.disabled = true;
                 statusEl.textContent = "Archiving…";
 
-                const result = await callArchive(projectId, adminKey);
+                try {
+                  await callArchive(projectId, adminKey);
+                  btn.disabled = true;
+                  btn.classList.add("muted");
+                  statusEl.textContent = "Moved to Project Archive.";
 
-                if (!result.ok) {
+                  const curr = (metaEl.textContent || "").trim();
+                  if (!curr.includes("Repo archived")) {
+                    metaEl.textContent = curr ? `${curr} • Repo archived` : "Repo archived";
+                  }
+                } catch (e) {
                   btn.disabled = false;
-                  statusEl.textContent = "Archive failed: " + (result.data?.error || ("HTTP " + result.status));
-                  return;
-                }
-
-                btn.disabled = true;
-                btn.classList.add("muted");
-                statusEl.textContent = "Moved to Project Archive.";
-
-                const curr = (metaEl.textContent || "").trim();
-                if (!curr.includes("Repo archived")) {
-                  metaEl.textContent = curr ? `${curr} • Repo archived` : "Repo archived";
+                  statusEl.textContent = "Archive failed: " + String(e);
                 }
               }
             });
           });
         });
 
+        // one automatic refresh (helps Repo buttons appear after background creation)
+        if (hasMissingRepos && !didAutoRefreshOnce) {
+          didAutoRefreshOnce = true;
+          setTimeout(loadWrikeProjects, 6500);
+        }
+
       } catch (e) {
-        el.textContent = "Error: " + String(e);
+        el.innerHTML = `
+          <div class="item" style="justify-content:flex-start;">
+            <div class="text">
+              <div class="main">Temporary load issue</div>
+              <div class="meta">${escapeHtml(String(e))}</div>
+              <div style="margin-top:10px;">
+                <button id="retryBtn" class="btn btn-gold">Retry</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById("retryBtn")?.addEventListener("click", loadWrikeProjects);
       }
     }
 
