@@ -7,64 +7,94 @@
 
   <style>
     :root{
+      /* ASU-inspired palette */
+      --asu-maroon: #8C1D40;
+      --asu-gold: #FFC627;
+
       --bg: #0b0f17;
-      --card: rgba(255,255,255,.06);
-      --card2: rgba(255,255,255,.09);
+      --surface: rgba(255,255,255,.06);
+      --surface2: rgba(255,255,255,.09);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.65);
-      --border: rgba(255,255,255,.10);
+      --border: rgba(255,255,255,.12);
       --shadow: 0 12px 40px rgba(0,0,0,.35);
       --radius: 18px;
-      --danger: rgba(255,200,200,.9);
+
+      --danger: rgba(255,200,200,.92);
+      --focus: rgba(255,198,39,.45); /* gold focus ring */
     }
 
     @media (prefers-color-scheme: light){
       :root{
         --bg:#f6f7fb;
-        --card: rgba(0,0,0,.04);
-        --card2: rgba(0,0,0,.06);
+        --surface: rgba(0,0,0,.04);
+        --surface2: rgba(0,0,0,.06);
         --text: rgba(0,0,0,.88);
         --muted: rgba(0,0,0,.58);
         --border: rgba(0,0,0,.10);
         --shadow: 0 10px 25px rgba(0,0,0,.12);
         --danger: rgba(170,40,40,.9);
+        --focus: rgba(255,198,39,.55);
       }
     }
 
     * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
+
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(1200px 700px at 20% 0%, rgba(124,92,255,.28), transparent 55%),
-                  radial-gradient(900px 600px at 90% 30%, rgba(35,198,255,.22), transparent 50%),
-                  var(--bg);
+
+      /* ASU-ish background treatment: maroon + gold glows */
+      background:
+        radial-gradient(1100px 680px at 20% 0%, rgba(140,29,64,.35), transparent 55%),
+        radial-gradient(900px 600px at 88% 32%, rgba(255,198,39,.18), transparent 52%),
+        var(--bg);
+
       color: var(--text);
     }
 
-    .wrap{ padding: 18px; max-width: 980px; margin: 0 auto; }
+    /* IMPORTANT: no fixed max-width; let it fill the iframe */
+    .wrap{
+      padding: 14px;
+      width: 100%;
+      margin: 0;
+    }
 
     .shell{
+      width: 100%;
       border: 1px solid var(--border);
-      background: linear-gradient(180deg, var(--card2), var(--card));
+      background: linear-gradient(180deg, var(--surface2), var(--surface));
       box-shadow: var(--shadow);
       border-radius: var(--radius);
       overflow: hidden;
     }
 
     header{
-      padding: 18px 18px 12px;
+      padding: 16px 16px 12px;
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
       gap: 12px;
       border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    /* subtle ASU maroon top bar */
+    header:before{
+      content:"";
+      position:absolute;
+      left:0; top:0; right:0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--asu-maroon), rgba(140,29,64,.25), var(--asu-gold));
+      opacity: .95;
     }
 
     .title h1{
       margin:0;
       font-size: 16px;
       letter-spacing:.2px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .admin{
@@ -76,7 +106,7 @@
     }
 
     .admin input{
-      width: 180px;
+      width: 190px;
       padding: 8px 10px;
       border-radius: 12px;
       border: 1px solid var(--border);
@@ -86,6 +116,11 @@
       font-size: 12px;
     }
 
+    .admin input:focus{
+      box-shadow: 0 0 0 3px var(--focus);
+      border-color: rgba(255,198,39,.6);
+    }
+
     .admin .hint{
       font-size: 12px;
       color: var(--muted);
@@ -93,19 +128,19 @@
     }
 
     .grid{
-      padding: 16px;
+      padding: 14px;
       display:grid;
       grid-template-columns: repeat(12, 1fr);
       gap: 12px;
     }
 
     .card{
+      grid-column: span 12;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.04);
       border-radius: 16px;
       padding: 14px;
       min-height: 90px;
-      grid-column: span 12;
     }
 
     .label{ font-size: 12px; color: var(--muted); }
@@ -122,8 +157,8 @@
 
     .projects-list::-webkit-scrollbar{ width: 10px; }
     .projects-list::-webkit-scrollbar-thumb{
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,198,39,.18);
+      border: 1px solid rgba(255,198,39,.22);
       border-radius: 999px;
     }
     .projects-list::-webkit-scrollbar-track{ background: transparent; }
@@ -144,7 +179,7 @@
 
     .text .main{
       font-size: 13px;
-      font-weight: 650;
+      font-weight: 750;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -182,8 +217,28 @@
       user-select: none;
     }
     .btn:hover{ background: rgba(255,255,255,.06); }
+
+    /* ASU accent buttons */
+    .btn-primary{
+      color: rgba(255,255,255,.92);
+      border-color: rgba(140,29,64,.55);
+      background: rgba(140,29,64,.18);
+    }
+    .btn-primary:hover{
+      background: rgba(140,29,64,.26);
+    }
+
+    .btn-gold{
+      color: rgba(0,0,0,.78);
+      border-color: rgba(255,198,39,.65);
+      background: rgba(255,198,39,.85);
+    }
+    .btn-gold:hover{
+      background: rgba(255,198,39,.95);
+    }
+
     .btn:disabled{ opacity:.55; cursor:not-allowed; }
-    .btn-danger{ color: var(--danger); }
+    .btn-danger{ color: var(--danger); border-color: rgba(255,200,200,.35); }
     .muted{ opacity: .7; }
 
     /* Modal */
@@ -200,7 +255,7 @@
     .modal{
       width: min(520px, 100%);
       border: 1px solid var(--border);
-      background: linear-gradient(180deg, var(--card2), var(--card));
+      background: linear-gradient(180deg, var(--surface2), var(--surface));
       border-radius: 16px;
       box-shadow: var(--shadow);
       padding: 14px;
@@ -208,6 +263,7 @@
     .modal h2{
       margin: 0 0 8px;
       font-size: 14px;
+      font-weight: 800;
     }
     .modal p{
       margin: 0 0 12px;
@@ -232,7 +288,7 @@
         </div>
 
         <div class="admin">
-          <input id="adminKey" type="password" placeholder="Admin key (for Archive)" />
+          <input id="adminKey" type="password" placeholder="Admin key (Archive)" />
           <span id="adminHint" class="hint"></span>
         </div>
       </header>
@@ -286,7 +342,7 @@
 
     function refreshAdminHint() {
       const v = (adminInput.value || "").trim();
-      adminHint.textContent = v ? "Key set" : "Key required for Archive";
+      adminHint.textContent = v ? "Key set" : "Key required";
     }
 
     adminInput.value = localStorage.getItem(STORAGE_KEY) || "";
@@ -298,8 +354,7 @@
     });
 
     function getAdminKey() {
-      const v = (adminInput.value || "").trim();
-      return v;
+      return (adminInput.value || "").trim();
     }
 
     // Modal helpers
@@ -335,6 +390,7 @@
       u.searchParams.set("action", "archiveRepo");
       u.searchParams.set("projectId", projectId);
       u.searchParams.set("adminKey", adminKey);
+
       const res = await fetch(u.toString(), { cache: "no-store" });
       const data = await res.json().catch(() => ({}));
       return { ok: res.ok && !data.error, status: res.status, data };
@@ -342,11 +398,10 @@
 
     async function loadWrikeProjects(){
       const el = document.getElementById("wrikeProjects");
-      const listUrl = buildListUrl();
       el.textContent = "Loading…";
 
       try {
-        const res = await fetch(listUrl, { cache: "no-store" });
+        const res = await fetch(buildListUrl(), { cache: "no-store" });
         const data = await res.json();
 
         if (!res.ok || data.error) {
@@ -367,10 +422,10 @@
           const meta = metaParts.join(" • ");
 
           const repoBtn = p.repoUrl
-            ? `<a class="btn" href="${p.repoUrl}" target="_blank" rel="noreferrer">Repo</a>`
-            : `<button class="btn" disabled>Repo</button>`;
+            ? `<a class="btn btn-gold" href="${p.repoUrl}" target="_blank" rel="noreferrer">Repo</a>`
+            : `<button class="btn btn-gold" disabled>Repo</button>`;
 
-          const canArchive = !!p.repoUrl; // only makes sense if we have a repo page
+          const canArchive = !!p.repoUrl;
           const archiveDisabled = (p.repoArchived || !canArchive) ? "disabled" : "";
           const archiveMuted = (p.repoArchived || !canArchive) ? "muted" : "";
 
@@ -385,7 +440,7 @@
               </div>
               <div class="actions">
                 ${repoBtn}
-                <a class="btn" href="${p.link}" target="_blank" rel="noreferrer">Open</a>
+                <a class="btn btn-primary" href="${p.link}" target="_blank" rel="noreferrer">Open</a>
                 <button class="btn btn-danger ${archiveMuted}"
                         ${archiveDisabled}
                         data-archive="${p.id}"
@@ -406,7 +461,7 @@
 
             openModal({
               title: "Archive repo page?",
-              text: `Move "${projectTitle}" repo page to the Project Archive page in Notion.`,
+              text: `Move "${projectTitle}" repo page to Project Archive in Notion.`,
               onOk: async () => {
                 const adminKey = getAdminKey();
                 if (!adminKey) {
@@ -425,7 +480,6 @@
                   return;
                 }
 
-                // Keep project in list; just annotate + mute button
                 btn.disabled = true;
                 btn.classList.add("muted");
                 statusEl.textContent = "Moved to Project Archive.";
