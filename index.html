@@ -182,6 +182,34 @@
     .btn-danger{ color: var(--danger); border-color: rgba(255,200,200,.35); }
     .muted{ opacity: .7; }
 
+    /* --- NEW: Open button + unread comment badge --- */
+    .openWrap{
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .commentBadge{
+      position: absolute;
+      top: -7px;
+      right: -7px;
+
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+
+      border-radius: 999px;
+      background: #ff2d2d;
+      color: #fff;
+
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 18px;
+      text-align: center;
+
+      box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+      pointer-events: none;
+    }
+
     .modal-backdrop{
       position: fixed; inset: 0;
       background: rgba(0,0,0,.55);
@@ -239,6 +267,9 @@
     const workerBase = "https://wrike-proxy.dustinjsmith.workers.dev";
     const STORAGE_KEY = "wrike_adminKey";
 
+    // --- NEW: comment "seen" tracking ---
+    const SEEN_PREFIX = "wrike_seenComments:"; // per projectId
+
     // localStorage can be blocked in some embed contexts — make it safe
     const safeStorage = {
       get(key){ try { return localStorage.getItem(key); } catch { return ""; } },
@@ -247,7 +278,7 @@
 
     function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-    async function fetchJsonWithRetry(url, { retries = 2, timeoutMs = 12000 } = {}) {
+    async function fetchJsonWithRetry(url, { retries = 2, timeoutMs = 12000, fetchInit = {} } = {}) {
       let lastErr = null;
 
       for (let attempt = 0; attempt <= retries; attempt++) {
@@ -259,6 +290,7 @@
             cache: "no-store",
             mode: "cors",
             credentials: "omit",
+            ...fetchInit,
             signal: controller.signal
           });
           clearTimeout(t);
@@ -324,6 +356,69 @@
       return (adminInput.value || "").trim();
     }
 
+    // --- NEW: unread comment badge helpers ---
+    function seenKey(projectId){ return `${SEEN_PREFIX}${projectId}`; }
+
+    // First time we ever see a project in this widget, we set baseline to "now"
+    // so you don't get spammed by older comments.
+    function getSeenIso(projectId){
+      const k = seenKey(projectId);
+      let v = (safeStorage.get(k) || "").trim();
+      if (!v) {
+        v = new Date().toISOString();
+        safeStorage.set(k, v);
+      }
+      return v;
+    }
+
+    function setSeenNow(projectId){
+      const v = new Date().toISOString();
+      safeStorage.set(seenKey(projectId), v);
+      const badge = document.querySelector(`[data-badge="${projectId}"]`);
+      if (badge) badge.hidden = true;
+    }
+
+    function setBadge(projectId, n){
+      const badge = document.querySelector(`[data-badge="${projectId}"]`);
+      if (!badge) return;
+
+      const count = Number(n || 0);
+      if (!count || count <= 0) {
+        badge.hidden = true;
+        return;
+      }
+
+      badge.textContent = count > 99 ? "99+" : String(count);
+      badge.hidden = false;
+    }
+
+    async function refreshUnreadBadges(projectIds){
+      if (!projectIds?.length) return;
+
+      const u = new URL(workerBase);
+      u.pathname = "/unread-comments";
+
+      const items = projectIds.map(id => ({
+        folderId: id,
+        since: getSeenIso(id),
+      }));
+
+      const data = await fetchJsonWithRetry(u.toString(), {
+        retries: 1,
+        timeoutMs: 12000,
+        fetchInit: {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items })
+        }
+      });
+
+      for (const id of projectIds) {
+        const unread = data?.[id]?.unreadCount ?? 0;
+        setBadge(id, unread);
+      }
+    }
+
     const modalBackdrop = document.getElementById("modalBackdrop");
     const modalText = document.getElementById("modalText");
     const modalTitle = document.getElementById("modalTitle");
@@ -376,6 +471,7 @@
         }
 
         const hasMissingRepos = data.projects.some(p => !p.repoUrl);
+        const shown = data.projects.slice(0, 25);
 
         el.innerHTML = (hasMissingRepos ? `
           <div class="item" style="justify-content:flex-start;">
@@ -384,7 +480,7 @@
               <div class="meta">If some Repo buttons are disabled, they should appear after a refresh.</div>
             </div>
           </div>
-        ` : ``) + data.projects.slice(0, 25).map(p => {
+        ` : ``) + shown.map(p => {
           const title = escapeHtml(p.title || "(Untitled project)");
           const metaParts = [];
           if (p.endDate) metaParts.push(`End ${p.endDate}`);
@@ -410,7 +506,19 @@
               </div>
               <div class="actions">
                 ${repoBtn}
-                <a class="btn btn-primary" href="${p.link}" target="_blank" rel="noreferrer">Open</a>
+
+                <!-- NEW: Open button wrapper + badge -->
+                <div class="openWrap">
+                  <a class="btn btn-primary openBtn"
+                     href="${p.link}"
+                     target="_blank"
+                     rel="noreferrer"
+                     data-open="${p.id}">
+                    Open
+                  </a>
+                  <span class="commentBadge" data-badge="${p.id}" hidden>0</span>
+                </div>
+
                 <button class="btn btn-danger ${archiveMuted}"
                         ${archiveDisabled}
                         data-archive="${p.id}"
@@ -422,6 +530,15 @@
           `;
         }).join("");
 
+        // Mark comments as "seen" when Open is clicked (without blocking the link)
+        el.querySelectorAll("a.openBtn").forEach(a => {
+          a.addEventListener("click", () => {
+            const projectId = a.dataset.open;
+            if (projectId) setSeenNow(projectId);
+          });
+        });
+
+        // Archive handlers
         el.querySelectorAll("button[data-archive]").forEach(btn => {
           btn.addEventListener("click", () => {
             const projectId = btn.dataset.archive;
@@ -460,6 +577,9 @@
             });
           });
         });
+
+        // NEW: pull unread comment counts (non-blocking)
+        refreshUnreadBadges(shown.map(p => p.id)).catch(() => {});
 
         // one automatic refresh (helps Repo buttons appear after background creation)
         if (hasMissingRepos && !didAutoRefreshOnce) {
