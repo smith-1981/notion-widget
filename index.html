@@ -1,268 +1,419 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Wrike Projects (Unread Comments)</title>
-    <style>
-      :root {
-        --bg: #0b0f1a;
-        --card: #0f172a;
-        --text: #e5e7eb;
-        --muted: #94a3b8;
-        --border: rgba(148, 163, 184, 0.18);
-        --btn: #111827;
-        --btnBorder: rgba(148, 163, 184, 0.25);
-        --badge: #ef4444;
-      }
-      body {
-        margin: 0;
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji",
-          "Segoe UI Emoji";
-        background: var(--bg);
-        color: var(--text);
-      }
-      .wrap {
-        padding: 14px;
-      }
-      .header {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 10px;
-      }
-      .title {
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 0.2px;
-      }
-      .sub {
-        font-size: 12px;
-        color: var(--muted);
-      }
-      .card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        overflow: hidden;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th,
-      td {
-        text-align: left;
-        padding: 10px 12px;
-        border-bottom: 1px solid var(--border);
-        font-size: 12px;
-      }
-      th {
-        color: var(--muted);
-        font-weight: 600;
-        background: rgba(255, 255, 255, 0.02);
-      }
-      tr:last-child td {
-        border-bottom: none;
-      }
-      .actions {
-        width: 1%;
-        white-space: nowrap;
-        text-align: right;
-      }
-      .btn {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 7px 10px;
-        border-radius: 10px;
-        background: var(--btn);
-        border: 1px solid var(--btnBorder);
-        color: var(--text);
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 12px;
-        cursor: pointer;
-      }
-      .btn:hover {
-        filter: brightness(1.1);
-      }
-      .badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        min-width: 18px;
-        height: 18px;
-        padding: 0 5px;
-        border-radius: 999px;
-        background: var(--badge);
-        color: white;
-        font-size: 11px;
-        font-weight: 800;
-        line-height: 18px;
-        text-align: center;
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
-        display: none;
-      }
-      .badge.show {
-        display: inline-block;
-      }
-      .pill {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        color: var(--muted);
-        font-size: 11px;
-      }
-      .err {
-        margin-top: 10px;
-        font-size: 12px;
-        color: #fecaca;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <div class="header">
-        <div>
-          <div class="title">Wrike Projects</div>
-          <div class="sub">Shows unread comment badges next to Open</div>
-        </div>
-        <div class="pill" id="statusPill">Loading…</div>
-      </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Wrike Projects</title>
+  <style>
+    :root {
+      --bg1: #2a0f1f;
+      --bg2: #1c1b0f;
+      --card: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --btn: rgba(255,255,255,.10);
+      --btnStroke: rgba(255,255,255,.16);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --yellow: #f5c84c;
+      --red: #ff3b30;
+    }
 
-      <div class="card">
-        <table>
-          <thead>
-            <tr>
-              <th>Project</th>
-              <th class="actions">Open</th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 700px at 20% 10%, #3b1030 0%, transparent 60%),
+                  radial-gradient(1000px 600px at 90% 20%, #3a3a10 0%, transparent 55%),
+                  linear-gradient(140deg, #0b0b10, #0a0a0f 70%);
+      display: grid;
+      place-items: start center;
+      padding: 18px;
+    }
 
-      <div class="err" id="err"></div>
+    .wrap {
+      width: min(980px, 100%);
+      border-radius: 20px;
+      padding: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .admin {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .admin input {
+      background: rgba(0,0,0,.25);
+      border: 1px solid var(--stroke);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 999px;
+      outline: none;
+      width: 210px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      opacity: .85;
+    }
+
+    .panel {
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid var(--stroke);
+      padding: 14px;
+    }
+
+    .panel h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: rgba(255,255,255,.85);
+      font-weight: 700;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .row .meta {
+      min-width: 0;
+    }
+    .row .meta .name {
+      font-weight: 700;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 560px;
+    }
+    .row .meta .date {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      position: relative;
+      border: 1px solid var(--btnStroke);
+      background: var(--btn);
+      color: var(--text);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 58px;
+    }
+
+    .btn.yellow {
+      background: rgba(245,200,76,.18);
+      border-color: rgba(245,200,76,.40);
+      color: rgba(255,255,255,.95);
+    }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    /* The red badge dot next to Open */
+    .badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--red);
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(0,0,0,.35);
+      box-shadow: 0 8px 18px rgba(0,0,0,.35);
+      line-height: 1;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .err {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #ffd1d1;
+      background: rgba(255,0,0,.10);
+      border: 1px solid rgba(255,0,0,.20);
+      padding: 10px 12px;
+      border-radius: 12px;
+      display: none;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">Wrike Projects</div>
+      <div class="admin">
+        <input id="adminKey" placeholder="Admin key (Archive)" />
+        <div class="hint" id="keyHint">Key required</div>
+      </div>
     </div>
 
-    <script>
-      const qs = new URLSearchParams(location.search);
+    <div class="panel">
+      <h3>My Wrike Projects</h3>
+      <div class="list" id="list"></div>
+      <div class="status" id="status"></div>
+      <div class="err" id="err"></div>
+    </div>
+  </div>
 
-      // Your Cloudflare Worker base URL:
-      // Example: https://wrike-proxy.dustinjsmith.workers.dev/
-      const apiBase = (qs.get("apiBase") || "").trim() || "https://wrike-proxy.dustinjsmith.workers.dev/";
+  <script>
+    const qs = new URLSearchParams(location.search);
 
-      // Optional: root folder override
-      const rootFolderId = (qs.get("rootFolderId") || "").trim();
+    // Pass your worker URL via the Notion embed URL:
+    //   ?api=https://YOUR-WORKER.workers.dev
+    const API_BASE = qs.get("api") || "";
+    const pmField = qs.get("pmField") || "Project Manager";
+    const assignedField = qs.get("assignedField") || "Assigned";
+    const limit = qs.get("limit") || "25";
 
-      const statusPill = document.getElementById("statusPill");
-      const rowsEl = document.getElementById("rows");
-      const errEl = document.getElementById("err");
+    const $list = document.getElementById("list");
+    const $status = document.getElementById("status");
+    const $err = document.getElementById("err");
+    const $adminKey = document.getElementById("adminKey");
+    const $keyHint = document.getElementById("keyHint");
 
-      let projects = [];
+    let projects = [];
 
-      function setStatus(t) {
-        statusPill.textContent = t;
-      }
+    function showError(msg) {
+      $err.style.display = "block";
+      $err.textContent = msg;
+    }
+    function clearError() {
+      $err.style.display = "none";
+      $err.textContent = "";
+    }
 
-      function escapeHtml(s) {
-        return (s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
-      }
+    function setStatus(msg) {
+      $status.textContent = msg || "";
+    }
 
-      function render() {
-        rowsEl.innerHTML = projects
-          .map((p) => {
-            const safeTitle = escapeHtml(p.title);
-            const hasUrl = !!p.url;
-            const openAttr = hasUrl ? `data-url="${escapeHtml(p.url)}"` : "";
-            return `
-              <tr>
-                <td>${safeTitle}</td>
-                <td class="actions">
-                  <button class="btn" data-id="${p.id}" ${openAttr} ${hasUrl ? "" : "disabled"} title="${hasUrl ? "Open in Wrike" : "No permalink returned"}">
-                    Open
-                    <span class="badge" id="badge-${p.id}"></span>
-                  </button>
-                </td>
-              </tr>
-            `;
-          })
-          .join("");
+    function updateKeyUI() {
+      const hasKey = ($adminKey.value || "").trim().length > 0;
+      $keyHint.textContent = hasKey ? "Key set" : "Key required";
+      $keyHint.style.opacity = hasKey ? "1" : ".85";
+    }
+    $adminKey.addEventListener("input", updateKeyUI);
+    updateKeyUI();
 
-        rowsEl.querySelectorAll(".btn").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            const id = btn.getAttribute("data-id");
-            const url = btn.getAttribute("data-url");
+    function apiUrl(pathAndQuery) {
+      if (!API_BASE) throw new Error("Missing ?api=YOUR_WORKER_URL in the embed link");
+      const base = API_BASE.replace(/\/+$/, "");
+      if (pathAndQuery.startsWith("/")) return base + pathAndQuery;
+      return base + "/" + pathAndQuery;
+    }
 
-            if (url) window.open(url, "_blank", "noopener,noreferrer");
+    async function fetchJSON(url, init) {
+      const r = await fetch(url, init);
+      const t = await r.text();
+      let j;
+      try { j = JSON.parse(t); } catch { j = { raw: t }; }
+      if (!r.ok) throw new Error(j.error || t || ("HTTP " + r.status));
+      return j;
+    }
 
-            // Clear unread immediately for that project
-            try {
-              await fetch(`${apiBase}?action=markSeen&id=${encodeURIComponent(id)}`, { method: "GET", keepalive: true });
-            } catch (_) {}
+    function render(projects) {
+      $list.innerHTML = "";
 
-            // Update badges after click
-            await refreshBadges();
-          });
+      projects.forEach(p => {
+        const row = document.createElement("div");
+        row.className = "row";
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = p.title;
+
+        const date = document.createElement("div");
+        date.className = "date";
+        date.textContent = p.endDate ? ("End " + p.endDate) : "End —";
+
+        meta.appendChild(name);
+        meta.appendChild(date);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const repoBtn = document.createElement("a");
+        repoBtn.className = "btn yellow";
+        repoBtn.textContent = "Repo";
+        repoBtn.target = "_blank";
+        repoBtn.rel = "noopener";
+        if (p.repoUrl) {
+          repoBtn.href = p.repoUrl;
+        } else {
+          repoBtn.href = "javascript:void(0)";
+          repoBtn.style.opacity = ".45";
+          repoBtn.style.pointerEvents = "none";
+        }
+
+        const openBtn = document.createElement("a");
+        openBtn.className = "btn";
+        openBtn.textContent = "Open";
+        openBtn.target = "_blank";
+        openBtn.rel = "noopener";
+        openBtn.href = p.openUrl;
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.dataset.projectId = p.id;
+        openBtn.appendChild(badge);
+
+        openBtn.addEventListener("click", () => {
+          // Mark this project’s comments as seen (don’t block navigation).
+          fetch(apiUrl(`?action=markSeen&projectId=${encodeURIComponent(p.id)}`)).catch(() => {});
+          badge.style.display = "none";
         });
-      }
 
-      async function fetchProjects() {
-        const u = new URL(apiBase);
-        if (rootFolderId) u.searchParams.set("rootFolderId", rootFolderId);
-        const resp = await fetch(u.toString(), { method: "GET" });
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data?.error || "Failed to load projects");
-        return data.projects || [];
-      }
+        const archiveBtn = document.createElement("button");
+        archiveBtn.className = "btn";
+        archiveBtn.textContent = "Archive";
 
-      async function refreshBadges() {
-        if (!projects.length) return;
+        archiveBtn.addEventListener("click", async () => {
+          try {
+            clearError();
+            const key = ($adminKey.value || "").trim();
+            if (!key) throw new Error("Admin key required for Archive");
 
-        const ids = projects.map((p) => p.id).join(",");
-        const resp = await fetch(`${apiBase}?action=unreadCounts&ids=${encodeURIComponent(ids)}`, { method: "GET" });
-        const data = await resp.json();
-        if (!resp.ok) return;
+            archiveBtn.disabled = true;
+            archiveBtn.textContent = "…";
 
-        const counts = (data && data.counts) || {};
-        for (const p of projects) {
-          const n = Number(counts[p.id] || 0) || 0;
-          const badge = document.getElementById(`badge-${p.id}`);
-          if (!badge) continue;
-          if (n > 0) {
-            badge.textContent = String(Math.min(n, 99));
-            badge.classList.add("show");
-          } else {
-            badge.textContent = "";
-            badge.classList.remove("show");
+            await fetchJSON(apiUrl(`?action=archive&projectId=${encodeURIComponent(p.id)}&adminKey=${encodeURIComponent(key)}`), {
+              method: "POST"
+            });
+
+            archiveBtn.textContent = "Done";
+            setTimeout(() => { archiveBtn.textContent = "Archive"; archiveBtn.disabled = false; }, 900);
+          } catch (e) {
+            archiveBtn.textContent = "Archive";
+            archiveBtn.disabled = false;
+            showError(String(e));
           }
+        });
+
+        actions.appendChild(repoBtn);
+        actions.appendChild(openBtn);
+        actions.appendChild(archiveBtn);
+
+        row.appendChild(meta);
+        row.appendChild(actions);
+        $list.appendChild(row);
+      });
+    }
+
+    function applyBadges(countState) {
+      const byProject = (countState && countState.byProject) ? countState.byProject : {};
+      document.querySelectorAll(".badge").forEach(b => {
+        const id = b.dataset.projectId;
+        const n = Number(byProject[id] || 0);
+        if (n > 0) {
+          b.textContent = n > 9 ? "9+" : String(n);
+          b.style.display = "flex";
+        } else {
+          b.style.display = "none";
+        }
+      });
+    }
+
+    async function refreshCounts() {
+      try {
+        const state = await fetchJSON(apiUrl(`?action=unreadCounts`));
+        applyBadges(state);
+      } catch {
+        // silently ignore count refresh errors (keeps widget usable)
+      }
+    }
+
+    async function load() {
+      try {
+        clearError();
+
+        if (!API_BASE) {
+          setStatus("Missing api param. Add ?api=https://YOUR-WORKER.workers.dev to this page URL.");
+          return;
         }
 
-        setStatus("Updated");
-        setTimeout(() => setStatus("Live"), 600);
+        setStatus("Loading…");
+
+        const data = await fetchJSON(apiUrl(`?pmField=${encodeURIComponent(pmField)}&assignedField=${encodeURIComponent(assignedField)}&limit=${encodeURIComponent(limit)}`));
+        projects = data.projects || [];
+        render(projects);
+
+        setStatus(`Loaded ${projects.length} projects`);
+        await refreshCounts();
+
+        // poll counts (webhooks update KV instantly, poll just updates the UI)
+        setInterval(refreshCounts, 30000);
+      } catch (e) {
+        showError(String(e));
+        setStatus("");
       }
+    }
 
-      async function main() {
-        try {
-          setStatus("Loading…");
-          projects = await fetchProjects();
-          render();
-          await refreshBadges();
-          setStatus("Live");
-
-          // Poll badges every 30s (webhook pushes counts into KV; this just reads them)
-          setInterval(refreshBadges, 30000);
-        } catch (e) {
-          errEl.textContent = e?.message || String(e);
-          setStatus("Error");
-        }
-      }
-
-      main();
-    </script>
-  </body>
+    load();
+  </script>
+</body>
 </html>
