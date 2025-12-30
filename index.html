@@ -1,609 +1,321 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wrike Projects</title>
   <style>
     :root{
-      --asu-maroon: #8C1D40;
-      --asu-gold: #FFC627;
-
-      --bg: #0b0f17;
-      --surface: rgba(255,255,255,.06);
-      --surface2: rgba(255,255,255,.09);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.65);
-      --border: rgba(255,255,255,.12);
-      --shadow: 0 12px 40px rgba(0,0,0,.35);
-      --radius: 18px;
-
-      --danger: rgba(255,200,200,.92);
-      --focus: rgba(255,198,39,.45);
+      --bg1:#120915;
+      --bg2:#0b1220;
+      --stroke:rgba(255,255,255,.10);
+      --text:#f4f4f5;
+      --muted:rgba(244,244,245,.75);
+      --btnStroke:rgba(255,255,255,.14);
+      --gold:#f5c542;
+      --red:#ff3b30;
+      --pink:#ff4d9d;
+      --shadow:0 16px 60px rgba(0,0,0,.55);
     }
-
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg:#f6f7fb;
-        --surface: rgba(0,0,0,.04);
-        --surface2: rgba(0,0,0,.06);
-        --text: rgba(0,0,0,.88);
-        --muted: rgba(0,0,0,.58);
-        --border: rgba(0,0,0,.10);
-        --shadow: 0 10px 25px rgba(0,0,0,.12);
-        --danger: rgba(170,40,40,.9);
-        --focus: rgba(255,198,39,.55);
-      }
-    }
-
-    * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; }
-
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--text);
       background:
-        radial-gradient(1100px 680px at 20% 0%, rgba(140,29,64,.35), transparent 55%),
-        radial-gradient(900px 600px at 88% 32%, rgba(255,198,39,.18), transparent 52%),
-        var(--bg);
-      color: var(--text);
+        radial-gradient(900px 420px at 15% 8%, rgba(255,77,157,.24), transparent 60%),
+        radial-gradient(900px 520px at 85% 15%, rgba(245,197,66,.18), transparent 60%),
+        radial-gradient(900px 520px at 70% 80%, rgba(120,200,255,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      padding:18px;
     }
-
-    .wrap{ padding: 14px; width: 100%; margin: 0; }
-
     .shell{
-      width: 100%;
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, var(--surface2), var(--surface));
-      box-shadow: var(--shadow);
-      border-radius: var(--radius);
-      overflow: hidden;
+      max-width:980px;
+      margin:0 auto;
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      overflow:hidden;
     }
-
-    header{
-      padding: 16px 16px 12px;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 12px;
-      border-bottom: 1px solid var(--border);
-      position: relative;
-    }
-
-    header:before{
-      content:"";
-      position:absolute;
-      left:0; top:0; right:0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--asu-maroon), rgba(140,29,64,.25), var(--asu-gold));
-      opacity: .95;
-    }
-
-    .title h1{ margin:0; font-size: 16px; letter-spacing:.2px; font-weight: 800; }
-
-    .admin{ display:flex; align-items:center; gap: 8px; flex-wrap: wrap; justify-content:flex-end; }
-    .admin input{
-      width: 190px;
-      padding: 8px 10px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      outline: none;
-      font-size: 12px;
-    }
-    .admin input:focus{ box-shadow: 0 0 0 3px var(--focus); border-color: rgba(255,198,39,.6); }
-    .admin .hint{ font-size: 12px; color: var(--muted); white-space: nowrap; }
-
-    .grid{ padding: 14px; display:grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
-
-    .card{
-      grid-column: span 12;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      border-radius: 16px;
-      padding: 14px;
-      min-height: 90px;
-    }
-
-    .label{ font-size: 12px; color: var(--muted); }
-
-    .projects-list{
-      margin-top: 10px;
-      display:flex;
-      flex-direction:column;
-      gap: 8px;
-      max-height: 520px;
-      overflow-y: auto;
-      padding-right: 6px;
-    }
-
-    .item{
+    .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap: 12px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius: 14px;
-      padding: 10px 12px;
+      padding:14px 18px;
+      border-bottom:1px solid var(--stroke);
     }
-
-    .left{ display:flex; align-items:center; gap: 10px; min-width: 0; }
-    .text{ display:flex; flex-direction:column; gap:2px; min-width: 0; }
-
-    .text .main{
-      font-size: 13px;
-      font-weight: 750;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .title{font-weight:700; letter-spacing:.2px;}
+    .admin{
+      display:flex; align-items:center; gap:10px;
+      color:var(--muted); font-size:12px;
     }
-
-    .text .meta, .text .statusline{
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .admin input{
+      width:240px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--btnStroke);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      outline:none;
     }
-
-    .actions{ display:flex; align-items:center; gap: 8px; }
-
+    .admin .req{opacity:.9; font-weight:600;}
+    .panel{padding:16px 18px 18px;}
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:16px;
+      background:rgba(0,0,0,.22);
+      padding:14px;
+    }
+    .sectionTitle{
+      font-size:13px;
+      color:var(--muted);
+      margin:0 0 10px 0;
+      font-weight:600;
+    }
+    .list{display:flex; flex-direction:column; gap:10px;}
+    .row{
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .meta{min-width:0;}
+    .name{
+      font-weight:700; font-size:13px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:640px;
+    }
+    .sub{margin-top:4px; font-size:12px; color:var(--muted);}
+    .btns{display:flex; align-items:center; gap:10px; flex-shrink:0;}
     .btn{
-      font-size: 12px;
-      color: var(--muted);
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      white-space: nowrap;
-      text-decoration: none;
-      cursor: pointer;
-      user-select: none;
+      position:relative;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--btnStroke);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      font-size:12px;
+      font-weight:700;
+      cursor:pointer;
+      text-decoration:none;
+      user-select:none;
     }
-    .btn:hover{ background: rgba(255,255,255,.06); }
-
-    .btn-primary{
-      color: rgba(255,255,255,.92);
-      border-color: rgba(140,29,64,.55);
-      background: rgba(140,29,64,.18);
+    .btn:hover{filter:brightness(1.10)}
+    .btn:active{transform:translateY(1px)}
+    .btn.repo{
+      background:rgba(245,197,66,.16);
+      border-color:rgba(245,197,66,.38);
+      color:var(--gold);
     }
-    .btn-primary:hover{ background: rgba(140,29,64,.26); }
-
-    .btn-gold{
-      color: rgba(0,0,0,.78);
-      border-color: rgba(255,198,39,.65);
-      background: rgba(255,198,39,.85);
+    .btn.open{
+      background:rgba(255,77,157,.14);
+      border-color:rgba(255,77,157,.34);
+      color:#ffd1e5;
     }
-    .btn-gold:hover{ background: rgba(255,198,39,.95); }
-
-    .btn:disabled{ opacity:.55; cursor:not-allowed; }
-    .btn-danger{ color: var(--danger); border-color: rgba(255,200,200,.35); }
-    .muted{ opacity: .7; }
-
-    /* --- NEW: Open button + unread comment badge --- */
-    .openWrap{
-      position: relative;
-      display: inline-flex;
-      align-items: center;
+    .btn.archive{
+      background:rgba(255,255,255,.06);
+      border-color:rgba(255,255,255,.14);
+      color:rgba(255,255,255,.85);
     }
-    .commentBadge{
-      position: absolute;
-      top: -7px;
-      right: -7px;
+    .btn.disabled{opacity:.45; cursor:not-allowed; pointer-events:none;}
 
-      min-width: 18px;
-      height: 18px;
-      padding: 0 5px;
-
-      border-radius: 999px;
-      background: #ff2d2d;
-      color: #fff;
-
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 18px;
-      text-align: center;
-
-      box-shadow: 0 0 0 2px rgba(0,0,0,.35);
-      pointer-events: none;
+    /* Red numbered badge */
+    .badge{
+      position:absolute;
+      top:-6px;
+      right:-6px;
+      min-width:18px;
+      height:18px;
+      padding:0 5px;
+      border-radius:999px;
+      background:var(--red);
+      color:white;
+      font-size:11px;
+      line-height:18px;
+      text-align:center;
+      box-shadow:0 0 0 2px rgba(0,0,0,.35);
+      display:none;
     }
+    .badge.show{display:inline-block}
 
-    .modal-backdrop{
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.55);
-      display: none;
-      align-items: center; justify-content: center;
-      padding: 16px;
-      z-index: 9999;
-    }
-    .modal{
-      width: min(520px, 100%);
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, var(--surface2), var(--surface));
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      padding: 14px;
-    }
-    .modal h2{ margin: 0 0 8px; font-size: 14px; font-weight: 800; }
-    .modal p{ margin: 0 0 12px; color: var(--muted); font-size: 12px; line-height: 1.35; }
-    .modal .row{ display:flex; gap: 8px; justify-content:flex-end; }
+    .footerNote{margin-top:10px; font-size:12px; color:var(--muted);}
+    .err{margin-top:10px; font-size:12px; color:#ffb4b4; display:none; white-space:pre-wrap;}
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="shell">
-      <header>
-        <div class="title"><h1>Wrike Projects</h1></div>
-        <div class="admin">
-          <input id="adminKey" type="password" placeholder="Admin key (Archive)" />
-          <span id="adminHint" class="hint"></span>
-        </div>
-      </header>
-
-      <div class="grid">
-        <div class="card">
-          <div class="label">My Wrike Projects</div>
-          <div id="wrikeProjects" class="projects-list"></div>
-        </div>
+  <div class="shell">
+    <div class="topbar">
+      <div class="title">Wrike Projects</div>
+      <div class="admin">
+        <input id="adminKey" type="password" placeholder="Admin key (Archive)" />
+        <span class="req">Key required</span>
       </div>
     </div>
-  </div>
 
-  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
-    <div class="modal">
-      <h2 id="modalTitle">Archive repo page?</h2>
-      <p id="modalText"></p>
-      <div class="row">
-        <button id="modalCancel" class="btn">Cancel</button>
-        <button id="modalOk" class="btn btn-danger">Archive</button>
+    <div class="panel">
+      <div class="card">
+        <div class="sectionTitle">My Wrike Projects</div>
+        <div id="list" class="list"></div>
+        <div id="err" class="err"></div>
+        <div class="footerNote">
+          Comment badges update automatically (light polling against the Worker’s KV counts).
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const workerBase = "https://wrike-proxy.dustinjsmith.workers.dev";
-    const STORAGE_KEY = "wrike_adminKey";
+    // ========= CONFIG =========
+    const WORKER_URL = "https://wrike-proxy.dustinjsmith.workers.dev/";
+    const PM_FIELD = "Project Manager";
+    const ASSIGNED_FIELD = "Assigned";
+    const LIMIT = 25;
+    const UNREAD_POLL_MS = 20000;
 
-    // --- NEW: comment "seen" tracking ---
-    const SEEN_PREFIX = "wrike_seenComments:"; // per projectId
+    // ========= STATE =========
+    let projects = [];
+    let unreadTimer = null;
 
-    // localStorage can be blocked in some embed contexts — make it safe
-    const safeStorage = {
-      get(key){ try { return localStorage.getItem(key); } catch { return ""; } },
-      set(key, val){ try { localStorage.setItem(key, val); } catch {} },
+    const $ = (id) => document.getElementById(id);
+    const listEl = $("list");
+    const errEl = $("err");
+
+    const showError = (msg) => { errEl.style.display="block"; errEl.textContent=msg; };
+    const clearError = () => { errEl.style.display="none"; errEl.textContent=""; };
+
+    const apiUrl = (params) => {
+      const u = new URL(WORKER_URL);
+      Object.entries(params || {}).forEach(([k,v]) => u.searchParams.set(k, v));
+      return u.toString();
     };
 
-    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-
-    async function fetchJsonWithRetry(url, { retries = 2, timeoutMs = 12000, fetchInit = {} } = {}) {
-      let lastErr = null;
-
-      for (let attempt = 0; attempt <= retries; attempt++) {
-        const controller = new AbortController();
-        const t = setTimeout(() => controller.abort(), timeoutMs);
-
-        try {
-          const res = await fetch(url, {
-            cache: "no-store",
-            mode: "cors",
-            credentials: "omit",
-            ...fetchInit,
-            signal: controller.signal
-          });
-          clearTimeout(t);
-
-          const text = await res.text();
-          let data = {};
-          try { data = JSON.parse(text); } catch { data = { raw: text }; }
-
-          if (!res.ok || data.error) {
-            throw new Error(data.error || `HTTP ${res.status}`);
-          }
-          return data;
-        } catch (e) {
-          clearTimeout(t);
-          lastErr = e;
-          if (attempt < retries) {
-            const backoff = 350 * Math.pow(2, attempt) + Math.floor(Math.random() * 250);
-            await sleep(backoff);
-            continue;
-          }
-        }
-      }
-      throw lastErr || new Error("Failed to fetch");
+    async function fetchJson(url, init) {
+      const r = await fetch(url, init);
+      const text = await r.text();
+      let j; try { j = JSON.parse(text); } catch { j = { raw: text }; }
+      if (!r.ok) throw new Error(`HTTP ${r.status}: ${text}`);
+      return j;
     }
 
-    function buildListUrl() {
-      const u = new URL(workerBase);
-      u.pathname = "/";
-      u.searchParams.set("pmField", "Project Manager");
-      u.searchParams.set("assignedField", "Assigned");
-      u.searchParams.set("limit", "25");
-      // Optional: repo creation cap per refresh
-      // u.searchParams.set("createLimit", "2");
-      return u.toString();
-    }
-
-    function escapeHtml(s) {
-      return String(s ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
-
-    const adminInput = document.getElementById("adminKey");
-    const adminHint = document.getElementById("adminHint");
-
-    function refreshAdminHint() {
-      const v = (adminInput.value || "").trim();
-      adminHint.textContent = v ? "Key set" : "Key required";
-    }
-
-    adminInput.value = safeStorage.get(STORAGE_KEY) || "";
-    refreshAdminHint();
-
-    adminInput.addEventListener("input", () => {
-      safeStorage.set(STORAGE_KEY, adminInput.value);
-      refreshAdminHint();
-    });
-
-    function getAdminKey() {
-      return (adminInput.value || "").trim();
-    }
-
-    // --- NEW: unread comment badge helpers ---
-    function seenKey(projectId){ return `${SEEN_PREFIX}${projectId}`; }
-
-    // First time we ever see a project in this widget, we set baseline to "now"
-    // so you don't get spammed by older comments.
-    function getSeenIso(projectId){
-      const k = seenKey(projectId);
-      let v = (safeStorage.get(k) || "").trim();
-      if (!v) {
-        v = new Date().toISOString();
-        safeStorage.set(k, v);
-      }
-      return v;
-    }
-
-    function setSeenNow(projectId){
-      const v = new Date().toISOString();
-      safeStorage.set(seenKey(projectId), v);
-      const badge = document.querySelector(`[data-badge="${projectId}"]`);
-      if (badge) badge.hidden = true;
-    }
-
-    function setBadge(projectId, n){
-      const badge = document.querySelector(`[data-badge="${projectId}"]`);
+    function setBadge(projectId, count) {
+      const badge = document.querySelector(`[data-badge-for="${projectId}"]`);
       if (!badge) return;
-
-      const count = Number(n || 0);
-      if (!count || count <= 0) {
-        badge.hidden = true;
-        return;
-      }
-
-      badge.textContent = count > 99 ? "99+" : String(count);
-      badge.hidden = false;
-    }
-
-    async function refreshUnreadBadges(projectIds){
-      if (!projectIds?.length) return;
-
-      const u = new URL(workerBase);
-      u.pathname = "/unread-comments";
-
-      const items = projectIds.map(id => ({
-        folderId: id,
-        since: getSeenIso(id),
-      }));
-
-      const data = await fetchJsonWithRetry(u.toString(), {
-        retries: 1,
-        timeoutMs: 12000,
-        fetchInit: {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items })
-        }
-      });
-
-      for (const id of projectIds) {
-        const unread = data?.[id]?.unreadCount ?? 0;
-        setBadge(id, unread);
+      const n = Math.max(0, Number(count || 0));
+      if (n > 0) {
+        badge.textContent = String(Math.min(99, n));
+        badge.classList.add("show");
+      } else {
+        badge.textContent = "";
+        badge.classList.remove("show");
       }
     }
 
-    const modalBackdrop = document.getElementById("modalBackdrop");
-    const modalText = document.getElementById("modalText");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalCancel = document.getElementById("modalCancel");
-    const modalOk = document.getElementById("modalOk");
+    function render() {
+      listEl.innerHTML = "";
+      for (const p of projects) {
+        const row = document.createElement("div");
+        row.className = "row";
 
-    function openModal({ title, text, onOk }) {
-      modalTitle.textContent = title;
-      modalText.textContent = text;
-      modalBackdrop.style.display = "flex";
+        const meta = document.createElement("div");
+        meta.className = "meta";
 
-      const cleanup = () => {
-        modalBackdrop.style.display = "none";
-        modalCancel.onclick = null;
-        modalOk.onclick = null;
-      };
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = p.title || "(Untitled)";
 
-      modalCancel.onclick = () => cleanup();
-      modalBackdrop.onclick = (e) => { if (e.target === modalBackdrop) cleanup(); };
+        const sub = document.createElement("div");
+        sub.className = "sub";
+        sub.textContent = p.endDate ? `End ${p.endDate}` : "";
 
-      modalOk.onclick = async () => {
-        cleanup();
-        await onOk();
-      };
-    }
+        meta.appendChild(name);
+        meta.appendChild(sub);
 
-    async function callArchive(projectId, adminKey) {
-      const u = new URL(workerBase);
-      u.pathname = "/";
-      u.searchParams.set("action", "archiveRepo");
-      u.searchParams.set("projectId", projectId);
-      u.searchParams.set("adminKey", adminKey);
-      // archive should be reliable too
-      const data = await fetchJsonWithRetry(u.toString(), { retries: 1, timeoutMs: 15000 });
-      return data;
-    }
+        const btns = document.createElement("div");
+        btns.className = "btns";
 
-    let didAutoRefreshOnce = false;
+        // Repo
+        const repoBtn = document.createElement("a");
+        repoBtn.className = "btn repo" + (p.repoUrl ? "" : " disabled");
+        repoBtn.textContent = "Repo";
+        repoBtn.href = p.repoUrl || "#";
+        repoBtn.target = "_blank";
+        repoBtn.rel = "noopener";
 
-    async function loadWrikeProjects(){
-      const el = document.getElementById("wrikeProjects");
-      el.textContent = "Loading…";
+        // Open (+ badge)
+        const openBtn = document.createElement("a");
+        openBtn.className = "btn open";
+        openBtn.textContent = "Open";
+        openBtn.href = p.link || "#";
+        openBtn.target = "_blank";
+        openBtn.rel = "noopener";
 
-      try {
-        const data = await fetchJsonWithRetry(buildListUrl(), { retries: 2, timeoutMs: 12000 });
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.setAttribute("data-badge-for", p.id);
+        openBtn.appendChild(badge);
 
-        if (!data.projects?.length) {
-          el.textContent = "No matching projects found.";
-          return;
-        }
-
-        const hasMissingRepos = data.projects.some(p => !p.repoUrl);
-        const shown = data.projects.slice(0, 25);
-
-        el.innerHTML = (hasMissingRepos ? `
-          <div class="item" style="justify-content:flex-start;">
-            <div class="text">
-              <div class="main">Creating repo pages in the background…</div>
-              <div class="meta">If some Repo buttons are disabled, they should appear after a refresh.</div>
-            </div>
-          </div>
-        ` : ``) + shown.map(p => {
-          const title = escapeHtml(p.title || "(Untitled project)");
-          const metaParts = [];
-          if (p.endDate) metaParts.push(`End ${p.endDate}`);
-          if (p.repoArchived) metaParts.push("Repo archived");
-          const meta = metaParts.join(" • ");
-
-          const repoBtn = p.repoUrl
-            ? `<a class="btn btn-gold" href="${p.repoUrl}" target="_blank" rel="noreferrer">Repo</a>`
-            : `<button class="btn btn-gold" disabled>Repo</button>`;
-
-          const canArchive = !!p.repoUrl;
-          const archiveDisabled = (p.repoArchived || !canArchive) ? "disabled" : "";
-          const archiveMuted = (p.repoArchived || !canArchive) ? "muted" : "";
-
-          return `
-            <div class="item">
-              <div class="left">
-                <div class="text">
-                  <div class="main">${title}</div>
-                  <div class="meta" data-meta="${p.id}">${escapeHtml(meta)}</div>
-                  <div class="statusline" data-status="${p.id}"></div>
-                </div>
-              </div>
-              <div class="actions">
-                ${repoBtn}
-
-                <!-- NEW: Open button wrapper + badge -->
-                <div class="openWrap">
-                  <a class="btn btn-primary openBtn"
-                     href="${p.link}"
-                     target="_blank"
-                     rel="noreferrer"
-                     data-open="${p.id}">
-                    Open
-                  </a>
-                  <span class="commentBadge" data-badge="${p.id}" hidden>0</span>
-                </div>
-
-                <button class="btn btn-danger ${archiveMuted}"
-                        ${archiveDisabled}
-                        data-archive="${p.id}"
-                        data-title="${title}">
-                  Archive
-                </button>
-              </div>
-            </div>
-          `;
-        }).join("");
-
-        // Mark comments as "seen" when Open is clicked (without blocking the link)
-        el.querySelectorAll("a.openBtn").forEach(a => {
-          a.addEventListener("click", () => {
-            const projectId = a.dataset.open;
-            if (projectId) setSeenNow(projectId);
-          });
+        openBtn.addEventListener("click", () => {
+          // mark seen but don't block navigation
+          try {
+            navigator.sendBeacon(apiUrl({ action: "markSeen", projectId: p.id }), "");
+          } catch {
+            fetch(apiUrl({ action: "markSeen", projectId: p.id }), { method: "POST", keepalive: true }).catch(()=>{});
+          }
+          setBadge(p.id, 0);
         });
 
-        // Archive handlers
-        el.querySelectorAll("button[data-archive]").forEach(btn => {
-          btn.addEventListener("click", () => {
-            const projectId = btn.dataset.archive;
-            const projectTitle = btn.dataset.title || "this project";
-            const metaEl = el.querySelector(`[data-meta="${projectId}"]`);
-            const statusEl = el.querySelector(`[data-status="${projectId}"]`);
-
-            openModal({
-              title: "Archive repo page?",
-              text: `Move "${projectTitle}" repo page to Project Archive in Notion.`,
-              onOk: async () => {
-                const adminKey = getAdminKey();
-                if (!adminKey) {
-                  statusEl.textContent = "Missing admin key (top right).";
-                  return;
-                }
-
-                btn.disabled = true;
-                statusEl.textContent = "Archiving…";
-
-                try {
-                  await callArchive(projectId, adminKey);
-                  btn.disabled = true;
-                  btn.classList.add("muted");
-                  statusEl.textContent = "Moved to Project Archive.";
-
-                  const curr = (metaEl.textContent || "").trim();
-                  if (!curr.includes("Repo archived")) {
-                    metaEl.textContent = curr ? `${curr} • Repo archived` : "Repo archived";
-                  }
-                } catch (e) {
-                  btn.disabled = false;
-                  statusEl.textContent = "Archive failed: " + String(e);
-                }
-              }
-            });
-          });
+        // Archive
+        const archiveBtn = document.createElement("button");
+        archiveBtn.className = "btn archive";
+        archiveBtn.textContent = "Archive";
+        archiveBtn.addEventListener("click", async () => {
+          const adminKey = $("adminKey").value || "";
+          if (!adminKey) return alert("Admin key required to archive.");
+          archiveBtn.textContent = "Archiving…";
+          archiveBtn.disabled = true;
+          try {
+            const res = await fetchJson(apiUrl({ action: "archiveRepo", projectId: p.id, adminKey }), { method: "POST" });
+            if (res?.repoUrl) { p.repoUrl = res.repoUrl; render(); }
+          } catch (err) {
+            alert(String(err));
+          } finally {
+            archiveBtn.textContent = "Archive";
+            archiveBtn.disabled = false;
+          }
         });
 
-        // NEW: pull unread comment counts (non-blocking)
-        refreshUnreadBadges(shown.map(p => p.id)).catch(() => {});
+        btns.appendChild(repoBtn);
+        btns.appendChild(openBtn);
+        btns.appendChild(archiveBtn);
 
-        // one automatic refresh (helps Repo buttons appear after background creation)
-        if (hasMissingRepos && !didAutoRefreshOnce) {
-          didAutoRefreshOnce = true;
-          setTimeout(loadWrikeProjects, 6500);
-        }
-
-      } catch (e) {
-        el.innerHTML = `
-          <div class="item" style="justify-content:flex-start;">
-            <div class="text">
-              <div class="main">Temporary load issue</div>
-              <div class="meta">${escapeHtml(String(e))}</div>
-              <div style="margin-top:10px;">
-                <button id="retryBtn" class="btn btn-gold">Retry</button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.getElementById("retryBtn")?.addEventListener("click", loadWrikeProjects);
+        row.appendChild(meta);
+        row.appendChild(btns);
+        listEl.appendChild(row);
       }
     }
 
-    loadWrikeProjects();
+    async function refreshUnreadCounts() {
+      if (!projects.length) return;
+      const ids = projects.map(p => p.id).join(",");
+      const data = await fetchJson(apiUrl({ action: "unreadCounts", ids }), { cache: "no-store" });
+      const counts = data.counts || {};
+      for (const p of projects) setBadge(p.id, counts[p.id] || 0);
+    }
+
+    async function loadProjects() {
+      clearError();
+      const data = await fetchJson(apiUrl({ pmField: PM_FIELD, assignedField: ASSIGNED_FIELD, limit: String(LIMIT) }));
+      projects = data.projects || [];
+      render();
+      await refreshUnreadCounts();
+      if (unreadTimer) clearInterval(unreadTimer);
+      unreadTimer = setInterval(refreshUnreadCounts, UNREAD_POLL_MS);
+    }
+
+    loadProjects().catch(e => showError(String(e)));
   </script>
 </body>
 </html>
