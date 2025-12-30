@@ -1,282 +1,221 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wrike Projects</title>
   <style>
-    :root {
-      --bg1: #2a0f1f;
-      --bg2: #1c1b0f;
-      --card: rgba(255,255,255,.06);
-      --stroke: rgba(255,255,255,.10);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --btn: rgba(255,255,255,.10);
-      --btnStroke: rgba(255,255,255,.16);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --yellow: #f5c84c;
-      --red: #ff3b30;
+    :root{
+      --bg1:#120915;
+      --bg2:#0b1220;
+      --stroke:rgba(255,255,255,.10);
+      --text:#f4f4f5;
+      --muted:rgba(244,244,245,.75);
+      --btnStroke:rgba(255,255,255,.14);
+      --gold:#f5c542;
+      --red:#ff3b30;
+      --pink:#ff4d9d;
+      --shadow:0 16px 60px rgba(0,0,0,.55);
     }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(900px 420px at 15% 8%, rgba(255,77,157,.24), transparent 60%),
+        radial-gradient(900px 520px at 85% 15%, rgba(245,197,66,.18), transparent 60%),
+        radial-gradient(900px 520px at 70% 80%, rgba(120,200,255,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      padding:18px;
+    }
+    .shell{
+      max-width:980px;
+      margin:0 auto;
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 18px;
+      border-bottom:1px solid var(--stroke);
+    }
+    .title{font-weight:700; letter-spacing:.2px;}
+    .admin{
+      display:flex; align-items:center; gap:10px;
+      color:var(--muted); font-size:12px;
+    }
+    .admin input{
+      width:240px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--btnStroke);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      outline:none;
+    }
+    .admin .req{opacity:.9; font-weight:600;}
+    .panel{padding:16px 18px 18px;}
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:16px;
+      background:rgba(0,0,0,.22);
+      padding:14px;
+    }
+    .sectionTitle{
+      font-size:13px;
+      color:var(--muted);
+      margin:0 0 10px 0;
+      font-weight:600;
+    }
+    .list{display:flex; flex-direction:column; gap:10px;}
+    .row{
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .meta{min-width:0;}
+    .name{
+      font-weight:700; font-size:13px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:640px;
+    }
+    .sub{margin-top:4px; font-size:12px; color:var(--muted);}
+    .btns{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+    .btn{
+      position:relative;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--btnStroke);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      font-size:12px;
+      font-weight:700;
+      cursor:pointer;
+      text-decoration:none;
+      user-select:none;
+    }
+    .btn:hover{filter:brightness(1.10)}
+    .btn:active{transform:translateY(1px)}
+    .btn.repo{
+      background:rgba(245,197,66,.16);
+      border-color:rgba(245,197,66,.38);
+      color:var(--gold);
+    }
+    .btn.open{
+      background:rgba(255,77,157,.14);
+      border-color:rgba(255,77,157,.34);
+      color:#ffd1e5;
+    }
+    .btn.archive{
+      background:rgba(255,255,255,.06);
+      border-color:rgba(255,255,255,.14);
+      color:rgba(255,255,255,.85);
+    }
+    .btn.disabled{opacity:.45; cursor:not-allowed; pointer-events:none;}
 
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
-      background: radial-gradient(1200px 700px at 20% 10%, #3b1030 0%, transparent 60%),
-                  radial-gradient(1000px 600px at 90% 20%, #3a3a10 0%, transparent 55%),
-                  linear-gradient(140deg, #0b0b10, #0a0a0f 70%);
-      display: grid;
-      place-items: start center;
-      padding: 18px;
+    /* Red numbered badge */
+    .badge{
+      position:absolute;
+      top:-6px;
+      right:-6px;
+      min-width:18px;
+      height:18px;
+      padding:0 5px;
+      border-radius:999px;
+      background:var(--red);
+      color:white;
+      font-size:11px;
+      line-height:18px;
+      text-align:center;
+      box-shadow:0 0 0 2px rgba(0,0,0,.35);
+      display:none;
     }
+    .badge.show{display:inline-block}
 
-    .wrap {
-      width: min(980px, 100%);
-      border-radius: 20px;
-      padding: 18px;
-      background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow);
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .title {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: .2px;
-    }
-
-    .admin {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .admin input {
-      background: rgba(0,0,0,.25);
-      border: 1px solid var(--stroke);
-      color: var(--text);
-      padding: 8px 10px;
-      border-radius: 999px;
-      outline: none;
-      width: 210px;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: var(--muted);
-      opacity: .85;
-    }
-
-    .panel {
-      border-radius: 18px;
-      background: rgba(0,0,0,.18);
-      border: 1px solid var(--stroke);
-      padding: 14px;
-    }
-
-    .panel h3 {
-      margin: 0 0 10px 0;
-      font-size: 14px;
-      color: rgba(255,255,255,.85);
-      font-weight: 700;
-    }
-
-    .list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.08);
-    }
-
-    .row .meta {
-      min-width: 0;
-    }
-    .row .meta .name {
-      font-weight: 700;
-      font-size: 13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 560px;
-    }
-    .row .meta .date {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 3px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .btn {
-      position: relative;
-      border: 1px solid var(--btnStroke);
-      background: var(--btn);
-      color: var(--text);
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      user-select: none;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 58px;
-    }
-
-    .btn.yellow {
-      background: rgba(245,200,76,.18);
-      border-color: rgba(245,200,76,.40);
-      color: rgba(255,255,255,.95);
-    }
-
-    .btn:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-    }
-
-    /* The red badge dot next to Open */
-    .badge {
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      background: var(--red);
-      color: white;
-      font-size: 11px;
-      font-weight: 800;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid rgba(0,0,0,.35);
-      box-shadow: 0 8px 18px rgba(0,0,0,.35);
-      line-height: 1;
-    }
-
-    .status {
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .err {
-      margin-top: 10px;
-      font-size: 12px;
-      color: #ffd1d1;
-      background: rgba(255,0,0,.10);
-      border: 1px solid rgba(255,0,0,.20);
-      padding: 10px 12px;
-      border-radius: 12px;
-      display: none;
-      white-space: pre-wrap;
-    }
+    .footerNote{margin-top:10px; font-size:12px; color:var(--muted);}
+    .err{margin-top:10px; font-size:12px; color:#ffb4b4; display:none; white-space:pre-wrap;}
   </style>
 </head>
+
 <body>
-  <div class="wrap">
+  <div class="shell">
     <div class="topbar">
       <div class="title">Wrike Projects</div>
       <div class="admin">
-        <input id="adminKey" placeholder="Admin key (Archive)" />
-        <div class="hint" id="keyHint">Key required</div>
+        <input id="adminKey" type="password" placeholder="Admin key (Archive)" />
+        <span class="req">Key required</span>
       </div>
     </div>
 
     <div class="panel">
-      <h3>My Wrike Projects</h3>
-      <div class="list" id="list"></div>
-      <div class="status" id="status"></div>
-      <div class="err" id="err"></div>
+      <div class="card">
+        <div class="sectionTitle">My Wrike Projects</div>
+        <div id="list" class="list"></div>
+        <div id="err" class="err"></div>
+        <div class="footerNote">
+          Comment badges auto-update (polls Worker KV counts; webhook pushes updates into KV).
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    const qs = new URLSearchParams(location.search);
+    // ========= CONFIG =========
+    const WORKER_URL = "https://wrike-proxy.dustinjsmith.workers.dev/";
+    const PM_FIELD = "Project Manager";
+    const ASSIGNED_FIELD = "Assigned";
+    const LIMIT = 25;
+    const UNREAD_POLL_MS = 20000;
 
-    // Pass your worker URL via the Notion embed URL:
-    //   ?api=https://YOUR-WORKER.workers.dev
-    const API_BASE = qs.get("api") || "";
-    const pmField = qs.get("pmField") || "Project Manager";
-    const assignedField = qs.get("assignedField") || "Assigned";
-    const limit = qs.get("limit") || "25";
-
-    const $list = document.getElementById("list");
-    const $status = document.getElementById("status");
-    const $err = document.getElementById("err");
-    const $adminKey = document.getElementById("adminKey");
-    const $keyHint = document.getElementById("keyHint");
-
+    // ========= STATE =========
     let projects = [];
+    let unreadTimer = null;
 
-    function showError(msg) {
-      $err.style.display = "block";
-      $err.textContent = msg;
-    }
-    function clearError() {
-      $err.style.display = "none";
-      $err.textContent = "";
-    }
+    const $ = (id) => document.getElementById(id);
+    const listEl = $("list");
+    const errEl = $("err");
 
-    function setStatus(msg) {
-      $status.textContent = msg || "";
-    }
+    const showError = (msg) => { errEl.style.display="block"; errEl.textContent=msg; };
+    const clearError = () => { errEl.style.display="none"; errEl.textContent=""; };
 
-    function updateKeyUI() {
-      const hasKey = ($adminKey.value || "").trim().length > 0;
-      $keyHint.textContent = hasKey ? "Key set" : "Key required";
-      $keyHint.style.opacity = hasKey ? "1" : ".85";
-    }
-    $adminKey.addEventListener("input", updateKeyUI);
-    updateKeyUI();
+    const apiUrl = (params) => {
+      const u = new URL(WORKER_URL);
+      Object.entries(params || {}).forEach(([k,v]) => u.searchParams.set(k, v));
+      return u.toString();
+    };
 
-    function apiUrl(pathAndQuery) {
-      if (!API_BASE) throw new Error("Missing ?api=YOUR_WORKER_URL in the embed link");
-      const base = API_BASE.replace(/\/+$/, "");
-      if (pathAndQuery.startsWith("/")) return base + pathAndQuery;
-      return base + "/" + pathAndQuery;
-    }
-
-    async function fetchJSON(url, init) {
+    async function fetchJson(url, init) {
       const r = await fetch(url, init);
-      const t = await r.text();
-      let j;
-      try { j = JSON.parse(t); } catch { j = { raw: t }; }
-      if (!r.ok) throw new Error(j.error || t || ("HTTP " + r.status));
+      const text = await r.text();
+      let j; try { j = JSON.parse(text); } catch { j = { raw: text }; }
+      if (!r.ok) throw new Error(`HTTP ${r.status}: ${text}`);
       return j;
     }
 
-    function render(projects) {
-      $list.innerHTML = "";
+    function setBadge(projectId, count) {
+      const badge = document.querySelector(`[data-badge-for="${projectId}"]`);
+      if (!badge) return;
+      const n = Math.max(0, Number(count || 0));
+      if (n > 0) {
+        badge.textContent = String(Math.min(99, n));
+        badge.classList.add("show");
+      } else {
+        badge.textContent = "";
+        badge.classList.remove("show");
+      }
+    }
 
-      projects.forEach(p => {
+    function render() {
+      listEl.innerHTML = "";
+      for (const p of projects) {
         const row = document.createElement("div");
         row.className = "row";
 
@@ -285,135 +224,98 @@
 
         const name = document.createElement("div");
         name.className = "name";
-        name.textContent = p.title;
+        name.textContent = p.title || "(Untitled)";
 
-        const date = document.createElement("div");
-        date.className = "date";
-        date.textContent = p.endDate ? ("End " + p.endDate) : "End —";
+        const sub = document.createElement("div");
+        sub.className = "sub";
+        sub.textContent = p.endDate ? `End ${p.endDate}` : "";
 
         meta.appendChild(name);
-        meta.appendChild(date);
+        meta.appendChild(sub);
 
-        const actions = document.createElement("div");
-        actions.className = "actions";
+        const btns = document.createElement("div");
+        btns.className = "btns";
 
+        // Repo
         const repoBtn = document.createElement("a");
-        repoBtn.className = "btn yellow";
+        repoBtn.className = "btn repo" + (p.repoUrl ? "" : " disabled");
         repoBtn.textContent = "Repo";
+        repoBtn.href = p.repoUrl || "#";
         repoBtn.target = "_blank";
         repoBtn.rel = "noopener";
-        if (p.repoUrl) {
-          repoBtn.href = p.repoUrl;
-        } else {
-          repoBtn.href = "javascript:void(0)";
-          repoBtn.style.opacity = ".45";
-          repoBtn.style.pointerEvents = "none";
-        }
 
+        // Open (+ badge)
         const openBtn = document.createElement("a");
-        openBtn.className = "btn";
+        openBtn.className = "btn open";
         openBtn.textContent = "Open";
+        openBtn.href = p.link || "#";
         openBtn.target = "_blank";
         openBtn.rel = "noopener";
-        openBtn.href = p.openUrl;
 
         const badge = document.createElement("span");
         badge.className = "badge";
-        badge.dataset.projectId = p.id;
+        badge.setAttribute("data-badge-for", p.id);
         openBtn.appendChild(badge);
 
         openBtn.addEventListener("click", () => {
-          // Mark this project’s comments as seen (don’t block navigation).
-          fetch(apiUrl(`?action=markSeen&projectId=${encodeURIComponent(p.id)}`)).catch(() => {});
-          badge.style.display = "none";
+          // Mark seen but don't block navigation
+          try {
+            navigator.sendBeacon(apiUrl({ action: "markSeen", projectId: p.id }), "");
+          } catch {
+            fetch(apiUrl({ action: "markSeen", projectId: p.id }), { method: "POST", keepalive: true }).catch(()=>{});
+          }
+          setBadge(p.id, 0);
         });
 
+        // Archive (keeps your existing archiveRepo endpoint)
         const archiveBtn = document.createElement("button");
-        archiveBtn.className = "btn";
+        archiveBtn.className = "btn archive";
         archiveBtn.textContent = "Archive";
-
         archiveBtn.addEventListener("click", async () => {
+          const adminKey = $("adminKey").value || "";
+          if (!adminKey) return alert("Admin key required to archive.");
+          archiveBtn.textContent = "Archiving…";
+          archiveBtn.disabled = true;
           try {
-            clearError();
-            const key = ($adminKey.value || "").trim();
-            if (!key) throw new Error("Admin key required for Archive");
-
-            archiveBtn.disabled = true;
-            archiveBtn.textContent = "…";
-
-            await fetchJSON(apiUrl(`?action=archive&projectId=${encodeURIComponent(p.id)}&adminKey=${encodeURIComponent(key)}`), {
-              method: "POST"
-            });
-
-            archiveBtn.textContent = "Done";
-            setTimeout(() => { archiveBtn.textContent = "Archive"; archiveBtn.disabled = false; }, 900);
-          } catch (e) {
+            const res = await fetchJson(apiUrl({ action: "archiveRepo", projectId: p.id, adminKey }), { method: "POST" });
+            if (res?.repoUrl) { p.repoUrl = res.repoUrl; render(); }
+          } catch (err) {
+            alert(String(err));
+          } finally {
             archiveBtn.textContent = "Archive";
             archiveBtn.disabled = false;
-            showError(String(e));
           }
         });
 
-        actions.appendChild(repoBtn);
-        actions.appendChild(openBtn);
-        actions.appendChild(archiveBtn);
+        btns.appendChild(repoBtn);
+        btns.appendChild(openBtn);
+        btns.appendChild(archiveBtn);
 
         row.appendChild(meta);
-        row.appendChild(actions);
-        $list.appendChild(row);
-      });
-    }
-
-    function applyBadges(countState) {
-      const byProject = (countState && countState.byProject) ? countState.byProject : {};
-      document.querySelectorAll(".badge").forEach(b => {
-        const id = b.dataset.projectId;
-        const n = Number(byProject[id] || 0);
-        if (n > 0) {
-          b.textContent = n > 9 ? "9+" : String(n);
-          b.style.display = "flex";
-        } else {
-          b.style.display = "none";
-        }
-      });
-    }
-
-    async function refreshCounts() {
-      try {
-        const state = await fetchJSON(apiUrl(`?action=unreadCounts`));
-        applyBadges(state);
-      } catch {
-        // silently ignore count refresh errors (keeps widget usable)
+        row.appendChild(btns);
+        listEl.appendChild(row);
       }
     }
 
-    async function load() {
-      try {
-        clearError();
-
-        if (!API_BASE) {
-          setStatus("Missing api param. Add ?api=https://YOUR-WORKER.workers.dev to this page URL.");
-          return;
-        }
-
-        setStatus("Loading…");
-
-        const data = await fetchJSON(apiUrl(`?pmField=${encodeURIComponent(pmField)}&assignedField=${encodeURIComponent(assignedField)}&limit=${encodeURIComponent(limit)}`));
-        projects = data.projects || [];
-        render(projects);
-
-        setStatus(`Loaded ${projects.length} projects`);
-        await refreshCounts();
-
-        // poll counts (webhooks update KV instantly, poll just updates the UI)
-        setInterval(refreshCounts, 30000);
-      } catch (e) {
-        showError(String(e));
-        setStatus("");
-      }
+    async function refreshUnreadCounts() {
+      if (!projects.length) return;
+      const ids = projects.map(p => p.id).join(",");
+      const data = await fetchJson(apiUrl({ action: "unreadCounts", ids }), { cache: "no-store" });
+      const counts = data.counts || {};
+      for (const p of projects) setBadge(p.id, counts[p.id] || 0);
     }
 
-    load();
+    async function loadProjects() {
+      clearError();
+      const data = await fetchJson(apiUrl({ pmField: PM_FIELD, assignedField: ASSIGNED_FIELD, limit: String(LIMIT) }));
+      projects = data.projects || [];
+      render();
+      await refreshUnreadCounts();
+      if (unreadTimer) clearInterval(unreadTimer);
+      unreadTimer = setInterval(refreshUnreadCounts, UNREAD_POLL_MS);
+    }
+
+    loadProjects().catch(e => showError(String(e)));
   </script>
 </body>
 </html>
