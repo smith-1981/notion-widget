@@ -10,118 +10,139 @@
       --bg2:#0b1220;
       --stroke:rgba(255,255,255,.10);
       --text:#f4f4f5;
-      --muted:rgba(244,244,245,.75);
-      --btnStroke:rgba(255,255,255,.14);
-      --gold:#f5c542;
-      --red:#ff3b30;
-      --pink:#ff4d9d;
-      --shadow:0 16px 60px rgba(0,0,0,.55);
+      --muted:rgba(255,255,255,.72);
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.03);
+      --shadow:0 30px 80px rgba(0,0,0,.45);
+      --btn:rgba(255,255,255,.10);
+      --btnStroke:rgba(255,255,255,.16);
+      --repo:#f5c542;
+      --open:#ff4dd2;
+      --archive:#ffffff;
+      --badge:#ff3b30;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{box-sizing:border-box;}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--text);
-      background:
-        radial-gradient(900px 420px at 15% 8%, rgba(255,77,157,.24), transparent 60%),
-        radial-gradient(900px 520px at 85% 15%, rgba(245,197,66,.18), transparent 60%),
-        radial-gradient(900px 520px at 70% 80%, rgba(120,200,255,.10), transparent 60%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      padding:18px;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(255,0,214,.18), transparent 55%),
+                  radial-gradient(900px 600px at 90% 10%, rgba(255,189,74,.10), transparent 55%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      padding:24px;
     }
-    .shell{
-      max-width:980px;
+    .wrap{
+      max-width: 980px;
       margin:0 auto;
       border:1px solid var(--stroke);
-      border-radius:18px;
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      box-shadow:var(--shadow);
+      border-radius:22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
       overflow:hidden;
     }
-    .topbar{
+    .top{
+      padding:22px 22px 14px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding:14px 18px;
+      gap:12px;
       border-bottom:1px solid var(--stroke);
     }
-    .title{font-weight:700; letter-spacing:.2px;}
+    .title{font-weight:800; letter-spacing:.2px; font-size:18px;}
     .admin{
-      display:flex; align-items:center; gap:10px;
-      color:var(--muted); font-size:12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      opacity:.9;
+      font-size:12px;
     }
     .admin input{
       width:240px;
-      padding:8px 10px;
       border-radius:999px;
-      border:1px solid var(--btnStroke);
-      background:rgba(0,0,0,.25);
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      padding:9px 12px;
       color:var(--text);
       outline:none;
     }
-    .admin .req{opacity:.9; font-weight:600;}
-    .panel{padding:16px 18px 18px;}
+    .req{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.10);
+      opacity:.8;
+    }
+    .panel{ padding: 18px 22px 24px; }
     .card{
       border:1px solid var(--stroke);
-      border-radius:16px;
-      background:rgba(0,0,0,.22);
-      padding:14px;
+      border-radius:18px;
+      padding:18px;
+      background: linear-gradient(180deg, var(--card), var(--card2));
     }
     .sectionTitle{
-      font-size:13px;
-      color:var(--muted);
-      margin:0 0 10px 0;
-      font-weight:600;
+      font-weight:750;
+      margin-bottom:14px;
+      opacity:.92;
     }
-    .list{display:flex; flex-direction:column; gap:10px;}
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
     .row{
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
-      padding:12px; border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius:16px;
+      padding:14px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      background: rgba(0,0,0,.18);
     }
-    .meta{min-width:0;}
+    .meta{
+      min-width:0;
+    }
     .name{
-      font-weight:700; font-size:13px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width:640px;
+      font-weight:750;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 560px;
     }
-    .sub{margin-top:4px; font-size:12px; color:var(--muted);}
-    .btns{display:flex; align-items:center; gap:10px; flex-shrink:0;}
-    .btn{
+    .sub{
+      opacity:.78;
+      font-size:12px;
+      margin-top:4px;
+    }
+    .btns{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:nowrap;
+    }
+    .btn, a.btn{
       position:relative;
-      padding:8px 12px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height:34px;
+      min-width:64px;
+      padding:0 14px;
       border-radius:999px;
       border:1px solid var(--btnStroke);
-      background:rgba(0,0,0,.18);
-      color:var(--text);
-      font-size:12px;
-      font-weight:700;
-      cursor:pointer;
+      background: var(--btn);
+      color: var(--text);
       text-decoration:none;
+      font-weight:650;
+      font-size:12px;
+      cursor:pointer;
       user-select:none;
     }
-    .btn:hover{filter:brightness(1.10)}
-    .btn:active{transform:translateY(1px)}
-    .btn.repo{
-      background:rgba(245,197,66,.16);
-      border-color:rgba(245,197,66,.38);
-      color:var(--gold);
-    }
-    .btn.open{
-      background:rgba(255,77,157,.14);
-      border-color:rgba(255,77,157,.34);
-      color:#ffd1e5;
-    }
-    .btn.archive{
-      background:rgba(255,255,255,.06);
-      border-color:rgba(255,255,255,.14);
-      color:rgba(255,255,255,.85);
-    }
-    .btn.disabled{opacity:.45; cursor:not-allowed; pointer-events:none;}
-
-    /* Red numbered badge */
+    .btn.repo{ border-color: rgba(245,197,66,.40); color: var(--repo); }
+    .btn.open{ border-color: rgba(255,77,210,.35); color: var(--open); }
+    .btn.archive{ border-color: rgba(255,255,255,.22); color: rgba(255,255,255,.92); }
+    .btn:disabled{ opacity:.5; cursor:not-allowed; }
     .badge{
       position:absolute;
       top:-6px;
@@ -130,24 +151,38 @@
       height:18px;
       padding:0 5px;
       border-radius:999px;
-      background:var(--red);
-      color:white;
-      font-size:11px;
-      line-height:18px;
-      text-align:center;
-      box-shadow:0 0 0 2px rgba(0,0,0,.35);
       display:none;
+      align-items:center;
+      justify-content:center;
+      background: var(--badge);
+      color:#fff;
+      font-size:11px;
+      font-weight:800;
+      border:2px solid rgba(0,0,0,.35);
+      line-height:1;
     }
-    .badge.show{display:inline-block}
-
-    .footerNote{margin-top:10px; font-size:12px; color:var(--muted);}
-    .err{margin-top:10px; font-size:12px; color:#ffb4b4; display:none; white-space:pre-wrap;}
+    .badge.show{ display:flex; }
+    .err{
+      display:none;
+      margin-top:12px;
+      color:#fff;
+      background: rgba(255,59,48,.18);
+      border:1px solid rgba(255,59,48,.35);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:12px;
+      white-space:pre-wrap;
+    }
+    .footerNote{
+      margin-top:14px;
+      font-size:12px;
+      opacity:.75;
+    }
   </style>
 </head>
-
 <body>
-  <div class="shell">
-    <div class="topbar">
+  <div class="wrap">
+    <div class="top">
       <div class="title">Wrike Projects</div>
       <div class="admin">
         <input id="adminKey" type="password" placeholder="Admin key (Archive)" />
@@ -162,6 +197,7 @@
         <div id="err" class="err"></div>
         <div class="footerNote">
           Comment badges auto-update (polls Worker KV counts; webhook pushes updates into KV).
+          <div id="whStatus" style="margin-top:6px; opacity:.75;"></div>
         </div>
       </div>
     </div>
@@ -178,6 +214,8 @@
     // ========= STATE =========
     let projects = [];
     let unreadTimer = null;
+    let webhookTimer = null;
+    const locallyClearedAt = new Map();
 
     const $ = (id) => document.getElementById(id);
     const listEl = $("list");
@@ -203,6 +241,7 @@
     function setBadge(projectId, count) {
       const badge = document.querySelector(`[data-badge-for="${projectId}"]`);
       if (!badge) return;
+
       const n = Math.max(0, Number(count || 0));
       if (n > 0) {
         badge.textContent = String(Math.min(99, n));
@@ -236,15 +275,19 @@
         const btns = document.createElement("div");
         btns.className = "btns";
 
-        // Repo
+        // Repo button: opens repoUrl if present, otherwise disables
         const repoBtn = document.createElement("a");
-        repoBtn.className = "btn repo" + (p.repoUrl ? "" : " disabled");
+        repoBtn.className = "btn repo";
         repoBtn.textContent = "Repo";
-        repoBtn.href = p.repoUrl || "#";
         repoBtn.target = "_blank";
         repoBtn.rel = "noopener";
+        repoBtn.href = p.repoUrl || "#";
+        if (!p.repoUrl) {
+          repoBtn.style.opacity = ".55";
+          repoBtn.style.pointerEvents = "none";
+        }
 
-        // Open (+ badge)
+        // Open button (Wrike)
         const openBtn = document.createElement("a");
         openBtn.className = "btn open";
         openBtn.textContent = "Open";
@@ -257,17 +300,32 @@
         badge.setAttribute("data-badge-for", p.id);
         openBtn.appendChild(badge);
 
-        openBtn.addEventListener("click", () => {
-          // Mark seen but don't block navigation
-          try {
-            navigator.sendBeacon(apiUrl({ action: "markSeen", projectId: p.id }), "");
-          } catch {
-            fetch(apiUrl({ action: "markSeen", projectId: p.id }), { method: "POST", keepalive: true }).catch(()=>{});
-          }
-          setBadge(p.id, 0);
-        });
+        const markSeenNow = () => {
+          const url = apiUrl({ action: "markSeen", projectId: p.id, _ts: String(Date.now()) });
 
-        // Archive (keeps your existing archiveRepo endpoint)
+          // Clear UI immediately (and prevent the next poll from re-showing the badge for a few seconds).
+          locallyClearedAt.set(p.id, Date.now());
+          setBadge(p.id, 0);
+
+          // Prefer sendBeacon, but FALL BACK if it returns false (common in embedded contexts).
+          let queued = false;
+          try {
+            if (navigator.sendBeacon) queued = navigator.sendBeacon(url, "");
+          } catch {}
+
+          if (!queued) {
+            // Ultra-reliable GET ping
+            try { (new Image()).src = url; } catch {}
+            // and a keepalive POST for good measure
+            fetch(url, { method: "POST", keepalive: true }).catch(()=>{});
+          }
+        };
+
+        // Use pointerdown so it fires even if navigation is intercepted
+        openBtn.addEventListener("pointerdown", markSeenNow);
+        openBtn.addEventListener("click", markSeenNow);
+
+        // Archive
         const archiveBtn = document.createElement("button");
         archiveBtn.className = "btn archive";
         archiveBtn.textContent = "Archive";
@@ -293,6 +351,7 @@
 
         row.appendChild(meta);
         row.appendChild(btns);
+
         listEl.appendChild(row);
       }
     }
@@ -300,9 +359,38 @@
     async function refreshUnreadCounts() {
       if (!projects.length) return;
       const ids = projects.map(p => p.id).join(",");
-      const data = await fetchJson(apiUrl({ action: "unreadCounts", ids }), { cache: "no-store" });
+      const data = await fetchJson(apiUrl({ action: "unreadCounts", ids, _ts: String(Date.now()) }), { cache: "no-store" });
       const counts = data.counts || {};
-      for (const p of projects) setBadge(p.id, counts[p.id] || 0);
+      const now = Date.now();
+
+      for (const p of projects) {
+        let c = Number(counts[p.id] || 0);
+
+        // If we just cleared it locally, keep it hidden briefly to avoid race / redelivery flicker.
+        const clearedAt = locallyClearedAt.get(p.id) || 0;
+        if (clearedAt && (now - clearedAt) < 5000) c = 0;
+        if (c === 0) locallyClearedAt.delete(p.id);
+
+        setBadge(p.id, c);
+      }
+    }
+
+    async function refreshWebhookStatus() {
+      const el = $("whStatus");
+      if (!el) return;
+      try {
+        const data = await fetchJson(apiUrl({ action: "webhookStatus", _ts: String(Date.now()) }), { cache: "no-store" });
+        const s = data.status;
+        if (!s || !s.receivedAt) {
+          el.textContent = "Webhook: no events received yet.";
+          return;
+        }
+        const dt = new Date(s.receivedAt);
+        const types = Array.isArray(s.eventTypes) ? s.eventTypes.slice(0, 4).join(", ") : "";
+        el.textContent = `Webhook: last received ${dt.toLocaleString()}${types ? " (" + types + ")" : ""}`;
+      } catch {
+        el.textContent = "Webhook: status unavailable.";
+      }
     }
 
     async function loadProjects() {
@@ -310,9 +398,15 @@
       const data = await fetchJson(apiUrl({ pmField: PM_FIELD, assignedField: ASSIGNED_FIELD, limit: String(LIMIT) }));
       projects = data.projects || [];
       render();
+
       await refreshUnreadCounts();
+      await refreshWebhookStatus();
+
       if (unreadTimer) clearInterval(unreadTimer);
       unreadTimer = setInterval(refreshUnreadCounts, UNREAD_POLL_MS);
+
+      if (webhookTimer) clearInterval(webhookTimer);
+      webhookTimer = setInterval(refreshWebhookStatus, 60000);
     }
 
     loadProjects().catch(e => showError(String(e)));
