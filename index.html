@@ -100,9 +100,7 @@
       gap:12px;
       background: rgba(0,0,0,.18);
     }
-    .meta{
-      min-width:0;
-    }
+    .meta{ min-width:0; }
     .name{
       font-weight:750;
       white-space:nowrap;
@@ -275,7 +273,7 @@
         const btns = document.createElement("div");
         btns.className = "btns";
 
-        // Repo button: opens repoUrl if present, otherwise disables
+        // Repo
         const repoBtn = document.createElement("a");
         repoBtn.className = "btn repo";
         repoBtn.textContent = "Repo";
@@ -287,7 +285,7 @@
           repoBtn.style.pointerEvents = "none";
         }
 
-        // Open button (Wrike)
+        // Open (+ badge)
         const openBtn = document.createElement("a");
         openBtn.className = "btn open";
         openBtn.textContent = "Open";
@@ -303,25 +301,23 @@
         const markSeenNow = () => {
           const url = apiUrl({ action: "markSeen", projectId: p.id, _ts: String(Date.now()) });
 
-          // Clear UI immediately (and prevent the next poll from re-showing the badge for a few seconds).
+          // Clear UI immediately
           locallyClearedAt.set(p.id, Date.now());
           setBadge(p.id, 0);
 
-          // Prefer sendBeacon, but FALL BACK if it returns false (common in embedded contexts).
+          // sendBeacon often fails in embedded contexts; fallback if not queued
           let queued = false;
           try {
             if (navigator.sendBeacon) queued = navigator.sendBeacon(url, "");
           } catch {}
 
           if (!queued) {
-            // Ultra-reliable GET ping
             try { (new Image()).src = url; } catch {}
-            // and a keepalive POST for good measure
             fetch(url, { method: "POST", keepalive: true }).catch(()=>{});
           }
         };
 
-        // Use pointerdown so it fires even if navigation is intercepted
+        // pointerdown fires more reliably before navigation
         openBtn.addEventListener("pointerdown", markSeenNow);
         openBtn.addEventListener("click", markSeenNow);
 
@@ -366,7 +362,6 @@
       for (const p of projects) {
         let c = Number(counts[p.id] || 0);
 
-        // If we just cleared it locally, keep it hidden briefly to avoid race / redelivery flicker.
         const clearedAt = locallyClearedAt.get(p.id) || 0;
         if (clearedAt && (now - clearedAt) < 5000) c = 0;
         if (c === 0) locallyClearedAt.delete(p.id);
