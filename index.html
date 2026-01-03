@@ -6,8 +6,7 @@
   <title>Wrike Projects</title>
   <style>
     :root{
-      --bg1:#120915;
-      --bg2:#0b1220;
+      --bg1:#120915; --bg2:#0b1220;
       --stroke:rgba(255,255,255,.10);
       --text:#f4f4f5;
       --card:rgba(255,255,255,.06);
@@ -15,9 +14,7 @@
       --shadow:0 30px 80px rgba(0,0,0,.45);
       --btn:rgba(255,255,255,.10);
       --btnStroke:rgba(255,255,255,.16);
-      --repo:#f5c542;
-      --open:#ff4dd2;
-      --archive:#ffffff;
+      --repo:#f5c542; --open:#ff4dd2; --archive:#ffffff;
       --badge:#ff3b30;
     }
     *{box-sizing:border-box;}
@@ -25,9 +22,10 @@
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--text);
-      background: radial-gradient(1200px 600px at 20% 0%, rgba(255,0,214,.18), transparent 55%),
-                  radial-gradient(900px 600px at 90% 10%, rgba(255,189,74,.10), transparent 55%),
-                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(255,0,214,.18), transparent 55%),
+        radial-gradient(900px 600px at 90% 10%, rgba(255,189,74,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
       min-height:100vh;
       padding:24px;
     }
@@ -79,16 +77,9 @@
       padding:18px;
       background: linear-gradient(180deg, var(--card), var(--card2));
     }
-    .sectionTitle{
-      font-weight:750;
-      margin-bottom:14px;
-      opacity:.92;
-    }
-    .list{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
+    .sectionTitle{ font-weight:750; margin-bottom:10px; opacity:.92; }
+    .metaLine{ font-size:12px; opacity:.75; margin-bottom:14px; }
+    .list{ display:flex; flex-direction:column; gap:12px; }
     .row{
       border:1px solid var(--stroke);
       border-radius:16px;
@@ -107,17 +98,8 @@
       text-overflow:ellipsis;
       max-width: 560px;
     }
-    .sub{
-      opacity:.78;
-      font-size:12px;
-      margin-top:4px;
-    }
-    .btns{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:nowrap;
-    }
+    .sub{ opacity:.78; font-size:12px; margin-top:4px; }
+    .btns{ display:flex; align-items:center; gap:10px; flex-wrap:nowrap; }
     .btn, a.btn{
       position:relative;
       display:inline-flex;
@@ -139,7 +121,6 @@
     .btn.repo{ border-color: rgba(245,197,66,.40); color: var(--repo); }
     .btn.open{ border-color: rgba(255,77,210,.35); color: var(--open); }
     .btn.archive{ border-color: rgba(255,255,255,.22); color: rgba(255,255,255,.92); }
-    .btn:disabled{ opacity:.5; cursor:not-allowed; }
     .badge{
       position:absolute;
       top:-6px;
@@ -170,11 +151,6 @@
       font-size:12px;
       white-space:pre-wrap;
     }
-    .footerNote{
-      margin-top:14px;
-      font-size:12px;
-      opacity:.75;
-    }
     .empty{
       opacity:.75;
       font-size:13px;
@@ -182,6 +158,7 @@
       border:1px dashed var(--stroke);
       border-radius:12px;
       background: rgba(0,0,0,.12);
+      display:none;
     }
   </style>
 </head>
@@ -198,18 +175,19 @@
     <div class="panel">
       <div class="card">
         <div class="sectionTitle">My Wrike Projects</div>
+        <div id="metaLine" class="metaLine"></div>
         <div id="list" class="list"></div>
-        <div id="empty" class="empty" style="display:none;">No projects found for your PM/Assigned fields.</div>
+        <div id="empty" class="empty">No matching projects found (based on Project Manager / Assigned fields).</div>
         <div id="err" class="err"></div>
-        <div class="footerNote">
-          Comment badges auto-update (polls Worker KV counts; webhook pushes updates into KV).
-          <div id="whStatus" style="margin-top:6px; opacity:.75;"></div>
+        <div class="metaLine" style="margin-top:14px;">
+          <div id="whStatus"></div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    // ========= CONFIG =========
     const WORKER_URL = "https://wrike-proxy.dustinjsmith.workers.dev/";
     const PM_FIELD = "Project Manager";
     const ASSIGNED_FIELD = "Assigned";
@@ -218,13 +196,14 @@
 
     let projects = [];
     let unreadTimer = null;
-    let webhookTimer = null;
     const locallyClearedAt = new Map();
 
     const $ = (id) => document.getElementById(id);
     const listEl = $("list");
     const errEl = $("err");
     const emptyEl = $("empty");
+    const metaLineEl = $("metaLine");
+    const whEl = $("whStatus");
 
     const showError = (msg) => { errEl.style.display="block"; errEl.textContent=msg; };
     const clearError = () => { errEl.style.display="none"; errEl.textContent=""; };
@@ -288,10 +267,6 @@
         repoBtn.target = "_blank";
         repoBtn.rel = "noopener";
         repoBtn.href = p.repoUrl || "#";
-        if (!p.repoUrl) {
-          repoBtn.style.opacity = ".55";
-          repoBtn.style.pointerEvents = "none";
-        }
 
         const openBtn = document.createElement("a");
         openBtn.className = "btn open";
@@ -333,6 +308,9 @@
           archiveBtn.disabled = true;
           try {
             await fetchJson(apiUrl({ action: "archiveRepo", projectId: p.id, adminKey }), { method: "POST" });
+            projects = projects.filter(x => x.id !== p.id);
+            render();
+            await refreshUnreadCounts();
           } catch (err) {
             alert(String(err));
           } finally {
@@ -368,20 +346,18 @@
     }
 
     async function refreshWebhookStatus() {
-      const el = $("whStatus");
-      if (!el) return;
       try {
         const data = await fetchJson(apiUrl({ action: "webhookStatus", _ts: String(Date.now()) }), { cache: "no-store" });
         const s = data.status;
         if (!s || !s.receivedAt) {
-          el.textContent = "Webhook: no events received yet.";
+          whEl.textContent = "Webhook: no events received yet.";
           return;
         }
         const dt = new Date(s.receivedAt);
         const types = Array.isArray(s.eventTypes) ? s.eventTypes.slice(0, 4).join(", ") : "";
-        el.textContent = `Webhook: last received ${dt.toLocaleString()}${types ? " (" + types + ")" : ""}`;
+        whEl.textContent = `Webhook: last received ${dt.toLocaleString()}${types ? " (" + types + ")" : ""}`;
       } catch {
-        el.textContent = "Webhook: status unavailable.";
+        whEl.textContent = "Webhook: status unavailable.";
       }
     }
 
@@ -389,16 +365,20 @@
       clearError();
       const data = await fetchJson(apiUrl({ pmField: PM_FIELD, assignedField: ASSIGNED_FIELD, limit: String(LIMIT) }));
       projects = data.projects || [];
-      render();
 
+      const meta = data.meta || {};
+      metaLineEl.textContent =
+        meta.warning
+          ? `⚠ ${meta.warning}`
+          : `Filtering by: PM="${meta?.pmResolved?.matchedTitle || PM_FIELD}" and Assigned="${meta?.assignedResolved?.matchedTitle || ASSIGNED_FIELD}"`;
+
+      render();
       await refreshUnreadCounts();
       await refreshWebhookStatus();
 
       if (unreadTimer) clearInterval(unreadTimer);
       unreadTimer = setInterval(refreshUnreadCounts, UNREAD_POLL_MS);
-
-      if (webhookTimer) clearInterval(webhookTimer);
-      webhookTimer = setInterval(refreshWebhookStatus, 60000);
+      setInterval(refreshWebhookStatus, 60000);
     }
 
     loadProjects().catch(e => showError(String(e)));
