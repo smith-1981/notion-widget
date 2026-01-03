@@ -175,6 +175,14 @@
       font-size:12px;
       opacity:.75;
     }
+    .empty{
+      opacity:.75;
+      font-size:13px;
+      padding:10px 12px;
+      border:1px dashed var(--stroke);
+      border-radius:12px;
+      background: rgba(0,0,0,.12);
+    }
   </style>
 </head>
 <body>
@@ -191,6 +199,7 @@
       <div class="card">
         <div class="sectionTitle">My Wrike Projects</div>
         <div id="list" class="list"></div>
+        <div id="empty" class="empty" style="display:none;">No projects found for your PM/Assigned fields.</div>
         <div id="err" class="err"></div>
         <div class="footerNote">
           Comment badges auto-update (polls Worker KV counts; webhook pushes updates into KV).
@@ -201,14 +210,12 @@
   </div>
 
   <script>
-    // ========= CONFIG =========
     const WORKER_URL = "https://wrike-proxy.dustinjsmith.workers.dev/";
     const PM_FIELD = "Project Manager";
     const ASSIGNED_FIELD = "Assigned";
     const LIMIT = 25;
     const UNREAD_POLL_MS = 20000;
 
-    // ========= STATE =========
     let projects = [];
     let unreadTimer = null;
     let webhookTimer = null;
@@ -217,5 +224,184 @@
     const $ = (id) => document.getElementById(id);
     const listEl = $("list");
     const errEl = $("err");
+    const emptyEl = $("empty");
 
-    const showError = (msg) => { errEl.style
+    const showError = (msg) => { errEl.style.display="block"; errEl.textContent=msg; };
+    const clearError = () => { errEl.style.display="none"; errEl.textContent=""; };
+
+    const apiUrl = (params) => {
+      const u = new URL(WORKER_URL);
+      Object.entries(params || {}).forEach(([k,v]) => u.searchParams.set(k, v));
+      return u.toString();
+    };
+
+    async function fetchJson(url, init) {
+      const r = await fetch(url, init);
+      const text = await r.text();
+      let j; try { j = JSON.parse(text); } catch { j = { raw: text }; }
+      if (!r.ok) throw new Error(j?.error ? j.error : `HTTP ${r.status}: ${text}`);
+      return j;
+    }
+
+    function setBadge(projectId, count) {
+      const badge = document.querySelector(`[data-badge-for="${projectId}"]`);
+      if (!badge) return;
+
+      const n = Math.max(0, Number(count || 0));
+      if (n > 0) {
+        badge.textContent = String(Math.min(99, n));
+        badge.classList.add("show");
+      } else {
+        badge.textContent = "";
+        badge.classList.remove("show");
+      }
+    }
+
+    function render() {
+      listEl.innerHTML = "";
+      emptyEl.style.display = projects.length ? "none" : "block";
+
+      for (const p of projects) {
+        const row = document.createElement("div");
+        row.className = "row";
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = p.title || "(Untitled)";
+
+        const sub = document.createElement("div");
+        sub.className = "sub";
+        sub.textContent = p.endDate ? `End ${p.endDate}` : "";
+
+        meta.appendChild(name);
+        meta.appendChild(sub);
+
+        const btns = document.createElement("div");
+        btns.className = "btns";
+
+        const repoBtn = document.createElement("a");
+        repoBtn.className = "btn repo";
+        repoBtn.textContent = "Repo";
+        repoBtn.target = "_blank";
+        repoBtn.rel = "noopener";
+        repoBtn.href = p.repoUrl || "#";
+        if (!p.repoUrl) {
+          repoBtn.style.opacity = ".55";
+          repoBtn.style.pointerEvents = "none";
+        }
+
+        const openBtn = document.createElement("a");
+        openBtn.className = "btn open";
+        openBtn.textContent = "Open";
+        openBtn.href = p.link || "#";
+        openBtn.target = "_blank";
+        openBtn.rel = "noopener";
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.setAttribute("data-badge-for", p.id);
+        openBtn.appendChild(badge);
+
+        const markSeenNow = () => {
+          const u = apiUrl({ action: "markSeen", projectId: p.id, _ts: String(Date.now()) });
+
+          locallyClearedAt.set(p.id, Date.now());
+          setBadge(p.id, 0);
+
+          let queued = false;
+          try { if (navigator.sendBeacon) queued = navigator.sendBeacon(u, ""); } catch {}
+
+          if (!queued) {
+            try { (new Image()).src = u; } catch {}
+            fetch(u, { method: "POST", keepalive: true }).catch(()=>{});
+          }
+        };
+
+        openBtn.addEventListener("pointerdown", markSeenNow);
+        openBtn.addEventListener("click", markSeenNow);
+
+        const archiveBtn = document.createElement("button");
+        archiveBtn.className = "btn archive";
+        archiveBtn.textContent = "Archive";
+        archiveBtn.addEventListener("click", async () => {
+          const adminKey = $("adminKey").value || "";
+          if (!adminKey) return alert("Admin key required to archive.");
+          archiveBtn.textContent = "Archiving…";
+          archiveBtn.disabled = true;
+          try {
+            await fetchJson(apiUrl({ action: "archiveRepo", projectId: p.id, adminKey }), { method: "POST" });
+          } catch (err) {
+            alert(String(err));
+          } finally {
+            archiveBtn.textContent = "Archive";
+            archiveBtn.disabled = false;
+          }
+        });
+
+        btns.appendChild(repoBtn);
+        btns.appendChild(openBtn);
+        btns.appendChild(archiveBtn);
+
+        row.appendChild(meta);
+        row.appendChild(btns);
+        listEl.appendChild(row);
+      }
+    }
+
+    async function refreshUnreadCounts() {
+      if (!projects.length) return;
+      const ids = projects.map(p => p.id).join(",");
+      const data = await fetchJson(apiUrl({ action: "unreadCounts", ids, _ts: String(Date.now()) }), { cache: "no-store" });
+      const counts = data.counts || {};
+      const now = Date.now();
+
+      for (const p of projects) {
+        let c = Number(counts[p.id] || 0);
+        const clearedAt = locallyClearedAt.get(p.id) || 0;
+        if (clearedAt && (now - clearedAt) < 5000) c = 0;
+        if (c === 0) locallyClearedAt.delete(p.id);
+        setBadge(p.id, c);
+      }
+    }
+
+    async function refreshWebhookStatus() {
+      const el = $("whStatus");
+      if (!el) return;
+      try {
+        const data = await fetchJson(apiUrl({ action: "webhookStatus", _ts: String(Date.now()) }), { cache: "no-store" });
+        const s = data.status;
+        if (!s || !s.receivedAt) {
+          el.textContent = "Webhook: no events received yet.";
+          return;
+        }
+        const dt = new Date(s.receivedAt);
+        const types = Array.isArray(s.eventTypes) ? s.eventTypes.slice(0, 4).join(", ") : "";
+        el.textContent = `Webhook: last received ${dt.toLocaleString()}${types ? " (" + types + ")" : ""}`;
+      } catch {
+        el.textContent = "Webhook: status unavailable.";
+      }
+    }
+
+    async function loadProjects() {
+      clearError();
+      const data = await fetchJson(apiUrl({ pmField: PM_FIELD, assignedField: ASSIGNED_FIELD, limit: String(LIMIT) }));
+      projects = data.projects || [];
+      render();
+
+      await refreshUnreadCounts();
+      await refreshWebhookStatus();
+
+      if (unreadTimer) clearInterval(unreadTimer);
+      unreadTimer = setInterval(refreshUnreadCounts, UNREAD_POLL_MS);
+
+      if (webhookTimer) clearInterval(webhookTimer);
+      webhookTimer = setInterval(refreshWebhookStatus, 60000);
+    }
+
+    loadProjects().catch(e => showError(String(e)));
+  </script>
+</body>
+</html>
