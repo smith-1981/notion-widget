@@ -6,121 +6,121 @@
   <title>Wrike Projects</title>
   <style>
     :root{
-      --bg1:#120915; --bg2:#0b1220;
+      --bg1:#120915;
+      --bg2:#0b1220;
       --stroke:rgba(255,255,255,.10);
       --text:#f4f4f5;
-      --card:rgba(255,255,255,.06);
-      --card2:rgba(255,255,255,.03);
-      --shadow:0 30px 80px rgba(0,0,0,.45);
-      --btn:rgba(255,255,255,.10);
-      --btnStroke:rgba(255,255,255,.16);
-      --repo:#f5c542; --open:#ff4dd2; --archive:#ffffff;
-      --badge:#ff3b30;
+      --muted:rgba(244,244,245,.75);
+      --btnStroke:rgba(255,255,255,.14);
+      --gold:#f5c542;
+      --red:#ff3b30;
+      --pink:#ff4d9d;
+      --shadow:0 16px 60px rgba(0,0,0,.55);
     }
-    *{box-sizing:border-box;}
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--text);
       background:
-        radial-gradient(1200px 600px at 20% 0%, rgba(255,0,214,.18), transparent 55%),
-        radial-gradient(900px 600px at 90% 10%, rgba(255,189,74,.10), transparent 55%),
+        radial-gradient(900px 420px at 15% 8%, rgba(255,77,157,.24), transparent 60%),
+        radial-gradient(900px 520px at 85% 15%, rgba(245,197,66,.18), transparent 60%),
+        radial-gradient(900px 520px at 70% 80%, rgba(120,200,255,.10), transparent 60%),
         linear-gradient(180deg, var(--bg1), var(--bg2));
-      min-height:100vh;
-      padding:24px;
+      padding:18px;
     }
-    .wrap{
-      max-width: 980px;
+    .shell{
+      max-width:980px;
       margin:0 auto;
       border:1px solid var(--stroke);
-      border-radius:22px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      box-shadow: var(--shadow);
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
       overflow:hidden;
     }
-    .top{
-      padding:22px 22px 14px;
+    .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
+      padding:14px 18px;
       border-bottom:1px solid var(--stroke);
     }
-    .title{font-weight:800; letter-spacing:.2px; font-size:18px;}
+    .title{font-weight:700; letter-spacing:.2px;}
     .admin{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      opacity:.9;
-      font-size:12px;
+      display:flex; align-items:center; gap:10px;
+      color:var(--muted); font-size:12px;
     }
     .admin input{
       width:240px;
+      padding:8px 10px;
       border-radius:999px;
-      border:1px solid var(--stroke);
-      background: rgba(0,0,0,.18);
-      padding:9px 12px;
+      border:1px solid var(--btnStroke);
+      background:rgba(0,0,0,.25);
       color:var(--text);
       outline:none;
     }
-    .req{
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background: rgba(0,0,0,.10);
-      opacity:.8;
-    }
-    .panel{ padding: 18px 22px 24px; }
+    .admin .req{opacity:.9; font-weight:600;}
+    .panel{padding:16px 18px 18px;}
     .card{
       border:1px solid var(--stroke);
-      border-radius:18px;
-      padding:18px;
-      background: linear-gradient(180deg, var(--card), var(--card2));
-    }
-    .sectionTitle{ font-weight:750; margin-bottom:10px; opacity:.92; }
-    .metaLine{ font-size:12px; opacity:.75; margin-bottom:14px; white-space:pre-wrap; }
-    .list{ display:flex; flex-direction:column; gap:12px; }
-    .row{
-      border:1px solid var(--stroke);
       border-radius:16px;
-      padding:14px 14px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      background: rgba(0,0,0,.18);
+      background:rgba(0,0,0,.22);
+      padding:14px;
     }
-    .meta{ min-width:0; }
+    .sectionTitle{
+      font-size:13px;
+      color:var(--muted);
+      margin:0 0 10px 0;
+      font-weight:600;
+    }
+    .list{display:flex; flex-direction:column; gap:10px;}
+    .row{
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .meta{min-width:0;}
     .name{
-      font-weight:750;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 560px;
+      font-weight:700; font-size:13px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:640px;
     }
-    .sub{ opacity:.78; font-size:12px; margin-top:4px; }
-    .btns{ display:flex; align-items:center; gap:10px; flex-wrap:nowrap; }
-    .btn, a.btn{
+    .sub{margin-top:4px; font-size:12px; color:var(--muted);}
+    .btns{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+    .btn{
       position:relative;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      height:34px;
-      min-width:64px;
-      padding:0 14px;
+      padding:8px 12px;
       border-radius:999px;
       border:1px solid var(--btnStroke);
-      background: var(--btn);
-      color: var(--text);
-      text-decoration:none;
-      font-weight:650;
+      background:rgba(0,0,0,.18);
+      color:var(--text);
       font-size:12px;
+      font-weight:700;
       cursor:pointer;
+      text-decoration:none;
       user-select:none;
     }
-    .btn.repo{ border-color: rgba(245,197,66,.40); color: var(--repo); }
-    .btn.open{ border-color: rgba(255,77,210,.35); color: var(--open); }
-    .btn.archive{ border-color: rgba(255,255,255,.22); color: rgba(255,255,255,.92); }
+    .btn:hover{filter:brightness(1.10)}
+    .btn:active{transform:translateY(1px)}
+    .btn.repo{
+      background:rgba(245,197,66,.16);
+      border-color:rgba(245,197,66,.38);
+      color:var(--gold);
+    }
+    .btn.open{
+      background:rgba(255,77,157,.14);
+      border-color:rgba(255,77,157,.34);
+      color:#ffd1e5;
+    }
+    .btn.archive{
+      background:rgba(255,255,255,.06);
+      border-color:rgba(255,255,255,.14);
+      color:rgba(255,255,255,.85);
+    }
+    .btn.disabled{opacity:.45; cursor:not-allowed; pointer-events:none;}
+
     .badge{
       position:absolute;
       top:-6px;
@@ -129,42 +129,25 @@
       height:18px;
       padding:0 5px;
       border-radius:999px;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      background: var(--badge);
-      color:#fff;
+      background:var(--red);
+      color:white;
       font-size:11px;
-      font-weight:800;
-      border:2px solid rgba(0,0,0,.35);
-      line-height:1;
-    }
-    .badge.show{ display:flex; }
-    .err{
-      display:none;
-      margin-top:12px;
-      color:#fff;
-      background: rgba(255,59,48,.18);
-      border:1px solid rgba(255,59,48,.35);
-      padding:10px 12px;
-      border-radius:12px;
-      font-size:12px;
-      white-space:pre-wrap;
-    }
-    .empty{
-      opacity:.75;
-      font-size:13px;
-      padding:10px 12px;
-      border:1px dashed var(--stroke);
-      border-radius:12px;
-      background: rgba(0,0,0,.12);
+      line-height:18px;
+      text-align:center;
+      box-shadow:0 0 0 2px rgba(0,0,0,.35);
       display:none;
     }
+    .badge.show{display:inline-block}
+
+    .footerNote{margin-top:10px; font-size:12px; color:var(--muted);}
+    .err{margin-top:10px; font-size:12px; color:#ffb4b4; display:none; white-space:pre-wrap;}
+    .empty{margin-top:6px; font-size:12px; color:var(--muted);}
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="top">
+  <div class="shell">
+    <div class="topbar">
       <div class="title">Wrike Projects</div>
       <div class="admin">
         <input id="adminKey" type="password" placeholder="Admin key (Archive)" />
@@ -175,12 +158,11 @@
     <div class="panel">
       <div class="card">
         <div class="sectionTitle">My Wrike Projects</div>
-        <div id="metaLine" class="metaLine"></div>
         <div id="list" class="list"></div>
-        <div id="empty" class="empty">No projects found. (Try the Worker diagnostics: ?action=whoami and ?action=debugTasks)</div>
+        <div id="empty" class="empty" style="display:none;"></div>
         <div id="err" class="err"></div>
-        <div class="metaLine" style="margin-top:14px;">
-          <div id="whStatus"></div>
+        <div class="footerNote">
+          Comment badges auto-update (polls Worker KV counts; webhook pushes updates into KV).
         </div>
       </div>
     </div>
@@ -190,24 +172,25 @@
     // ========= CONFIG =========
     const WORKER_URL = "https://wrike-proxy.dustinjsmith.workers.dev/";
     const PM_FIELD = "Project Manager";
-    const ASSIGNED_FIELD = "Assignee";
+    // allow either name (Worker will resolve whichever exists)
+    const ASSIGNED_FIELD = "Assignee,Assigned";
     const LIMIT = 25;
     const UNREAD_POLL_MS = 20000;
 
+    // ========= STATE =========
     let projects = [];
     let unreadTimer = null;
-    let webhookTimer = null;
-    const locallyClearedAt = new Map();
 
     const $ = (id) => document.getElementById(id);
     const listEl = $("list");
     const errEl = $("err");
     const emptyEl = $("empty");
-    const metaLineEl = $("metaLine");
-    const whEl = $("whStatus");
 
     const showError = (msg) => { errEl.style.display="block"; errEl.textContent=msg; };
     const clearError = () => { errEl.style.display="none"; errEl.textContent=""; };
+
+    const showEmpty = (msg) => { emptyEl.style.display="block"; emptyEl.textContent=msg; };
+    const clearEmpty = () => { emptyEl.style.display="none"; emptyEl.textContent=""; };
 
     const apiUrl = (params) => {
       const u = new URL(WORKER_URL);
@@ -219,14 +202,13 @@
       const r = await fetch(url, init);
       const text = await r.text();
       let j; try { j = JSON.parse(text); } catch { j = { raw: text }; }
-      if (!r.ok) throw new Error(j?.error ? j.error : `HTTP ${r.status}: ${text}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}: ${text}`);
       return j;
     }
 
     function setBadge(projectId, count) {
       const badge = document.querySelector(`[data-badge-for="${projectId}"]`);
       if (!badge) return;
-
       const n = Math.max(0, Number(count || 0));
       if (n > 0) {
         badge.textContent = String(Math.min(99, n));
@@ -239,7 +221,11 @@
 
     function render() {
       listEl.innerHTML = "";
-      emptyEl.style.display = projects.length ? "none" : "block";
+      if (!projects.length) {
+        showEmpty("No projects found (you must match PM/Owner/Responsible). If this seems wrong, hit /?action=whoami and /?action=debugTasks.");
+        return;
+      }
+      clearEmpty();
 
       for (const p of projects) {
         const row = document.createElement("div");
@@ -262,13 +248,15 @@
         const btns = document.createElement("div");
         btns.className = "btns";
 
+        // Repo
         const repoBtn = document.createElement("a");
-        repoBtn.className = "btn repo";
+        repoBtn.className = "btn repo" + (p.repoUrl ? "" : " disabled");
         repoBtn.textContent = "Repo";
+        repoBtn.href = p.repoUrl || "#";
         repoBtn.target = "_blank";
         repoBtn.rel = "noopener";
-        repoBtn.href = p.repoUrl || "#";
 
+        // Open (+ badge)
         const openBtn = document.createElement("a");
         openBtn.className = "btn open";
         openBtn.textContent = "Open";
@@ -281,23 +269,20 @@
         badge.setAttribute("data-badge-for", p.id);
         openBtn.appendChild(badge);
 
-        const markSeenNow = () => {
-          const u = apiUrl({ action: "markSeen", projectId: p.id, _ts: String(Date.now()) });
-
-          locallyClearedAt.set(p.id, Date.now());
+        openBtn.addEventListener("click", () => {
+          // Clear immediately in UI
           setBadge(p.id, 0);
 
-          let queued = false;
-          try { if (navigator.sendBeacon) queued = navigator.sendBeacon(u, ""); } catch {}
-          if (!queued) {
-            try { (new Image()).src = u; } catch {}
-            fetch(u, { method: "POST", keepalive: true }).catch(()=>{});
+          // Persist clear to KV so polling doesn't restore it
+          const url = apiUrl({ action: "markSeen", projectId: p.id });
+          try {
+            navigator.sendBeacon(url, "");
+          } catch {
+            fetch(url, { method: "POST", keepalive: true }).catch(()=>{});
           }
-        };
+        });
 
-        openBtn.addEventListener("pointerdown", markSeenNow);
-        openBtn.addEventListener("click", markSeenNow);
-
+        // Archive
         const archiveBtn = document.createElement("button");
         archiveBtn.className = "btn archive";
         archiveBtn.textContent = "Archive";
@@ -307,10 +292,8 @@
           archiveBtn.textContent = "Archiving…";
           archiveBtn.disabled = true;
           try {
-            await fetchJson(apiUrl({ action: "archiveRepo", projectId: p.id, adminKey }), { method: "POST" });
-            projects = projects.filter(x => x.id !== p.id);
-            render();
-            await refreshUnreadCounts();
+            const res = await fetchJson(apiUrl({ action: "archiveRepo", projectId: p.id, adminKey }), { method: "POST" });
+            if (res?.repoUrl) { p.repoUrl = res.repoUrl; render(); }
           } catch (err) {
             alert(String(err));
           } finally {
@@ -332,58 +315,32 @@
     async function refreshUnreadCounts() {
       if (!projects.length) return;
       const ids = projects.map(p => p.id).join(",");
-      const data = await fetchJson(apiUrl({ action: "unreadCounts", ids, _ts: String(Date.now()) }), { cache: "no-store" });
+      const data = await fetchJson(apiUrl({ action: "unreadCounts", ids }), { cache: "no-store" });
       const counts = data.counts || {};
-      const now = Date.now();
-
-      for (const p of projects) {
-        let c = Number(counts[p.id] || 0);
-        const clearedAt = locallyClearedAt.get(p.id) || 0;
-        if (clearedAt && (now - clearedAt) < 5000) c = 0;
-        if (c === 0) locallyClearedAt.delete(p.id);
-        setBadge(p.id, c);
-      }
-    }
-
-    async function refreshWebhookStatus() {
-      try {
-        const data = await fetchJson(apiUrl({ action: "webhookStatus", _ts: String(Date.now()) }), { cache: "no-store" });
-        const s = data.status;
-        if (!s || !s.receivedAt) {
-          whEl.textContent = "Webhook: no events received yet.";
-          return;
-        }
-        const dt = new Date(s.receivedAt);
-        const types = Array.isArray(s.eventTypes) ? s.eventTypes.slice(0, 4).join(", ") : "";
-        whEl.textContent = `Webhook: last received ${dt.toLocaleString()}${types ? " (" + types + ")" : ""}`;
-      } catch {
-        whEl.textContent = "Webhook: status unavailable.";
-      }
+      for (const p of projects) setBadge(p.id, counts[p.id] || 0);
     }
 
     async function loadProjects() {
       clearError();
-      const data = await fetchJson(apiUrl({
-        pmField: PM_FIELD,
-        assignedField: ASSIGNED_FIELD,
-        limit: String(LIMIT)
-      }));
+      clearEmpty();
+
+      const data = await fetchJson(
+        apiUrl({ pmField: PM_FIELD, assignedField: ASSIGNED_FIELD, limit: String(LIMIT) }),
+        { cache: "no-store" }
+      );
+
       projects = data.projects || [];
-      const meta = data.meta || {};
-
-      const who = (meta.meName || meta.meEmail) ? `Token user: ${meta.meName || "(unknown)"} ${meta.meEmail ? "<" + meta.meEmail + ">" : ""}\n` : "";
-      const counts = `Scanned: ${meta.projectsScanned || 0} | Owner matches: ${meta.ownerMatched || 0} | PM matches: ${meta.pmMatched || 0} | Task-derived: ${meta.taskDerivedProjectCount || 0}`;
-      metaLineEl.textContent = `${who}${meta.note || ""}\n${counts}`;
-
       render();
+
       await refreshUnreadCounts();
-      await refreshWebhookStatus();
 
       if (unreadTimer) clearInterval(unreadTimer);
       unreadTimer = setInterval(refreshUnreadCounts, UNREAD_POLL_MS);
 
-      if (webhookTimer) clearInterval(webhookTimer);
-      webhookTimer = setInterval(refreshWebhookStatus, 60000);
+      // If repos are auto-created in background, refresh once shortly after.
+      if (projects.some(p => !p.repoUrl)) {
+        setTimeout(() => loadProjects().catch(()=>{}), 6000);
+      }
     }
 
     loadProjects().catch(e => showError(String(e)));
