@@ -78,7 +78,7 @@
       background: linear-gradient(180deg, var(--card), var(--card2));
     }
     .sectionTitle{ font-weight:750; margin-bottom:10px; opacity:.92; }
-    .metaLine{ font-size:12px; opacity:.75; margin-bottom:14px; }
+    .metaLine{ font-size:12px; opacity:.75; margin-bottom:14px; white-space:pre-wrap; }
     .list{ display:flex; flex-direction:column; gap:12px; }
     .row{
       border:1px solid var(--stroke);
@@ -177,7 +177,7 @@
         <div class="sectionTitle">My Wrike Projects</div>
         <div id="metaLine" class="metaLine"></div>
         <div id="list" class="list"></div>
-        <div id="empty" class="empty">No projects found where you are PM or Assignee, or have tasks assigned.</div>
+        <div id="empty" class="empty">No projects found. (Try the Worker diagnostics: ?action=whoami and ?action=debugTasks)</div>
         <div id="err" class="err"></div>
         <div class="metaLine" style="margin-top:14px;">
           <div id="whStatus"></div>
@@ -190,7 +190,7 @@
     // ========= CONFIG =========
     const WORKER_URL = "https://wrike-proxy.dustinjsmith.workers.dev/";
     const PM_FIELD = "Project Manager";
-    const ASSIGNED_FIELD = "Assignee"; // project-level custom field name (if you have one)
+    const ASSIGNED_FIELD = "Assignee"; // if you have a project custom field named this (your meta earlier says you do NOT)
     const LIMIT = 25;
     const UNREAD_POLL_MS = 20000;
 
@@ -370,7 +370,10 @@
       }));
       projects = data.projects || [];
       const meta = data.meta || {};
-      metaLineEl.textContent = meta.note || "Filtering: PM/Assignee + tasks assigned to you.";
+
+      const who = (meta.meName || meta.meEmail) ? `Token user: ${meta.meName || "(unknown)"} ${meta.meEmail ? "<" + meta.meEmail + ">" : ""}\n` : "";
+      const counts = `Scanned: ${meta.projectsScanned || 0} | Owner matches: ${meta.ownerMatched || 0} | PM matches: ${meta.pmMatched || 0} | Task-derived: ${meta.taskDerivedProjectCount || 0}`;
+      metaLineEl.textContent = `${who}${meta.note || ""}\n${counts}`;
 
       render();
       await refreshUnreadCounts();
