@@ -121,6 +121,7 @@
     }
     .btn.disabled{opacity:.45; cursor:not-allowed; pointer-events:none;}
 
+    /* Red numbered badge */
     .badge{
       position:absolute;
       top:-6px;
@@ -141,7 +142,7 @@
 
     .footerNote{margin-top:10px; font-size:12px; color:var(--muted);}
     .err{margin-top:10px; font-size:12px; color:#ffb4b4; display:none; white-space:pre-wrap;}
-    .empty{margin-top:6px; font-size:12px; color:var(--muted);}
+    .empty{padding:10px; color:var(--muted); font-size:12px;}
   </style>
 </head>
 
@@ -159,7 +160,6 @@
       <div class="card">
         <div class="sectionTitle">My Wrike Projects</div>
         <div id="list" class="list"></div>
-        <div id="empty" class="empty" style="display:none;"></div>
         <div id="err" class="err"></div>
         <div class="footerNote">
           Comment badges auto-update (polls Worker KV counts; webhook pushes updates into KV).
@@ -172,10 +172,13 @@
     // ========= CONFIG =========
     const WORKER_URL = "https://wrike-proxy.dustinjsmith.workers.dev/";
     const PM_FIELD = "Project Manager";
-    // allow either name (Worker will resolve whichever exists)
-    const ASSIGNED_FIELD = "Assignee,Assigned";
+    const ASSIGNED_FIELD = "Assigned";
     const LIMIT = 25;
     const UNREAD_POLL_MS = 20000;
+
+    // OPTIONAL (recommended): if you set DEFAULT_SPACE_ID in the Worker you can leave this blank.
+    // If you want to hard-scope from the widget side, paste the spaceId here:
+    const SPACE_ID = "";
 
     // ========= STATE =========
     let projects = [];
@@ -184,17 +187,16 @@
     const $ = (id) => document.getElementById(id);
     const listEl = $("list");
     const errEl = $("err");
-    const emptyEl = $("empty");
 
     const showError = (msg) => { errEl.style.display="block"; errEl.textContent=msg; };
     const clearError = () => { errEl.style.display="none"; errEl.textContent=""; };
 
-    const showEmpty = (msg) => { emptyEl.style.display="block"; emptyEl.textContent=msg; };
-    const clearEmpty = () => { emptyEl.style.display="none"; emptyEl.textContent=""; };
-
     const apiUrl = (params) => {
       const u = new URL(WORKER_URL);
-      Object.entries(params || {}).forEach(([k,v]) => u.searchParams.set(k, v));
+      Object.entries(params || {}).forEach(([k,v]) => {
+        if (v === undefined || v === null || v === "") return;
+        u.searchParams.set(k, v);
+      });
       return u.toString();
     };
 
@@ -222,10 +224,12 @@
     function render() {
       listEl.innerHTML = "";
       if (!projects.length) {
-        showEmpty("No projects found (you must match PM/Owner/Responsible). If this seems wrong, hit /?action=whoami and /?action=debugTasks.");
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No projects returned (check Worker meta / DEFAULT_SPACE_ID scope).";
+        listEl.appendChild(empty);
         return;
       }
-      clearEmpty();
 
       for (const p of projects) {
         const row = document.createElement("div");
@@ -270,16 +274,14 @@
         openBtn.appendChild(badge);
 
         openBtn.addEventListener("click", () => {
-          // Clear immediately in UI
-          setBadge(p.id, 0);
-
-          // Persist clear to KV so polling doesn't restore it
-          const url = apiUrl({ action: "markSeen", projectId: p.id });
+          // Mark seen but don't block navigation
+          const u = apiUrl({ action: "markSeen", projectId: p.id });
           try {
-            navigator.sendBeacon(url, "");
+            navigator.sendBeacon(u, "");
           } catch {
-            fetch(url, { method: "POST", keepalive: true }).catch(()=>{});
+            fetch(u, { method: "POST", keepalive: true }).catch(()=>{});
           }
+          setBadge(p.id, 0);
         });
 
         // Archive
@@ -322,25 +324,19 @@
 
     async function loadProjects() {
       clearError();
-      clearEmpty();
+      const params = {
+        pmField: PM_FIELD,
+        assignedField: ASSIGNED_FIELD,
+        limit: String(LIMIT),
+      };
+      if (SPACE_ID) params.spaceId = SPACE_ID;
 
-      const data = await fetchJson(
-        apiUrl({ pmField: PM_FIELD, assignedField: ASSIGNED_FIELD, limit: String(LIMIT) }),
-        { cache: "no-store" }
-      );
-
+      const data = await fetchJson(apiUrl(params));
       projects = data.projects || [];
       render();
-
       await refreshUnreadCounts();
-
       if (unreadTimer) clearInterval(unreadTimer);
       unreadTimer = setInterval(refreshUnreadCounts, UNREAD_POLL_MS);
-
-      // If repos are auto-created in background, refresh once shortly after.
-      if (projects.some(p => !p.repoUrl)) {
-        setTimeout(() => loadProjects().catch(()=>{}), 6000);
-      }
     }
 
     loadProjects().catch(e => showError(String(e)));
