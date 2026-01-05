@@ -177,7 +177,7 @@
         <div class="sectionTitle">My Wrike Projects</div>
         <div id="metaLine" class="metaLine"></div>
         <div id="list" class="list"></div>
-        <div id="empty" class="empty">No projects found where you are PM or have tasks assigned.</div>
+        <div id="empty" class="empty">No projects found where you are PM or Assignee, or have tasks assigned.</div>
         <div id="err" class="err"></div>
         <div class="metaLine" style="margin-top:14px;">
           <div id="whStatus"></div>
@@ -190,6 +190,7 @@
     // ========= CONFIG =========
     const WORKER_URL = "https://wrike-proxy.dustinjsmith.workers.dev/";
     const PM_FIELD = "Project Manager";
+    const ASSIGNED_FIELD = "Assignee"; // project-level custom field name (if you have one)
     const LIMIT = 25;
     const UNREAD_POLL_MS = 20000;
 
@@ -283,11 +284,9 @@
         const markSeenNow = () => {
           const u = apiUrl({ action: "markSeen", projectId: p.id, _ts: String(Date.now()) });
 
-          // instant UI clear
           locallyClearedAt.set(p.id, Date.now());
           setBadge(p.id, 0);
 
-          // best-effort send (works even when link opens a new tab)
           let queued = false;
           try { if (navigator.sendBeacon) queued = navigator.sendBeacon(u, ""); } catch {}
           if (!queued) {
@@ -364,12 +363,14 @@
 
     async function loadProjects() {
       clearError();
-      const data = await fetchJson(apiUrl({ pmField: PM_FIELD, limit: String(LIMIT) }));
+      const data = await fetchJson(apiUrl({
+        pmField: PM_FIELD,
+        assignedField: ASSIGNED_FIELD,
+        limit: String(LIMIT)
+      }));
       projects = data.projects || [];
       const meta = data.meta || {};
-      metaLineEl.textContent = meta.note
-        ? meta.note
-        : "Filtering: projects where you are PM OR have tasks assigned.";
+      metaLineEl.textContent = meta.note || "Filtering: PM/Assignee + tasks assigned to you.";
 
       render();
       await refreshUnreadCounts();
