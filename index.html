@@ -17,20 +17,22 @@
       --muted:rgba(243,244,246,.72);
 
       /* Card */
-      --cardBorder: rgba(255,198,39,.45);
-      --cardBorder2: rgba(255,198,39,.28);
-      --cardBg1: rgba(140,29,64,.30);
-      --cardBg2: rgba(18,18,24,.65);
+      --cardBorder: rgba(255,198,39,.60);
+      --cardBorderHover: rgba(255,198,39,.92);
+      --cardBg1: rgba(140,29,64,.32);
+      --cardBg2: rgba(18,18,24,.70);
 
       --shadow: 0 18px 40px rgba(0,0,0,.55);
       --shadowSoft: 0 10px 26px rgba(0,0,0,.35);
+      --shadowHover: 0 16px 34px rgba(0,0,0,.48);
+
       --radius: 18px;
     }
 
     html,body{height:100%;}
     body{
       margin:0;
-      background: transparent; /* plays nice inside Notion */
+      background: transparent;
       color:var(--ink);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       -webkit-font-smoothing: antialiased;
@@ -43,7 +45,6 @@
       padding: 12px;
     }
 
-    /* Outer "panel" */
     .panel{
       border-radius: 22px;
       background:
@@ -55,7 +56,6 @@
       overflow: hidden;
     }
 
-    /* Header */
     .header{
       padding: 16px 16px 12px;
     }
@@ -73,11 +73,10 @@
       margin-top: 10px;
       height: 2px;
       width: 100%;
-      background: linear-gradient(90deg, rgba(255,198,39,.85), rgba(255,198,39,.05));
+      background: linear-gradient(90deg, rgba(255,198,39,.90), rgba(255,198,39,.08));
       border-radius: 999px;
     }
 
-    /* List */
     .list{
       display: grid;
       grid-template-columns: 1fr;
@@ -87,21 +86,41 @@
 
     .card{
       border-radius: var(--radius);
-      border: 1px solid var(--cardBorder);
+      border: 2px solid var(--cardBorder); /* thicker */
       background:
-        radial-gradient(900px 220px at 15% 10%, rgba(255,198,39,.10), transparent 52%),
+        /* subtle inner gold glow */
+        radial-gradient(900px 240px at 20% 20%, rgba(255,198,39,.16), transparent 56%),
+        radial-gradient(700px 220px at 85% 25%, rgba(255,198,39,.08), transparent 55%),
         linear-gradient(135deg, var(--cardBg1), var(--cardBg2));
-      box-shadow: var(--shadowSoft);
+      box-shadow:
+        var(--shadowSoft),
+        inset 0 0 0 1px rgba(0,0,0,.35); /* inner edge */
       padding: 14px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 14px;
+
+      transition:
+        transform .12s ease,
+        box-shadow .16s ease,
+        border-color .16s ease,
+        filter .16s ease;
+      will-change: transform;
     }
 
-    .left{
-      min-width: 0;
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: var(--cardBorderHover);
+      box-shadow:
+        var(--shadowHover),
+        0 0 0 1px rgba(255,198,39,.12),
+        0 0 18px rgba(255,198,39,.18),
+        inset 0 0 0 1px rgba(0,0,0,.30);
+      filter: saturate(1.02);
     }
+
+    .left{ min-width:0; }
 
     .proj-title{
       margin: 0;
@@ -114,7 +133,6 @@
       text-overflow: ellipsis;
     }
 
-    /* Button */
     .btn{
       flex: 0 0 auto;
       appearance: none;
@@ -126,24 +144,27 @@
       color: #1a1300;
       text-decoration: none;
       cursor: pointer;
-      background: linear-gradient(180deg, #FFE08B, var(--asu-gold));
+      background: linear-gradient(180deg, #FFE49A, var(--asu-gold));
       box-shadow:
         0 10px 22px rgba(0,0,0,.35),
-        inset 0 1px 0 rgba(255,255,255,.55);
-      transition: transform .08s ease, filter .18s ease;
+        inset 0 1px 0 rgba(255,255,255,.60);
+      transition: transform .08s ease, filter .18s ease, box-shadow .18s ease;
       user-select: none;
       white-space: nowrap;
     }
     .btn:hover{
       transform: translateY(-1px);
-      filter: brightness(1.03);
+      filter: brightness(1.04);
+      box-shadow:
+        0 12px 26px rgba(0,0,0,.40),
+        0 0 18px rgba(255,198,39,.25),
+        inset 0 1px 0 rgba(255,255,255,.62);
     }
     .btn:active{
       transform: translateY(0px);
-      filter: brightness(.98);
+      filter: brightness(.99);
     }
 
-    /* Messages */
     .msg{
       margin: 0 14px 16px;
       border-radius: var(--radius);
@@ -158,16 +179,14 @@
       color: rgba(255, 160, 140, .95);
     }
 
-    /* Scrollbar polish (helps inside Notion embeds) */
     ::-webkit-scrollbar{ height: 10px; width: 10px; }
     ::-webkit-scrollbar-track{ background: rgba(255,255,255,.06); border-radius: 999px; }
     ::-webkit-scrollbar-thumb{
-      background: linear-gradient(180deg, rgba(255,198,39,.9), rgba(255,198,39,.45));
+      background: linear-gradient(180deg, rgba(255,198,39,.92), rgba(255,198,39,.45));
       border-radius: 999px;
       border: 2px solid rgba(0,0,0,.35);
     }
 
-    /* Mobile tweaks */
     @media (max-width: 520px){
       .title{ font-size: 18px; }
       .btn{ padding: 9px 14px; font-size: 13px; }
@@ -189,9 +208,7 @@
   </div>
 
   <script>
-    // Worker endpoint (keep as-is)
     const API_URL_BASE = "https://wrike-proxy.dustinjsmith.workers.dev/projects?pmField=Project%20Manager";
-    // Cache-bust each load (helps Notion/GitHub caching)
     const API_URL = `${API_URL_BASE}&_=${Date.now()}`;
 
     const content = document.getElementById("content");
@@ -247,7 +264,7 @@
         const projects = data.projects || [];
         if (!projects.length) {
           content.innerHTML = "";
-          setMessage("No active projects found.", "");
+          setMessage("No active projects found.");
           return;
         }
 
