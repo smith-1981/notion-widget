@@ -3,218 +3,263 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Wrike Projects (ASU)</title>
+  <title>ASU Outreach Hub — Wrike Projects</title>
   <style>
     :root{
+      /* ASU palette */
       --asu-maroon:#8C1D40;
       --asu-gold:#FFC627;
-      --card:#111827;
-      --card2:#0f172a;
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --border:#1f2937;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 16px;
+
+      /* Dark UI */
+      --bg0:#07070A;
+      --bg1:#0B0B10;
+      --ink:#F3F4F6;
+      --muted:rgba(243,244,246,.72);
+
+      /* Card */
+      --cardBorder: rgba(255,198,39,.45);
+      --cardBorder2: rgba(255,198,39,.28);
+      --cardBg1: rgba(140,29,64,.30);
+      --cardBg2: rgba(18,18,24,.65);
+
+      --shadow: 0 18px 40px rgba(0,0,0,.55);
+      --shadowSoft: 0 10px 26px rgba(0,0,0,.35);
+      --radius: 18px;
     }
 
     html,body{height:100%;}
     body{
       margin:0;
-      background: transparent;
-      color:var(--text);
+      background: transparent; /* plays nice inside Notion */
+      color:var(--ink);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    .wrap{
+    .frame{
       max-width: 980px;
       margin: 0 auto;
-      padding: 14px 14px 18px;
+      padding: 12px;
     }
 
-    .header{
-      background: linear-gradient(135deg, rgba(140,29,64,.35), rgba(255,198,39,.10));
-      border:1px solid rgba(255,198,39,.18);
-      border-radius: var(--radius);
+    /* Outer "panel" */
+    .panel{
+      border-radius: 22px;
+      background:
+        radial-gradient(1200px 380px at 20% -20%, rgba(255,198,39,.12), transparent 55%),
+        radial-gradient(900px 420px at 120% 0%, rgba(140,29,64,.22), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+      border: 1px solid rgba(255,255,255,.08);
       box-shadow: var(--shadow);
-      padding: 14px 14px 12px;
+      overflow: hidden;
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
+    /* Header */
+    .header{
+      padding: 16px 16px 12px;
     }
-    .dot{
-      width:10px;height:10px;border-radius:999px;
-      background: var(--asu-gold);
-      box-shadow: 0 0 0 4px rgba(255,198,39,.16);
-      flex:0 0 auto;
-    }
+
     .title{
-      font-weight: 800;
-      letter-spacing:.2px;
-      margin:0;
-      font-size: 16px;
-      line-height: 1.2;
-    }
-    .subtitle{
-      margin:4px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-      display:none; /* hidden */
+      margin: 0;
+      font-size: 22px;
+      font-weight: 850;
+      letter-spacing: .2px;
+      color: var(--asu-gold);
+      text-shadow: 0 6px 20px rgba(0,0,0,.45);
     }
 
-    .grid{
-      display:grid;
+    .divider{
+      margin-top: 10px;
+      height: 2px;
+      width: 100%;
+      background: linear-gradient(90deg, rgba(255,198,39,.85), rgba(255,198,39,.05));
+      border-radius: 999px;
+    }
+
+    /* List */
+    .list{
+      display: grid;
       grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 12px;
+      gap: 12px;
+      padding: 12px 14px 16px;
     }
 
     .card{
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(15,23,42,.9));
       border-radius: var(--radius);
-      box-shadow: 0 8px 22px rgba(0,0,0,.25);
-      padding: 12px;
-      display:flex;
-      align-items:center;
+      border: 1px solid var(--cardBorder);
+      background:
+        radial-gradient(900px 220px at 15% 10%, rgba(255,198,39,.10), transparent 52%),
+        linear-gradient(135deg, var(--cardBg1), var(--cardBg2));
+      box-shadow: var(--shadowSoft);
+      padding: 14px 14px;
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
     }
 
-    .left{ min-width:0; }
+    .left{
+      min-width: 0;
+    }
 
     .proj-title{
-      margin:0;
-      font-size: 14px;
-      font-weight: 750;
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.25;
+      font-weight: 800;
+      color: var(--ink);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
+    /* Button */
     .btn{
-      appearance:none;
-      border: 1px solid rgba(255,198,39,.55);
-      background: rgba(140,29,64,.25);
-      color: var(--text);
+      flex: 0 0 auto;
+      appearance: none;
+      border: 1px solid rgba(0,0,0,.35);
       border-radius: 999px;
-      padding: 8px 12px;
-      font-weight: 750;
-      cursor:pointer;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      transition: transform .08s ease, background .15s ease, border-color .15s ease;
-      flex:0 0 auto;
-      white-space:nowrap;
+      padding: 10px 16px;
+      font-weight: 900;
+      font-size: 14px;
+      color: #1a1300;
+      text-decoration: none;
+      cursor: pointer;
+      background: linear-gradient(180deg, #FFE08B, var(--asu-gold));
+      box-shadow:
+        0 10px 22px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.55);
+      transition: transform .08s ease, filter .18s ease;
+      user-select: none;
+      white-space: nowrap;
     }
     .btn:hover{
       transform: translateY(-1px);
-      background: rgba(140,29,64,.35);
-      border-color: rgba(255,198,39,.85);
+      filter: brightness(1.03);
+    }
+    .btn:active{
+      transform: translateY(0px);
+      filter: brightness(.98);
     }
 
-    .loading, .error, .empty{
-      margin-top: 12px;
-      border:1px dashed rgba(255,255,255,.18);
+    /* Messages */
+    .msg{
+      margin: 0 14px 16px;
       border-radius: var(--radius);
-      padding: 12px;
+      border: 1px dashed rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
       color: var(--muted);
-      background: rgba(0,0,0,.12);
+      padding: 12px 12px;
+      font-size: 13px;
+    }
+    .msg.error{
+      border-color: rgba(255, 99, 71, .45);
+      color: rgba(255, 160, 140, .95);
+    }
+
+    /* Scrollbar polish (helps inside Notion embeds) */
+    ::-webkit-scrollbar{ height: 10px; width: 10px; }
+    ::-webkit-scrollbar-track{ background: rgba(255,255,255,.06); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb{
+      background: linear-gradient(180deg, rgba(255,198,39,.9), rgba(255,198,39,.45));
+      border-radius: 999px;
+      border: 2px solid rgba(0,0,0,.35);
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 520px){
+      .title{ font-size: 18px; }
+      .btn{ padding: 9px 14px; font-size: 13px; }
+      .proj-title{ font-size: 14px; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="header">
-      <div class="brand">
-        <div class="dot"></div>
-        <div>
-          <p class="title">ASU Outreach Hub — Wrike Projects</p>
-          <p class="subtitle" id="subtitle">Loading…</p>
-        </div>
+  <div class="frame">
+    <div class="panel">
+      <div class="header">
+        <p class="title">ASU Outreach Hub — Wrike Projects</p>
+        <div class="divider"></div>
       </div>
-    </div>
 
-    <div id="content" class="grid"></div>
-    <div id="msg" class="loading">Fetching projects you’re involved in…</div>
+      <div id="content" class="list"></div>
+      <div id="msg" class="msg">Fetching projects you’re involved in…</div>
+    </div>
   </div>
 
-<script>
-  const API_URL_BASE = "https://wrike-proxy.dustinjsmith.workers.dev/projects?pmField=Project%20Manager";
-  const API_URL = `${API_URL_BASE}&_=${Date.now()}`;
+  <script>
+    // Worker endpoint (keep as-is)
+    const API_URL_BASE = "https://wrike-proxy.dustinjsmith.workers.dev/projects?pmField=Project%20Manager";
+    // Cache-bust each load (helps Notion/GitHub caching)
+    const API_URL = `${API_URL_BASE}&_=${Date.now()}`;
 
-  const content = document.getElementById("content");
-  const msg = document.getElementById("msg");
-  const subtitle = document.getElementById("subtitle");
+    const content = document.getElementById("content");
+    const msg = document.getElementById("msg");
 
-  // keep hidden no matter what
-  subtitle.style.display = "none";
-
-  function setMessage(type, text) {
-    msg.className = type;
-    msg.textContent = text;
-    msg.style.display = "block";
-  }
-
-  function hideMessage() {
-    msg.style.display = "none";
-  }
-
-  function render(projects) {
-    content.innerHTML = "";
-    for (const p of projects) {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      const left = document.createElement("div");
-      left.className = "left";
-
-      const h = document.createElement("p");
-      h.className = "proj-title";
-      h.textContent = p.title || "(Untitled)";
-      left.appendChild(h);
-
-      const a = document.createElement("a");
-      a.className = "btn";
-      a.href = p.openUrl;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.textContent = "Open";
-
-      card.appendChild(left);
-      card.appendChild(a);
-      content.appendChild(card);
+    function setMessage(text, type) {
+      msg.textContent = text;
+      msg.className = "msg" + (type ? ` ${type}` : "");
+      msg.style.display = "block";
     }
-  }
 
-  async function load() {
-    try {
-      setMessage("loading", "Fetching projects you’re involved in…");
-      const res = await fetch(API_URL, { cache: "no-store" });
-      const data = await res.json();
+    function hideMessage() {
+      msg.style.display = "none";
+    }
 
-      if (!data.ok) throw new Error(data.error || "Unknown error");
-
-      const projects = data.projects || [];
-      if (!projects.length) {
-        content.innerHTML = "";
-        setMessage("empty", "No matching projects found.");
-        return;
-      }
-
-      hideMessage();
-      render(projects);
-    } catch (e) {
+    function render(projects) {
       content.innerHTML = "";
-      setMessage("error", `Error loading projects: ${e.message || e}`);
-    }
-  }
 
-  load();
-</script>
+      for (const p of projects) {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const left = document.createElement("div");
+        left.className = "left";
+
+        const title = document.createElement("p");
+        title.className = "proj-title";
+        title.textContent = p.title || "(Untitled)";
+        left.appendChild(title);
+
+        const btn = document.createElement("a");
+        btn.className = "btn";
+        btn.href = p.openUrl;
+        btn.target = "_blank";
+        btn.rel = "noopener noreferrer";
+        btn.textContent = "Open";
+
+        card.appendChild(left);
+        card.appendChild(btn);
+        content.appendChild(card);
+      }
+    }
+
+    async function load() {
+      try {
+        setMessage("Fetching projects you’re involved in…");
+
+        const res = await fetch(API_URL, { cache: "no-store" });
+        const data = await res.json();
+
+        if (!data.ok) throw new Error(data.error || "Unknown error");
+
+        const projects = data.projects || [];
+        if (!projects.length) {
+          content.innerHTML = "";
+          setMessage("No active projects found.", "");
+          return;
+        }
+
+        hideMessage();
+        render(projects);
+      } catch (e) {
+        content.innerHTML = "";
+        setMessage(`Error loading projects: ${e.message || e}`, "error");
+      }
+    }
+
+    load();
+  </script>
 </body>
 </html>
