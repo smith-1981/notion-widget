@@ -12,8 +12,6 @@
       --text:#f4f4f5;
       --muted:rgba(244,244,245,.75);
       --btnStroke:rgba(255,255,255,.14);
-      --gold:#f5c542;
-      --red:#ff3b30;
       --pink:#ff4d9d;
       --shadow:0 16px 60px rgba(0,0,0,.55);
     }
@@ -46,21 +44,7 @@
       padding:14px 18px;
       border-bottom:1px solid var(--stroke);
     }
-    .title{font-weight:700; letter-spacing:.2px;}
-    .admin{
-      display:flex; align-items:center; gap:10px;
-      color:var(--muted); font-size:12px;
-    }
-    .admin input{
-      width:240px;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--btnStroke);
-      background:rgba(0,0,0,.25);
-      color:var(--text);
-      outline:none;
-    }
-    .admin .req{opacity:.9; font-weight:600;}
+    .title{font-weight:800; letter-spacing:.2px;}
     .panel{padding:16px 18px 18px;}
     .card{
       border:1px solid var(--stroke);
@@ -72,7 +56,7 @@
       font-size:13px;
       color:var(--muted);
       margin:0 0 10px 0;
-      font-weight:600;
+      font-weight:700;
     }
     .list{display:flex; flex-direction:column; gap:10px;}
     .row{
@@ -83,66 +67,44 @@
     }
     .meta{min-width:0;}
     .name{
-      font-weight:700; font-size:13px;
+      font-weight:800; font-size:13px;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width:640px;
+      max-width:720px;
     }
     .sub{margin-top:4px; font-size:12px; color:var(--muted);}
     .btns{display:flex; align-items:center; gap:10px; flex-shrink:0;}
     .btn{
-      position:relative;
       padding:8px 12px;
       border-radius:999px;
       border:1px solid var(--btnStroke);
       background:rgba(0,0,0,.18);
       color:var(--text);
       font-size:12px;
-      font-weight:700;
+      font-weight:800;
       cursor:pointer;
       text-decoration:none;
       user-select:none;
     }
     .btn:hover{filter:brightness(1.10)}
     .btn:active{transform:translateY(1px)}
-    .btn.repo{
-      background:rgba(245,197,66,.16);
-      border-color:rgba(245,197,66,.38);
-      color:var(--gold);
-    }
     .btn.open{
       background:rgba(255,77,157,.14);
       border-color:rgba(255,77,157,.34);
       color:#ffd1e5;
     }
-    .btn.archive{
-      background:rgba(255,255,255,.06);
-      border-color:rgba(255,255,255,.14);
-      color:rgba(255,255,255,.85);
-    }
-    .btn.disabled{opacity:.45; cursor:not-allowed; pointer-events:none;}
-
-    /* Red numbered badge */
-    .badge{
-      position:absolute;
-      top:-6px;
-      right:-6px;
-      min-width:18px;
-      height:18px;
-      padding:0 5px;
-      border-radius:999px;
-      background:var(--red);
-      color:white;
-      font-size:11px;
-      line-height:18px;
-      text-align:center;
-      box-shadow:0 0 0 2px rgba(0,0,0,.35);
+    .err{
+      margin-top:10px;
+      font-size:12px;
+      color:#ffb4b4;
       display:none;
+      white-space:pre-wrap;
     }
-    .badge.show{display:inline-block}
-
+    .empty{
+      padding:10px;
+      color:var(--muted);
+      font-size:12px;
+    }
     .footerNote{margin-top:10px; font-size:12px; color:var(--muted);}
-    .err{margin-top:10px; font-size:12px; color:#ffb4b4; display:none; white-space:pre-wrap;}
-    .empty{padding:10px; color:var(--muted); font-size:12px;}
   </style>
 </head>
 
@@ -150,10 +112,7 @@
   <div class="shell">
     <div class="topbar">
       <div class="title">Wrike Projects</div>
-      <div class="admin">
-        <input id="adminKey" type="password" placeholder="Admin key (Archive)" />
-        <span class="req">Key required</span>
-      </div>
+      <div style="font-size:12px;color:rgba(244,244,245,.7);font-weight:700;">ASU Outreach Hub</div>
     </div>
 
     <div class="panel">
@@ -162,7 +121,7 @@
         <div id="list" class="list"></div>
         <div id="err" class="err"></div>
         <div class="footerNote">
-          Comment badges auto-update (polls Worker KV counts; webhook pushes updates into KV).
+          Showing projects where you are Project Manager (custom field) or assigned to at least one task (responsible).
         </div>
       </div>
     </div>
@@ -172,17 +131,11 @@
     // ========= CONFIG =========
     const WORKER_URL = "https://wrike-proxy.dustinjsmith.workers.dev/";
     const PM_FIELD = "Project Manager";
-    const ASSIGNED_FIELD = "Assigned";
     const LIMIT = 25;
-    const UNREAD_POLL_MS = 20000;
 
-    // OPTIONAL (recommended): if you set DEFAULT_SPACE_ID in the Worker you can leave this blank.
-    // If you want to hard-scope from the widget side, paste the spaceId here:
+    // Optional: if you want to force a Space scope from the widget side,
+    // paste the spaceId here. Otherwise leave blank and (recommended) set DEFAULT_SPACE_ID in Worker.
     const SPACE_ID = "";
-
-    // ========= STATE =========
-    let projects = [];
-    let unreadTimer = null;
 
     const $ = (id) => document.getElementById(id);
     const listEl = $("list");
@@ -200,33 +153,21 @@
       return u.toString();
     };
 
-    async function fetchJson(url, init) {
-      const r = await fetch(url, init);
+    async function fetchJson(url) {
+      const r = await fetch(url, { cache: "no-store" });
       const text = await r.text();
       let j; try { j = JSON.parse(text); } catch { j = { raw: text }; }
       if (!r.ok) throw new Error(`HTTP ${r.status}: ${text}`);
       return j;
     }
 
-    function setBadge(projectId, count) {
-      const badge = document.querySelector(`[data-badge-for="${projectId}"]`);
-      if (!badge) return;
-      const n = Math.max(0, Number(count || 0));
-      if (n > 0) {
-        badge.textContent = String(Math.min(99, n));
-        badge.classList.add("show");
-      } else {
-        badge.textContent = "";
-        badge.classList.remove("show");
-      }
-    }
-
-    function render() {
+    function render(projects) {
       listEl.innerHTML = "";
-      if (!projects.length) {
+
+      if (!projects || !projects.length) {
         const empty = document.createElement("div");
         empty.className = "empty";
-        empty.textContent = "No projects returned (check Worker meta / DEFAULT_SPACE_ID scope).";
+        empty.textContent = "No projects returned. (If this seems wrong, test the Worker endpoint with ?action=whoami and check the meta block.)";
         listEl.appendChild(empty);
         return;
       }
@@ -252,15 +193,6 @@
         const btns = document.createElement("div");
         btns.className = "btns";
 
-        // Repo
-        const repoBtn = document.createElement("a");
-        repoBtn.className = "btn repo" + (p.repoUrl ? "" : " disabled");
-        repoBtn.textContent = "Repo";
-        repoBtn.href = p.repoUrl || "#";
-        repoBtn.target = "_blank";
-        repoBtn.rel = "noopener";
-
-        // Open (+ badge)
         const openBtn = document.createElement("a");
         openBtn.className = "btn open";
         openBtn.textContent = "Open";
@@ -268,45 +200,7 @@
         openBtn.target = "_blank";
         openBtn.rel = "noopener";
 
-        const badge = document.createElement("span");
-        badge.className = "badge";
-        badge.setAttribute("data-badge-for", p.id);
-        openBtn.appendChild(badge);
-
-        openBtn.addEventListener("click", () => {
-          // Mark seen but don't block navigation
-          const u = apiUrl({ action: "markSeen", projectId: p.id });
-          try {
-            navigator.sendBeacon(u, "");
-          } catch {
-            fetch(u, { method: "POST", keepalive: true }).catch(()=>{});
-          }
-          setBadge(p.id, 0);
-        });
-
-        // Archive
-        const archiveBtn = document.createElement("button");
-        archiveBtn.className = "btn archive";
-        archiveBtn.textContent = "Archive";
-        archiveBtn.addEventListener("click", async () => {
-          const adminKey = $("adminKey").value || "";
-          if (!adminKey) return alert("Admin key required to archive.");
-          archiveBtn.textContent = "Archiving…";
-          archiveBtn.disabled = true;
-          try {
-            const res = await fetchJson(apiUrl({ action: "archiveRepo", projectId: p.id, adminKey }), { method: "POST" });
-            if (res?.repoUrl) { p.repoUrl = res.repoUrl; render(); }
-          } catch (err) {
-            alert(String(err));
-          } finally {
-            archiveBtn.textContent = "Archive";
-            archiveBtn.disabled = false;
-          }
-        });
-
-        btns.appendChild(repoBtn);
         btns.appendChild(openBtn);
-        btns.appendChild(archiveBtn);
 
         row.appendChild(meta);
         row.appendChild(btns);
@@ -314,32 +208,20 @@
       }
     }
 
-    async function refreshUnreadCounts() {
-      if (!projects.length) return;
-      const ids = projects.map(p => p.id).join(",");
-      const data = await fetchJson(apiUrl({ action: "unreadCounts", ids }), { cache: "no-store" });
-      const counts = data.counts || {};
-      for (const p of projects) setBadge(p.id, counts[p.id] || 0);
-    }
-
-    async function loadProjects() {
+    async function load() {
       clearError();
+
       const params = {
         pmField: PM_FIELD,
-        assignedField: ASSIGNED_FIELD,
         limit: String(LIMIT),
       };
       if (SPACE_ID) params.spaceId = SPACE_ID;
 
       const data = await fetchJson(apiUrl(params));
-      projects = data.projects || [];
-      render();
-      await refreshUnreadCounts();
-      if (unreadTimer) clearInterval(unreadTimer);
-      unreadTimer = setInterval(refreshUnreadCounts, UNREAD_POLL_MS);
+      render(data.projects || []);
     }
 
-    loadProjects().catch(e => showError(String(e)));
+    load().catch(e => showError(String(e)));
   </script>
 </body>
 </html>
