@@ -6,17 +6,14 @@
   <title>ASU Outreach Hub — Wrike Projects</title>
   <style>
     :root{
-      /* ASU palette */
       --asu-maroon:#8C1D40;
       --asu-gold:#FFC627;
 
-      /* Dark UI */
       --bg0:#07070A;
       --bg1:#0B0B10;
       --ink:#F3F4F6;
       --muted:rgba(243,244,246,.72);
 
-      /* Card */
       --cardBorder: rgba(255,198,39,.60);
       --cardBorderHover: rgba(255,198,39,.92);
       --cardBg1: rgba(140,29,64,.32);
@@ -42,7 +39,7 @@
     .frame{
       max-width: 980px;
       margin: 0 auto;
-      padding: 12px;
+      padding: 10px; /* slightly tighter */
     }
 
     .panel{
@@ -57,12 +54,12 @@
     }
 
     .header{
-      padding: 16px 16px 12px;
+      padding: 14px 16px 10px; /* tighter */
     }
 
     .title{
       margin: 0;
-      font-size: 22px;
+      font-size: 20px; /* slightly smaller */
       font-weight: 850;
       letter-spacing: .2px;
       color: var(--asu-gold);
@@ -70,7 +67,7 @@
     }
 
     .divider{
-      margin-top: 10px;
+      margin-top: 8px; /* tighter */
       height: 2px;
       width: 100%;
       background: linear-gradient(90deg, rgba(255,198,39,.90), rgba(255,198,39,.08));
@@ -80,26 +77,26 @@
     .list{
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px;
-      padding: 12px 14px 16px;
+      gap: 8px;                 /* ✅ reduced row gap */
+      padding: 10px 12px 12px;  /* ✅ tighter list padding */
     }
 
     .card{
       border-radius: var(--radius);
-      border: 2px solid var(--cardBorder); /* thicker */
+      border: 2px solid var(--cardBorder);
       background:
-        /* subtle inner gold glow */
         radial-gradient(900px 240px at 20% 20%, rgba(255,198,39,.16), transparent 56%),
         radial-gradient(700px 220px at 85% 25%, rgba(255,198,39,.08), transparent 55%),
         linear-gradient(135deg, var(--cardBg1), var(--cardBg2));
       box-shadow:
         var(--shadowSoft),
-        inset 0 0 0 1px rgba(0,0,0,.35); /* inner edge */
-      padding: 14px 14px;
+        inset 0 0 0 1px rgba(0,0,0,.35);
+
+      padding: 10px 12px;   /* ✅ reduced card padding */
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
+      gap: 10px;            /* ✅ tighter internal gap */
 
       transition:
         transform .12s ease,
@@ -110,12 +107,12 @@
     }
 
     .card:hover{
-      transform: translateY(-2px);
+      transform: translateY(-1px); /* ✅ smaller lift */
       border-color: var(--cardBorderHover);
       box-shadow:
         var(--shadowHover),
         0 0 0 1px rgba(255,198,39,.12),
-        0 0 18px rgba(255,198,39,.18),
+        0 0 14px rgba(255,198,39,.18),
         inset 0 0 0 1px rgba(0,0,0,.30);
       filter: saturate(1.02);
     }
@@ -124,8 +121,8 @@
 
     .proj-title{
       margin: 0;
-      font-size: 15px;
-      line-height: 1.25;
+      font-size: 14px;      /* slightly smaller */
+      line-height: 1.2;
       font-weight: 800;
       color: var(--ink);
       white-space: nowrap;
@@ -138,9 +135,11 @@
       appearance: none;
       border: 1px solid rgba(0,0,0,.35);
       border-radius: 999px;
-      padding: 10px 16px;
+
+      padding: 8px 14px;    /* ✅ smaller button */
       font-weight: 900;
-      font-size: 14px;
+      font-size: 13px;      /* ✅ smaller button text */
+
       color: #1a1300;
       text-decoration: none;
       cursor: pointer;
@@ -157,7 +156,7 @@
       filter: brightness(1.04);
       box-shadow:
         0 12px 26px rgba(0,0,0,.40),
-        0 0 18px rgba(255,198,39,.25),
+        0 0 16px rgba(255,198,39,.22),
         inset 0 1px 0 rgba(255,255,255,.62);
     }
     .btn:active{
@@ -166,12 +165,12 @@
     }
 
     .msg{
-      margin: 0 14px 16px;
+      margin: 0 12px 12px;  /* tighter */
       border-radius: var(--radius);
       border: 1px dashed rgba(255,255,255,.18);
       background: rgba(0,0,0,.22);
       color: var(--muted);
-      padding: 12px 12px;
+      padding: 10px 12px;   /* tighter */
       font-size: 13px;
     }
     .msg.error{
@@ -189,8 +188,10 @@
 
     @media (max-width: 520px){
       .title{ font-size: 18px; }
-      .btn{ padding: 9px 14px; font-size: 13px; }
-      .proj-title{ font-size: 14px; }
+      .btn{ padding: 8px 12px; font-size: 13px; }
+      .proj-title{ font-size: 13.5px; }
+      .list{ gap: 7px; padding: 10px 10px 12px; }
+      .card{ padding: 9px 10px; }
     }
   </style>
 </head>
