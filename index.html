@@ -93,33 +93,6 @@
       text-overflow: ellipsis;
     }
 
-    .meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top: 6px;
-      align-items:center;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      color: var(--text);
-      font-size: 12px;
-    }
-    .pill .bar{
-      width:8px;height:8px;border-radius:999px;
-      background: var(--asu-gold);
-      opacity:.85;
-    }
-
     .btn{
       appearance:none;
       border: 1px solid rgba(255,198,39,.55);
@@ -170,7 +143,7 @@
   </div>
 
 <script>
-  // Your worker base URL is correct. We’re calling the /projects route.
+  // Your worker endpoint:
   const API_URL = "https://wrike-proxy.dustinjsmith.workers.dev/projects?pmField=Project%20Manager";
 
   const content = document.getElementById("content");
@@ -187,18 +160,6 @@
     msg.style.display = "none";
   }
 
-  function pill(label) {
-    const el = document.createElement("span");
-    el.className = "pill";
-    const bar = document.createElement("span");
-    bar.className = "bar";
-    const t = document.createElement("span");
-    t.textContent = label;
-    el.appendChild(bar);
-    el.appendChild(t);
-    return el;
-  }
-
   function render(projects) {
     content.innerHTML = "";
     for (const p of projects) {
@@ -213,22 +174,7 @@
       h.textContent = p.title || "(Untitled)";
       left.appendChild(h);
 
-      const meta = document.createElement("div");
-      meta.className = "meta";
-
-      if (p.status) {
-        const s = document.createElement("span");
-        s.textContent = `Status: ${p.status}`;
-        meta.appendChild(s);
-      }
-
-      if (Array.isArray(p.roles) && p.roles.length) {
-        meta.appendChild(pill(p.roles.join(" + ")));
-      }
-
-      left.appendChild(meta);
-
-      // Only Open button
+      // Only Open button (no status / no role pill)
       const a = document.createElement("a");
       a.className = "btn";
       a.href = p.openUrl;
