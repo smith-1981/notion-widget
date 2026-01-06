@@ -144,7 +144,8 @@
   </div>
 
 <script>
-  const API_URL = "https://wrike-proxy.dustinjsmith.workers.dev/projects?pmField=Project%20Manager";
+  const API_URL_BASE = "https://wrike-proxy.dustinjsmith.workers.dev/projects?pmField=Project%20Manager";
+  const API_URL = `${API_URL_BASE}&_=${Date.now()}`;
 
   const content = document.getElementById("content");
   const msg = document.getElementById("msg");
