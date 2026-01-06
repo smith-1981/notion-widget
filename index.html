@@ -39,7 +39,7 @@
     .frame{
       max-width: 980px;
       margin: 0 auto;
-      padding: 10px; /* slightly tighter */
+      padding: 10px;
     }
 
     .panel{
@@ -54,20 +54,20 @@
     }
 
     .header{
-      padding: 14px 16px 10px; /* tighter */
+      padding: 14px 16px 10px;
     }
 
     .title{
       margin: 0;
-      font-size: 20px; /* slightly smaller */
-      font-weight: 850;
+      font-size: 20px;
+      font-weight: 800; /* was 850 */
       letter-spacing: .2px;
       color: var(--asu-gold);
       text-shadow: 0 6px 20px rgba(0,0,0,.45);
     }
 
     .divider{
-      margin-top: 8px; /* tighter */
+      margin-top: 8px;
       height: 2px;
       width: 100%;
       background: linear-gradient(90deg, rgba(255,198,39,.90), rgba(255,198,39,.08));
@@ -77,8 +77,8 @@
     .list{
       display: grid;
       grid-template-columns: 1fr;
-      gap: 8px;                 /* ✅ reduced row gap */
-      padding: 10px 12px 12px;  /* ✅ tighter list padding */
+      gap: 8px;
+      padding: 10px 12px 12px;
     }
 
     .card{
@@ -92,11 +92,11 @@
         var(--shadowSoft),
         inset 0 0 0 1px rgba(0,0,0,.35);
 
-      padding: 10px 12px;   /* ✅ reduced card padding */
+      padding: 10px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;            /* ✅ tighter internal gap */
+      gap: 10px;
 
       transition:
         transform .12s ease,
@@ -107,7 +107,7 @@
     }
 
     .card:hover{
-      transform: translateY(-1px); /* ✅ smaller lift */
+      transform: translateY(-1px);
       border-color: var(--cardBorderHover);
       box-shadow:
         var(--shadowHover),
@@ -121,9 +121,9 @@
 
     .proj-title{
       margin: 0;
-      font-size: 14px;      /* slightly smaller */
+      font-size: 14px;
       line-height: 1.2;
-      font-weight: 800;
+      font-weight: 650; /* was 800 */
       color: var(--ink);
       white-space: nowrap;
       overflow: hidden;
@@ -136,9 +136,9 @@
       border: 1px solid rgba(0,0,0,.35);
       border-radius: 999px;
 
-      padding: 8px 14px;    /* ✅ smaller button */
-      font-weight: 900;
-      font-size: 13px;      /* ✅ smaller button text */
+      padding: 8px 14px;
+      font-weight: 700; /* was 900 */
+      font-size: 13px;
 
       color: #1a1300;
       text-decoration: none;
@@ -165,13 +165,14 @@
     }
 
     .msg{
-      margin: 0 12px 12px;  /* tighter */
+      margin: 0 12px 12px;
       border-radius: var(--radius);
       border: 1px dashed rgba(255,255,255,.18);
       background: rgba(0,0,0,.22);
       color: var(--muted);
-      padding: 10px 12px;   /* tighter */
+      padding: 10px 12px;
       font-size: 13px;
+      font-weight: 500;
     }
     .msg.error{
       border-color: rgba(255, 99, 71, .45);
