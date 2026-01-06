@@ -61,6 +61,7 @@
       margin:4px 0 0;
       color: var(--muted);
       font-size: 12px;
+      display:none; /* hidden */
     }
 
     .grid{
@@ -143,12 +144,14 @@
   </div>
 
 <script>
-  // Your worker endpoint:
   const API_URL = "https://wrike-proxy.dustinjsmith.workers.dev/projects?pmField=Project%20Manager";
 
   const content = document.getElementById("content");
   const msg = document.getElementById("msg");
   const subtitle = document.getElementById("subtitle");
+
+  // keep hidden no matter what
+  subtitle.style.display = "none";
 
   function setMessage(type, text) {
     msg.className = type;
@@ -174,7 +177,6 @@
       h.textContent = p.title || "(Untitled)";
       left.appendChild(h);
 
-      // Only Open button (no status / no role pill)
       const a = document.createElement("a");
       a.className = "btn";
       a.href = p.openUrl;
@@ -196,12 +198,10 @@
 
       if (!data.ok) throw new Error(data.error || "Unknown error");
 
-      subtitle.textContent = `User: ${data.user?.name || "Dustin"} • Projects: ${data.projects?.length || 0}`;
-
       const projects = data.projects || [];
       if (!projects.length) {
         content.innerHTML = "";
-        setMessage("empty", "No matching projects found (PM or Assignee).");
+        setMessage("empty", "No matching projects found.");
         return;
       }
 
@@ -209,7 +209,6 @@
       render(projects);
     } catch (e) {
       content.innerHTML = "";
-      subtitle.textContent = "Error";
       setMessage("error", `Error loading projects: ${e.message || e}`);
     }
   }
