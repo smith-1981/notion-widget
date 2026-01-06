@@ -8,7 +8,6 @@
     :root{
       --asu-maroon:#8C1D40;
       --asu-gold:#FFC627;
-      --bg:#0b0f14;
       --card:#111827;
       --card2:#0f172a;
       --text:#e5e7eb;
@@ -23,7 +22,7 @@
       margin:0;
       background: transparent;
       color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
     .wrap{
@@ -76,16 +75,14 @@
       background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(15,23,42,.9));
       border-radius: var(--radius);
       box-shadow: 0 8px 22px rgba(0,0,0,.25);
-      padding: 12px 12px;
+      padding: 12px;
       display:flex;
       align-items:center;
       justify-content: space-between;
       gap: 12px;
     }
 
-    .left{
-      min-width:0;
-    }
+    .left{ min-width:0; }
 
     .proj-title{
       margin:0;
@@ -117,7 +114,6 @@
       color: var(--text);
       font-size: 12px;
     }
-
     .pill .bar{
       width:8px;height:8px;border-radius:999px;
       background: var(--asu-gold);
@@ -147,10 +143,6 @@
       border-color: rgba(255,198,39,.85);
     }
 
-    .status{
-      opacity:.95;
-    }
-
     .loading, .error, .empty{
       margin-top: 12px;
       border:1px dashed rgba(255,255,255,.18);
@@ -158,12 +150,6 @@
       padding: 12px;
       color: var(--muted);
       background: rgba(0,0,0,.12);
-    }
-
-    .small{
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
     }
   </style>
 </head>
@@ -184,9 +170,8 @@
   </div>
 
 <script>
-  // ✅ CHANGE THIS to your Worker:
-  // Example: https://wrike-proxy.dustinjsmith.workers.dev/projects
-  const API_URL = "YOUR_WORKER_URL_HERE/projects?pmField=Project%20Manager";
+  // Your worker base URL is correct. We’re calling the /projects route.
+  const API_URL = "https://wrike-proxy.dustinjsmith.workers.dev/projects?pmField=Project%20Manager";
 
   const content = document.getElementById("content");
   const msg = document.getElementById("msg");
@@ -233,7 +218,6 @@
 
       if (p.status) {
         const s = document.createElement("span");
-        s.className = "status";
         s.textContent = `Status: ${p.status}`;
         meta.appendChild(s);
       }
@@ -244,6 +228,7 @@
 
       left.appendChild(meta);
 
+      // Only Open button
       const a = document.createElement("a");
       a.className = "btn";
       a.href = p.openUrl;
