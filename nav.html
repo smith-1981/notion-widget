@@ -4,21 +4,30 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Best-effort cache controls (some embeds ignore these, but they help when honored) -->
+  <!-- Best-effort cache controls -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <title>ASU Outreach Hub Nav</title>
+  <title>ASU Outreach Hub Nav (Dark)</title>
 
   <style>
     :root{
       --asu-maroon:#8C1D40;
       --asu-gold:#FFC627;
-      --ink:#1f2328;
-      --panel:#ffffff;
-      --border:rgba(31,35,40,.14);
-      --shadow:0 6px 16px rgba(0,0,0,.08);
+
+      --bg-1:#0b0c10;
+      --bg-2:#12131a;
+
+      --text:#f3f4f6;
+      --muted:rgba(243,244,246,.75);
+
+      --gold-border:rgba(255,198,39,.55);
+      --gold-border-strong:rgba(255,198,39,.80);
+      --row-border:rgba(255,198,39,.22);
+
+      --shadow: 0 10px 26px rgba(0,0,0,.55);
+      --glow: 0 0 0 1px rgba(255,198,39,.25), 0 0 22px rgba(255,198,39,.10);
     }
 
     html,body{height:100%}
@@ -26,7 +35,7 @@
       margin:0;
       background:transparent;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--ink);
+      color:var(--text);
     }
 
     .wrap{ padding:6px 8px; }
@@ -34,78 +43,140 @@
     .bar{
       display:flex;
       align-items:center;
-      gap:8px;
-      padding:8px;
-      border:1px solid var(--border);
-      border-radius:12px;
-      background:var(--panel);
-      box-shadow:var(--shadow);
+      gap:10px;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--gold-border);
+      background: linear-gradient(180deg, rgba(140,29,64,.26), rgba(0,0,0,.10)),
+                  linear-gradient(180deg, var(--bg-2), var(--bg-1));
+      box-shadow: var(--shadow), var(--glow);
       overflow-x:auto;
       -webkit-overflow-scrolling:touch;
     }
 
-    /* small ASU accent stripe */
-    .accent{
-      width:6px;
-      height:34px;
-      border-radius:8px;
-      background:linear-gradient(180deg, var(--asu-gold), rgba(255,198,39,.65));
-      box-shadow:0 0 0 3px rgba(255,198,39,.18);
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding-right:10px;
+      margin-right:4px;
+      border-right:1px solid rgba(255,198,39,.20);
       flex:0 0 auto;
     }
 
-    .btns{
+    .badge{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:var(--asu-gold);
+      box-shadow: 0 0 0 3px rgba(255,198,39,.18);
+      flex:0 0 auto;
+    }
+
+    .brandtext{
       display:flex;
-      gap:8px;
+      flex-direction:column;
+      line-height:1.05;
+      white-space:nowrap;
+    }
+
+    .brandtext .t{
+      font-weight:850;
+      font-size:12.5px;
+      letter-spacing:.3px;
+      color:var(--text);
+    }
+
+    .brandtext .s{
+      margin-top:3px;
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .items{
+      display:flex;
+      gap:10px;
       flex:1 1 auto;
       min-width:0;
     }
 
-    a.btn{
-      display:inline-flex;
+    a.item{
+      display:flex;
       align-items:center;
-      gap:8px;
-      padding:8px 10px;
-      border-radius:10px;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--row-border);
+      background: linear-gradient(90deg, rgba(140,29,64,.28), rgba(0,0,0,.15));
+      color:var(--text);
       text-decoration:none;
-      font-weight:750;
-      font-size:12.5px;
       white-space:nowrap;
-      border:1px solid rgba(140,29,64,.22);
-      background:linear-gradient(180deg, rgba(140,29,64,.06), rgba(140,29,64,.03));
-      color:var(--asu-maroon);
       flex:0 0 auto;
-      transition:transform .08s ease, background .12s ease, border-color .12s ease;
+      transition: transform .10s ease, border-color .12s ease, background .12s ease;
     }
 
-    a.btn:hover{
-      background:linear-gradient(180deg, rgba(255,198,39,.32), rgba(255,198,39,.14));
-      border-color:rgba(140,29,64,.35);
-      transform:translateY(-1px);
+    a.item:hover{
+      transform: translateY(-1px);
+      border-color: var(--gold-border-strong);
+      background: linear-gradient(90deg, rgba(140,29,64,.36), rgba(0,0,0,.20));
+    }
+
+    .left{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
     }
 
     .icon{
-      width:18px;
-      height:18px;
-      border-radius:8px;
+      width:22px;
+      height:22px;
+      border-radius:10px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      background:rgba(140,29,64,.10);
-      border:1px solid rgba(140,29,64,.18);
-      font-size:12px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      flex:0 0 auto;
+      font-size:13px;
       line-height:1;
     }
 
-    @media (max-width:520px){
+    .label{
+      font-weight:800;
+      font-size:13px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:220px;
+    }
+
+    .open{
+      margin-left:8px;
+      padding:7px 12px;
+      border-radius:12px;
+      background: linear-gradient(180deg, #FFE08A, var(--asu-gold));
+      color:#111;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.2px;
+      border:1px solid rgba(0,0,0,.18);
+      box-shadow: 0 6px 14px rgba(0,0,0,.35);
+      flex:0 0 auto;
+    }
+
+    /* compact on small embeds */
+    @media (max-width:600px){
+      .brand{display:none;}
       .wrap{padding:6px;}
-      .bar{padding:7px;}
-      a.btn{padding:8px 9px; font-size:12.25px;}
+      .bar{padding:9px;}
+      a.item{padding:9px 10px;}
+      .label{max-width:160px;}
+      .open{padding:6px 10px;}
     }
   </style>
 
   <script>
-    // Notion sometimes caches embeds. This makes the iframe URL unique once per load (no infinite loop).
+    // Helps with stale Notion embed caching. Adds ?v=timestamp once per load.
     (function () {
       try {
         const u = new URL(window.location.href);
@@ -120,26 +191,44 @@
 
 <body>
   <div class="wrap">
-    <div class="bar" role="navigation" aria-label="ASU Outreach Hub Navigation">
-      <div class="accent" aria-hidden="true"></div>
+    <div class="bar" role="navigation" aria-label="ASU Outreach Hub Navigation (Dark)">
+      <div class="brand" aria-hidden="true">
+        <div class="badge"></div>
+        <div class="brandtext">
+          <div class="t">ASU Outreach Hub</div>
+          <div class="s">Quick links</div>
+        </div>
+      </div>
 
-      <div class="btns">
-        <a class="btn"
+      <div class="items">
+        <a class="item"
            href="https://www.notion.so/Notes-2a2f187ac1be806f8690f0cce85d8eaf?source=copy_link"
            target="_top" rel="noopener">
-          <span class="icon">📝</span> Notes
+          <div class="left">
+            <span class="icon">📝</span>
+            <span class="label">Notes</span>
+          </div>
+          <span class="open">Open</span>
         </a>
 
-        <a class="btn"
+        <a class="item"
            href="https://www.notion.so/Tasks-and-Initiatives-2a4f187ac1be800c85f3eaa5ea2704f3?source=copy_link"
            target="_top" rel="noopener">
-          <span class="icon">✅</span> Tasks &amp; Initiatives
+          <div class="left">
+            <span class="icon">✅</span>
+            <span class="label">Tasks &amp; Initiatives</span>
+          </div>
+          <span class="open">Open</span>
         </a>
 
-        <a class="btn"
+        <a class="item"
            href="https://docs.google.com/document/d/1eF7myQINXl8mcoa1QINES7yeMET1NaX92LnjNmvS1Qw/edit?tab=t.0#heading=h.k5ll9k6j39p7"
            target="_top" rel="noopener">
-          <span class="icon">📅</span> PM Team Agenda
+          <div class="left">
+            <span class="icon">📅</span>
+            <span class="label">PM Team Agenda</span>
+          </div>
+          <span class="open">Open</span>
         </a>
       </div>
     </div>
