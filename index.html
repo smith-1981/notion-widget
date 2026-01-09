@@ -17,37 +17,79 @@
 
       --bg0:#0b0f17;
       --bg1:#0f1320;
-      --card:rgba(255,255,255,0.06);
-      --card2:rgba(255,255,255,0.08);
-      --border:rgba(255,255,255,0.12);
+
       --text:rgba(255,255,255,0.92);
       --muted:rgba(255,255,255,0.70);
       --muter:rgba(255,255,255,0.55);
+
       --shadow: 0 14px 40px rgba(0,0,0,0.45);
       --radius:18px;
       --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
 
-    html,body{height:100%}
+    /* Prevent odd clipping/sizing in embeds */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html,body{
+      width:100%;
+      height:100%;
+      min-height:100vh;
+    }
+
     body{
       margin:0;
       font-family:var(--font);
-      background:
-        radial-gradient(900px 380px at 10% 0%, rgba(140,29,64,0.35), transparent 55%),
-        radial-gradient(780px 360px at 95% 10%, rgba(255,198,39,0.20), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
       color:var(--text);
+      background: transparent; /* background moved to .bg for embed safety */
+      overflow-x:hidden;
     }
 
-    .wrap{ padding:18px; }
+    /* FULL-BLEED background that won't get "cut off" by iframe height quirks */
+    .bg{
+      position:fixed;
+      inset:-160px;              /* extend beyond edges so glows don't crop */
+      z-index:-2;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 420px at 10% 0%, rgba(140,29,64,0.45), transparent 60%),
+        radial-gradient(820px 380px at 95% 12%, rgba(255,198,39,0.28), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      filter: saturate(1.05);
+    }
+
+    .wrap{
+      padding:14px;              /* slightly tighter so it looks better in Notion */
+      min-height:100vh;          /* ensures content area always "fills" */
+    }
 
     .card{
+      position:relative;
+      isolation:isolate;         /* keeps pseudo layers contained */
       border-radius:var(--radius);
       border:1px solid rgba(255,255,255,0.10);
-      background:rgba(0,0,0,0.18);
+      background:rgba(8,10,16,0.62); /* a touch more opaque = cleaner */
       box-shadow:var(--shadow);
       overflow:hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
+
+    /* ASU glow INSIDE the card so it still looks branded even if outer bg is cropped */
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-140px;
+      z-index:0;
+      pointer-events:none;
+      background:
+        radial-gradient(760px 340px at 12% 0%, rgba(140,29,64,0.42), transparent 60%),
+        radial-gradient(700px 320px at 92% 10%, rgba(255,198,39,0.22), transparent 62%);
+      filter: blur(18px);
+      opacity:0.95;
+    }
+
+    /* Ensure content stays above the glow */
+    .card > *{ position:relative; z-index:1; }
 
     .header{
       padding:16px 18px 10px 18px;
@@ -121,7 +163,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 850px;
+      max-width: min(850px, 60vw); /* responsive for Notion columns */
     }
 
     .meta{
@@ -186,6 +228,8 @@
 </head>
 
 <body>
+  <div class="bg"></div>
+
   <div class="wrap">
     <div class="card">
       <div class="header">
@@ -202,7 +246,7 @@
         <div id="main"></div>
 
         <div class="hint">
-          Tip: You can force-refresh by adding <code>?v=</code> to the URL (e.g. <code>?v=2</code>) to bust embed caching.
+          Tip: You can force-refresh by adding <code>?v=</code> to the URL (e.g. <code>?v=3</code>) to bust embed caching.
         </div>
       </div>
     </div>
@@ -210,17 +254,14 @@
 
   <script>
     // === CONFIG ===
-    // If you want to hardcode your Worker, replace DEFAULT_WORKER below.
     const DEFAULT_WORKER =
       "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&assignedField=Assigned&limit=25";
 
-    // Allow overriding via URL param: ?worker=https://... (URL-encoded)
     function getWorkerUrl() {
       const params = new URLSearchParams(location.search);
       const override = params.get("worker");
       const base = override ? override : DEFAULT_WORKER;
 
-      // Cache-bust every time to avoid stale results in Notion embeds
       const u = new URL(base);
       u.searchParams.set("t", Date.now().toString());
       return u.toString();
@@ -319,7 +360,6 @@
       }
     }
 
-    // Ensures DOM exists before script runs (prevents “container not found” hangs)
     window.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
