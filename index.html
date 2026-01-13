@@ -13,21 +13,17 @@
     :root{
       --asu-maroon:#8C1D40;
       --asu-gold:#FFC627;
-
       --bg0:#0b0f17;
       --bg1:#0f1320;
-
       --text:rgba(255,255,255,0.92);
       --muted:rgba(255,255,255,0.70);
       --muter:rgba(255,255,255,0.55);
-
       --shadow: 0 14px 40px rgba(0,0,0,0.45);
       --radius:18px;
       --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-
     html,body{ width:100%; height:100%; min-height:100vh; }
 
     body{
@@ -119,10 +115,7 @@
       line-height:1;
     }
 
-    .dot{
-      width:8px;height:8px;border-radius:50%;
-      background:rgba(255,255,255,0.28);
-    }
+    .dot{ width:8px;height:8px;border-radius:50%; background:rgba(255,255,255,0.28); }
     .dot.ok{ background:rgba(0,255,170,0.55); }
     .dot.bad{ background:rgba(255,80,80,0.70); }
     .dot.load{ background:rgba(255,198,39,0.85); }
@@ -140,7 +133,6 @@
     }
 
     .left{ min-width:0; }
-
     .name{
       font-size:14px;
       font-weight:750;
@@ -152,12 +144,7 @@
       max-width: min(850px, 60vw);
     }
 
-    .meta{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
+    .meta{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
 
     .badge{
       font-size:12px;
@@ -259,7 +246,7 @@
   </div>
 
   <script>
-    const UI_VERSION = "2026-01-13-2"; // bump this when you deploy
+    const UI_VERSION = "2026-01-13-4"; // bump this when you deploy
 
     const DEFAULT_WORKER =
       "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&assignedField=Assigned&limit=25&dateField=Date";
@@ -270,16 +257,8 @@
       const base = override ? override : DEFAULT_WORKER;
 
       const u = new URL(base);
-
-      // ✅ Use the page's ?v= (or UI_VERSION) as a stable cache buster (no Date.now hammering)
       const v = pageParams.get("v") || UI_VERSION || "1";
       u.searchParams.set("t", v);
-
-      // Optional emergency hard refresh: add &refresh=1 to the page URL
-      if (pageParams.get("refresh") === "1") {
-        u.searchParams.set("t", Date.now().toString());
-      }
-
       return u.toString();
     }
 
@@ -306,4 +285,122 @@
       document.getElementById("newReqText").textContent = "New Request: 0";
       document.getElementById("activeText").textContent = "Active: 0";
       document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
-      if (workerUrl) document.getElementById("workerLink"
+      if (workerUrl) document.getElementById("workerLink").href = workerUrl;
+    }
+
+    function formatDue(isoDate) {
+      if (!isoDate) return null;
+      const d = new Date(isoDate + "T00:00:00Z");
+      if (isNaN(d.getTime())) return null;
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC"
+      }).format(d);
+    }
+
+    function updateTotals(projects) {
+      const active = projects.length;
+      const newReq = projects.reduce((acc, p) => {
+        const s = String(p.status || "").trim().toLowerCase();
+        return acc + (s === "new request" ? 1 : 0);
+      }, 0);
+
+      document.getElementById("newReqText").textContent = `New Request: ${newReq}`;
+      document.getElementById("activeText").textContent = `Active: ${active}`;
+      document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
+    }
+
+    function renderProjects(data) {
+      const main = document.getElementById("main");
+      const projects = Array.isArray(data?.projects) ? data.projects : [];
+      const userName = data?.user?.name ? data.user.name : "Unknown user";
+      document.getElementById("userText").textContent = userName;
+
+      updateTotals(projects);
+
+      if (!projects.length) {
+        main.innerHTML = `<div class="errorBox">No projects returned.</div>`;
+        return;
+      }
+
+      const items = projects.map(p => {
+        const title = esc(p.title);
+        const status = esc(p.status || "—");
+        const roles = Array.isArray(p.roles) ? p.roles : [];
+        const url = esc(p.openUrl || "#");
+
+        const duePretty = formatDue(p.dueDate);
+        const dueBadge = duePretty
+          ? `<span class="badge">${esc("Due: " + duePretty)}</span>`
+          : `<span class="badge dim">Due: —</span>`;
+
+        const roleBadges = roles.map(r => {
+          const cls = (r === "PM") ? "badge maroon" : "badge gold";
+          return `<span class="${cls}">${esc(r)}</span>`;
+        }).join("");
+
+        return `
+          <div class="item">
+            <div class="left">
+              <div class="name" title="${title}">${title}</div>
+              <div class="meta">
+                ${dueBadge}
+                <span class="badge">${status}</span>
+                ${roleBadges}
+              </div>
+            </div>
+            <div class="right">
+              <a class="open" href="${url}" target="_blank" rel="noopener noreferrer">Open in Wrike ↗</a>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      main.innerHTML = `<div class="list">${items}</div>`;
+    }
+
+    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    async function fetchJsonWithRetry(workerUrl) {
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const res = await fetch(workerUrl); // ✅ simplest fetch = least preflight headaches
+          if (!res.ok) {
+            const txt = await res.text().catch(() => "");
+            throw new Error(`Worker returned ${res.status}\n\n${txt}`);
+          }
+          return await res.json();
+        } catch (e) {
+          if (attempt === 2) throw e;
+          await sleep(300);
+        }
+      }
+    }
+
+    async function init() {
+      const workerUrl = getWorkerUrl();
+      document.getElementById("workerLink").href = workerUrl;
+      document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
+
+      try {
+        setState("load", "Fetching projects you’re involved in…");
+        const data = await fetchJsonWithRetry(workerUrl);
+
+        if (!data || data.ok !== true) {
+          throw new Error(`Unexpected payload:\n\n${JSON.stringify(data, null, 2)}`);
+        }
+
+        renderProjects(data);
+        setState("ok", `Loaded ${data.projects?.length ?? 0} projects`);
+      } catch (e) {
+        setState("bad", "Failed to load projects");
+        renderError(e?.message || String(e), workerUrl);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
