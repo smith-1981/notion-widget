@@ -211,6 +211,7 @@
     }
     a.open:hover{ background:rgba(255,255,255,0.08); }
 
+    /* Footer totals (same visual weight as your old Tip text) */
     .hint{
       margin-top:10px;
       font-size:12px;
@@ -251,7 +252,7 @@
 
         <div id="main"></div>
 
-        <!-- ✅ Replaces the old Tip text -->
+        <!-- ✅ Totals footer -->
         <div class="hint" id="totalsLine">
           <span id="newReqText">New Request: —</span>
           <span id="activeText">Active: —</span>
@@ -294,7 +295,6 @@
     function renderError(errText) {
       const main = document.getElementById("main");
       main.innerHTML = `<div class="errorBox">${esc(errText)}</div>`;
-      // keep totals sane on error
       document.getElementById("newReqText").textContent = "New Request: 0";
       document.getElementById("activeText").textContent = "Active: 0";
     }
@@ -311,10 +311,16 @@
       }).format(d);
     }
 
-    function updateTotals(data) {
-      const totals = data?.totals || {};
-      const newReq = Number.isFinite(+totals.newRequestCount) ? +totals.newRequestCount : 0;
-      const active = Number.isFinite(+totals.activeCount) ? +totals.activeCount : 0;
+    function updateTotals(projects) {
+      const active = projects.length;
+
+      // Counts only if status literally equals "New Request" (case-insensitive)
+      // If your Wrike API returns "Custom", this will show 0 until we classify by a different signal.
+      const newReq = projects.reduce((acc, p) => {
+        const s = String(p.status || "").trim().toLowerCase();
+        return acc + (s === "new request" ? 1 : 0);
+      }, 0);
+
       document.getElementById("newReqText").textContent = `New Request: ${newReq}`;
       document.getElementById("activeText").textContent = `Active: ${active}`;
     }
@@ -325,7 +331,7 @@
       const userName = data?.user?.name ? data.user.name : "Unknown user";
       document.getElementById("userText").textContent = userName;
 
-      updateTotals(data);
+      updateTotals(projects);
 
       if (!projects.length) {
         main.innerHTML = `<div class="errorBox">No projects returned.</div>`;
@@ -375,7 +381,7 @@
         const workerUrl = getWorkerUrl();
         console.log("[Wrike Widget] Worker URL:", workerUrl);
 
-        // ✅ Explicit CORS + omit credentials for Notion iframe safety
+        // ✅ Keep the known-good fetch settings for Notion
         const res = await fetch(workerUrl, {
           cache: "no-store",
           mode: "cors",
