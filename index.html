@@ -250,7 +250,6 @@
 
         <div id="main"></div>
 
-        <!-- ✅ Totals footer (replaces Tip) -->
         <div class="hint" id="totalsLine">
           <span id="newReqText">New Request: —</span>
           <span id="activeText">Active: —</span>
@@ -261,19 +260,28 @@
   </div>
 
   <script>
-    // ✅ Change this string when you deploy to confirm Notion is loading the new HTML
     const UI_VERSION = "2026-01-13-1";
 
     const DEFAULT_WORKER =
       "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&assignedField=Assigned&limit=25&dateField=Date";
 
+    // ✅ Key change: use ?v= (or UI_VERSION) to bust caching, NOT Date.now()
     function getWorkerUrl() {
       const params = new URLSearchParams(location.search);
       const override = params.get("worker");
       const base = override ? override : DEFAULT_WORKER;
 
       const u = new URL(base);
-      u.searchParams.set("t", Date.now().toString()); // cache-bust worker response
+
+      // Use the page's v=... if present, otherwise UI_VERSION.
+      const pageV = params.get("v") || UI_VERSION || "1";
+      u.searchParams.set("t", pageV);
+
+      // Optional: force a true one-off refresh by adding &refresh=1 to the page URL
+      if (params.get("refresh") === "1") {
+        u.searchParams.set("t", Date.now().toString());
+      }
+
       return u.toString();
     }
 
@@ -293,9 +301,10 @@
       document.getElementById("stateText").textContent = text;
     }
 
-    function renderError(errText) {
+    function renderError(errText, workerUrl) {
       const main = document.getElementById("main");
-      main.innerHTML = `<div class="errorBox">${esc(errText)}</div>`;
+      const extra = workerUrl ? `\n\nWorker URL:\n${workerUrl}` : "";
+      main.innerHTML = `<div class="errorBox">${esc(errText + extra)}</div>`;
       document.getElementById("newReqText").textContent = "New Request: 0";
       document.getElementById("activeText").textContent = "Active: 0";
       document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
@@ -316,7 +325,8 @@
     function updateTotals(projects) {
       const active = projects.length;
 
-      // Counts only if status literally equals "New Request" (case-insensitive)
+      // NOTE: Your payload currently shows status: "Custom" so New Request may remain 0
+      // until Wrike returns "New Request" in p.status or we classify using a different field.
       const newReq = projects.reduce((acc, p) => {
         const s = String(p.status || "").trim().toLowerCase();
         return acc + (s === "new request" ? 1 : 0);
@@ -376,25 +386,36 @@
       main.innerHTML = `<div class="list">${items}</div>`;
     }
 
+    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    async function fetchJsonWithRetry(workerUrl) {
+      const opts = { cache: "no-store", mode: "cors", credentials: "omit" };
+
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const res = await fetch(workerUrl, opts);
+
+          if (!res.ok) {
+            const txt = await res.text().catch(() => "");
+            throw new Error(`Worker returned ${res.status}\n\n${txt}`);
+          }
+
+          return await res.json();
+        } catch (e) {
+          if (attempt === 2) throw e;
+          await sleep(300);
+        }
+      }
+    }
+
     async function init() {
+      const workerUrl = getWorkerUrl();
       try {
         setState("load", "Fetching projects you’re involved in…");
-
-        const workerUrl = getWorkerUrl();
         console.log("[Wrike Widget] Worker URL:", workerUrl);
 
-        const res = await fetch(workerUrl, {
-          cache: "no-store",
-          mode: "cors",
-          credentials: "omit"
-        });
+        const data = await fetchJsonWithRetry(workerUrl);
 
-        if (!res.ok) {
-          const txt = await res.text().catch(() => "");
-          throw new Error(`Worker returned ${res.status}\n\n${txt}`);
-        }
-
-        const data = await res.json();
         if (!data || data.ok !== true) {
           throw new Error(`Unexpected payload:\n\n${JSON.stringify(data, null, 2)}`);
         }
@@ -404,7 +425,7 @@
       } catch (e) {
         console.error("[Wrike Widget] Error:", e);
         setState("bad", "Failed to load projects");
-        renderError(e?.message || String(e));
+        renderError(e?.message || String(e), workerUrl);
       }
     }
 
