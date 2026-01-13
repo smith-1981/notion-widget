@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Wrike Projects</title>
 
-  <!-- Helps reduce caching weirdness in embeds -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
@@ -211,7 +210,6 @@
     }
     a.open:hover{ background:rgba(255,255,255,0.08); }
 
-    /* Footer totals (same visual weight as your old Tip text) */
     .hint{
       margin-top:10px;
       font-size:12px;
@@ -252,17 +250,20 @@
 
         <div id="main"></div>
 
-        <!-- ✅ Totals footer -->
+        <!-- ✅ Totals footer (replaces Tip) -->
         <div class="hint" id="totalsLine">
           <span id="newReqText">New Request: —</span>
           <span id="activeText">Active: —</span>
+          <span id="uiVerText">UI v—</span>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // === CONFIG ===
+    // ✅ Change this string when you deploy to confirm Notion is loading the new HTML
+    const UI_VERSION = "2026-01-13-1";
+
     const DEFAULT_WORKER =
       "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&assignedField=Assigned&limit=25&dateField=Date";
 
@@ -272,7 +273,7 @@
       const base = override ? override : DEFAULT_WORKER;
 
       const u = new URL(base);
-      u.searchParams.set("t", Date.now().toString()); // cache-bust
+      u.searchParams.set("t", Date.now().toString()); // cache-bust worker response
       return u.toString();
     }
 
@@ -297,11 +298,12 @@
       main.innerHTML = `<div class="errorBox">${esc(errText)}</div>`;
       document.getElementById("newReqText").textContent = "New Request: 0";
       document.getElementById("activeText").textContent = "Active: 0";
+      document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
     }
 
     function formatDue(isoDate) {
       if (!isoDate) return null;
-      const d = new Date(isoDate + "T00:00:00Z"); // stable UTC date
+      const d = new Date(isoDate + "T00:00:00Z");
       if (isNaN(d.getTime())) return null;
       return new Intl.DateTimeFormat("en-US", {
         month: "short",
@@ -315,7 +317,6 @@
       const active = projects.length;
 
       // Counts only if status literally equals "New Request" (case-insensitive)
-      // If your Wrike API returns "Custom", this will show 0 until we classify by a different signal.
       const newReq = projects.reduce((acc, p) => {
         const s = String(p.status || "").trim().toLowerCase();
         return acc + (s === "new request" ? 1 : 0);
@@ -323,6 +324,7 @@
 
       document.getElementById("newReqText").textContent = `New Request: ${newReq}`;
       document.getElementById("activeText").textContent = `Active: ${active}`;
+      document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
     }
 
     function renderProjects(data) {
@@ -381,14 +383,11 @@
         const workerUrl = getWorkerUrl();
         console.log("[Wrike Widget] Worker URL:", workerUrl);
 
-        // ✅ Keep the known-good fetch settings for Notion
         const res = await fetch(workerUrl, {
           cache: "no-store",
           mode: "cors",
           credentials: "omit"
         });
-
-        console.log("[Wrike Widget] Response status:", res.status);
 
         if (!res.ok) {
           const txt = await res.text().catch(() => "");
@@ -396,8 +395,6 @@
         }
 
         const data = await res.json();
-        console.log("[Wrike Widget] Data:", data);
-
         if (!data || data.ok !== true) {
           throw new Error(`Unexpected payload:\n\n${JSON.stringify(data, null, 2)}`);
         }
