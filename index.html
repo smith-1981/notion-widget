@@ -234,8 +234,8 @@
         <div id="main"></div>
 
         <div class="hint" id="totalsLine">
-          <span id="newReqText">New Request: —</span>
-          <span id="activeText">Active: —</span>
+          <span id="newReqText">New Requests: —</span>
+          <span id="activeText">Active Projects: —</span>
           <span id="uiVerText">UI v—</span>
           <span>•</span>
           <a id="workerLink" class="miniLink" href="#" target="_blank" rel="noopener noreferrer">Worker JSON</a>
@@ -245,7 +245,7 @@
   </div>
 
   <script>
-    const UI_VERSION = "2026-01-13-5"; // bump when you deploy
+    const UI_VERSION = "2026-01-13-6";
 
     const DEFAULT_WORKER =
       "https://wrike-proxy.dustinjsmith.workers.dev/?" +
@@ -259,7 +259,7 @@
 
       const u = new URL(base);
       const v = pageParams.get("v") || UI_VERSION || "1";
-      u.searchParams.set("t", v); // stable cache-bust
+      u.searchParams.set("t", v);
       return u.toString();
     }
 
@@ -283,8 +283,8 @@
       const main = document.getElementById("main");
       const extra = workerUrl ? `\n\nWorker URL:\n${workerUrl}` : "";
       main.innerHTML = `<div class="errorBox">${esc(errText + extra)}</div>`;
-      document.getElementById("newReqText").textContent = "New Request: 0";
-      document.getElementById("activeText").textContent = "Active: 0";
+      document.getElementById("newReqText").textContent = "New Requests: 0";
+      document.getElementById("activeText").textContent = "Active Projects: 0";
       document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
       if (workerUrl) document.getElementById("workerLink").href = workerUrl;
     }
@@ -301,14 +301,13 @@
       }).format(d);
     }
 
-    // ✅ Totals now come from Worker portfolio totals (NOT the user-filtered list)
     function updateTotalsFromPayload(data) {
-      const totals = data?.totals || null;
+      const totals = data?.totals || {};
       const newReq = Number(totals?.newRequests ?? 0);
       const active = Number(totals?.activeProjects ?? 0);
 
-      document.getElementById("newReqText").textContent = `New Request: ${newReq}`;
-      document.getElementById("activeText").textContent = `Active: ${active}`;
+      document.getElementById("newReqText").textContent = `New Requests: ${newReq}`;
+      document.getElementById("activeText").textContent = `Active Projects: ${active}`;
       document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
     }
 
