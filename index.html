@@ -28,11 +28,7 @@
 
     *, *::before, *::after { box-sizing: border-box; }
 
-    html,body{
-      width:100%;
-      height:100%;
-      min-height:100vh;
-    }
+    html,body{ width:100%; height:100%; min-height:100vh; }
 
     body{
       margin:0;
@@ -54,10 +50,7 @@
       filter: saturate(1.05);
     }
 
-    .wrap{
-      padding:14px;
-      min-height:100vh;
-    }
+    .wrap{ padding:14px; min-height:100vh; }
 
     .card{
       position:relative;
@@ -86,9 +79,7 @@
 
     .card > *{ position:relative; z-index:1; }
 
-    .header{
-      padding:16px 18px 10px 18px;
-    }
+    .header{ padding:16px 18px 10px 18px; }
 
     .title{
       font-size:26px;
@@ -132,7 +123,6 @@
       width:8px;height:8px;border-radius:50%;
       background:rgba(255,255,255,0.28);
     }
-
     .dot.ok{ background:rgba(0,255,170,0.55); }
     .dot.bad{ background:rgba(255,80,80,0.70); }
     .dot.load{ background:rgba(255,198,39,0.85); }
@@ -150,6 +140,7 @@
     }
 
     .left{ min-width:0; }
+
     .name{
       font-size:14px;
       font-weight:750;
@@ -220,6 +211,12 @@
       align-items:center;
     }
 
+    .miniLink{
+      color: rgba(255,255,255,0.75);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
     .errorBox{
       border:1px solid rgba(255,80,80,0.45);
       background: rgba(255,80,80,0.10);
@@ -254,31 +251,32 @@
           <span id="newReqText">New Request: —</span>
           <span id="activeText">Active: —</span>
           <span id="uiVerText">UI v—</span>
+          <span>•</span>
+          <a id="workerLink" class="miniLink" href="#" target="_blank" rel="noopener noreferrer">Worker JSON</a>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    const UI_VERSION = "2026-01-13-1";
+    const UI_VERSION = "2026-01-13-2"; // bump this when you deploy
 
     const DEFAULT_WORKER =
       "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&assignedField=Assigned&limit=25&dateField=Date";
 
-    // ✅ Key change: use ?v= (or UI_VERSION) to bust caching, NOT Date.now()
     function getWorkerUrl() {
-      const params = new URLSearchParams(location.search);
-      const override = params.get("worker");
+      const pageParams = new URLSearchParams(location.search);
+      const override = pageParams.get("worker");
       const base = override ? override : DEFAULT_WORKER;
 
       const u = new URL(base);
 
-      // Use the page's v=... if present, otherwise UI_VERSION.
-      const pageV = params.get("v") || UI_VERSION || "1";
-      u.searchParams.set("t", pageV);
+      // ✅ Use the page's ?v= (or UI_VERSION) as a stable cache buster (no Date.now hammering)
+      const v = pageParams.get("v") || UI_VERSION || "1";
+      u.searchParams.set("t", v);
 
-      // Optional: force a true one-off refresh by adding &refresh=1 to the page URL
-      if (params.get("refresh") === "1") {
+      // Optional emergency hard refresh: add &refresh=1 to the page URL
+      if (pageParams.get("refresh") === "1") {
         u.searchParams.set("t", Date.now().toString());
       }
 
@@ -308,128 +306,4 @@
       document.getElementById("newReqText").textContent = "New Request: 0";
       document.getElementById("activeText").textContent = "Active: 0";
       document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
-    }
-
-    function formatDue(isoDate) {
-      if (!isoDate) return null;
-      const d = new Date(isoDate + "T00:00:00Z");
-      if (isNaN(d.getTime())) return null;
-      return new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        timeZone: "UTC"
-      }).format(d);
-    }
-
-    function updateTotals(projects) {
-      const active = projects.length;
-
-      // NOTE: Your payload currently shows status: "Custom" so New Request may remain 0
-      // until Wrike returns "New Request" in p.status or we classify using a different field.
-      const newReq = projects.reduce((acc, p) => {
-        const s = String(p.status || "").trim().toLowerCase();
-        return acc + (s === "new request" ? 1 : 0);
-      }, 0);
-
-      document.getElementById("newReqText").textContent = `New Request: ${newReq}`;
-      document.getElementById("activeText").textContent = `Active: ${active}`;
-      document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
-    }
-
-    function renderProjects(data) {
-      const main = document.getElementById("main");
-      const projects = Array.isArray(data?.projects) ? data.projects : [];
-      const userName = data?.user?.name ? data.user.name : "Unknown user";
-      document.getElementById("userText").textContent = userName;
-
-      updateTotals(projects);
-
-      if (!projects.length) {
-        main.innerHTML = `<div class="errorBox">No projects returned.</div>`;
-        return;
-      }
-
-      const items = projects.map(p => {
-        const title = esc(p.title);
-        const status = esc(p.status || "—");
-        const roles = Array.isArray(p.roles) ? p.roles : [];
-        const url = esc(p.openUrl || "#");
-
-        const duePretty = formatDue(p.dueDate);
-        const dueBadge = duePretty
-          ? `<span class="badge">${esc("Due: " + duePretty)}</span>`
-          : `<span class="badge dim">Due: —</span>`;
-
-        const roleBadges = roles.map(r => {
-          const cls = (r === "PM") ? "badge maroon" : "badge gold";
-          return `<span class="${cls}">${esc(r)}</span>`;
-        }).join("");
-
-        return `
-          <div class="item">
-            <div class="left">
-              <div class="name" title="${title}">${title}</div>
-              <div class="meta">
-                ${dueBadge}
-                <span class="badge">${status}</span>
-                ${roleBadges}
-              </div>
-            </div>
-            <div class="right">
-              <a class="open" href="${url}" target="_blank" rel="noopener noreferrer">Open in Wrike ↗</a>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      main.innerHTML = `<div class="list">${items}</div>`;
-    }
-
-    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-
-    async function fetchJsonWithRetry(workerUrl) {
-      const opts = { cache: "no-store", mode: "cors", credentials: "omit" };
-
-      for (let attempt = 1; attempt <= 2; attempt++) {
-        try {
-          const res = await fetch(workerUrl, opts);
-
-          if (!res.ok) {
-            const txt = await res.text().catch(() => "");
-            throw new Error(`Worker returned ${res.status}\n\n${txt}`);
-          }
-
-          return await res.json();
-        } catch (e) {
-          if (attempt === 2) throw e;
-          await sleep(300);
-        }
-      }
-    }
-
-    async function init() {
-      const workerUrl = getWorkerUrl();
-      try {
-        setState("load", "Fetching projects you’re involved in…");
-        console.log("[Wrike Widget] Worker URL:", workerUrl);
-
-        const data = await fetchJsonWithRetry(workerUrl);
-
-        if (!data || data.ok !== true) {
-          throw new Error(`Unexpected payload:\n\n${JSON.stringify(data, null, 2)}`);
-        }
-
-        renderProjects(data);
-        setState("ok", `Loaded ${data.projects?.length ?? 0} projects`);
-      } catch (e) {
-        console.error("[Wrike Widget] Error:", e);
-        setState("bad", "Failed to load projects");
-        renderError(e?.message || String(e), workerUrl);
-      }
-    }
-
-    window.addEventListener("DOMContentLoaded", init);
-  </script>
-</body>
-</html>
+      if (workerUrl) document.getElementById("workerLink"
