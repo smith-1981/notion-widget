@@ -253,7 +253,7 @@
 
   <script>
     // Bump this to confirm Notion is loading the newest HTML
-    const UI_VERSION = "2026-01-13-4";
+    const UI_VERSION = "2026-02-06-1";
 
     // IMPORTANT: keep these titles aligned with your Worker defaults
     const DEFAULT_WORKER =
@@ -323,7 +323,7 @@
       setTotals(newReq, active);
 
       if (!projects.length) {
-        main.innerHTML = `<div class="errorBox">No projects returned for you (PM/Assignee) in Active statuses.</div>`;
+        main.innerHTML = `<div class="errorBox">No projects returned for you (PM) in Active statuses.</div>`;
         return;
       }
 
