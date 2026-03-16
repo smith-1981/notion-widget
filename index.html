@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Wrike Projects</title>
+  <title>Wrike Governance Dashboard</title>
 
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -19,18 +19,17 @@
       --gold-border: rgba(255, 198, 39, .55);
 
       --text:rgba(255,255,255,0.92);
-      --muted:rgba(255,255,255,0.70);
-      --muter:rgba(255,255,255,0.55);
+      --muted:rgba(255,255,255,0.72);
+      --muter:rgba(255,255,255,0.56);
 
       --shadow: 0 14px 40px rgba(0,0,0,0.45);
       --radius:18px;
+      --radius-sm:14px;
       --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-
-    html,body{ width:100%; height:100%; min-height:100vh; }
-
+    html, body { width:100%; min-height:100%; }
     body{
       margin:0;
       font-family:var(--font);
@@ -51,13 +50,16 @@
       filter: saturate(1.05);
     }
 
-    .wrap{ padding:14px; min-height:100vh; }
+    .wrap{
+      padding:14px;
+      min-height:100vh;
+    }
 
-    .card{
+    .shell{
       position:relative;
       isolation:isolate;
       border-radius:var(--radius);
-      border:1px solid var(--gold-border); 
+      border:1px solid var(--gold-border);
       background:rgba(8,10,16,0.62);
       box-shadow:var(--shadow);
       overflow:hidden;
@@ -65,7 +67,7 @@
       -webkit-backdrop-filter: blur(10px);
     }
 
-    .card::before{
+    .shell::before{
       content:"";
       position:absolute;
       inset:-140px;
@@ -78,32 +80,55 @@
       opacity:0.95;
     }
 
-    .card > *{ position:relative; z-index:1; }
+    .shell > *{ position:relative; z-index:1; }
 
-    .header{ padding:16px 18px 10px 18px; }
+    .header{
+      padding:18px 20px 12px 20px;
+    }
+
+    .eyebrow{
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
 
     .title{
-      font-size:26px;
+      margin:0;
+      font-size:30px;
       font-weight:800;
       letter-spacing:0.2px;
-      margin:0 0 10px 0;
       color:var(--asu-gold);
     }
 
+    .subtitle{
+      margin:8px 0 0 0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      max-width:980px;
+    }
+
     .rule{
+      margin-top:14px;
       height:2px;
       width:100%;
       background:linear-gradient(90deg, var(--asu-gold), rgba(255,198,39,0.18));
       opacity:0.95;
     }
 
-    .content{ padding:14px 18px 18px 18px; }
+    .content{
+      padding:14px 20px 22px 20px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
 
     .statusRow{
       display:flex;
       gap:10px;
       align-items:center;
-      margin-bottom:12px;
       flex-wrap:wrap;
     }
 
@@ -120,34 +145,170 @@
       line-height:1;
     }
 
-    .dot{ width:8px;height:8px;border-radius:50%; background:rgba(255,255,255,0.28); }
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:rgba(255,255,255,0.28);
+    }
     .dot.ok{ background:rgba(0,255,170,0.55); }
     .dot.bad{ background:rgba(255,80,80,0.70); }
     .dot.load{ background:rgba(255,198,39,0.85); }
 
-    .list{ display:flex; flex-direction:column; gap:10px; }
+    .grid{
+      display:grid;
+      gap:14px;
+    }
+
+    .metrics{
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    }
+
+    .two{
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .three{
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .card{
+      border-radius:var(--radius-sm);
+      border:1px solid rgba(255,255,255,0.10);
+      background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      overflow:hidden;
+    }
+
+    .metric{
+      padding:14px 14px 12px 14px;
+      min-height:98px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .metric .label{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.07em;
+    }
+
+    .metric .value{
+      font-size:28px;
+      font-weight:800;
+      color:var(--text);
+      margin-top:8px;
+    }
+
+    .metric .sub{
+      margin-top:4px;
+      color:var(--muter);
+      font-size:12px;
+    }
+
+    .section{
+      border-radius:var(--radius-sm);
+      border:1px solid rgba(255,255,255,0.10);
+      background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      overflow:hidden;
+    }
+
+    .sectionHead{
+      padding:14px 16px 10px 16px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.03);
+    }
+
+    .sectionTitle{
+      margin:0;
+      font-size:17px;
+      font-weight:800;
+      color:var(--text);
+    }
+
+    .sectionDesc{
+      margin:6px 0 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .sectionBody{
+      padding:14px 16px 16px 16px;
+    }
+
+    .reportCard{
+      border-radius:var(--radius-sm);
+      border:1px solid rgba(255,255,255,0.10);
+      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      overflow:hidden;
+      min-height:180px;
+    }
+
+    .reportHead{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.03);
+    }
+
+    .reportTitle{
+      margin:0;
+      font-size:15px;
+      font-weight:800;
+      color:var(--text);
+    }
+
+    .count{
+      padding:5px 8px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      color:rgba(255,255,255,0.95);
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.06);
+      white-space:nowrap;
+    }
+
+    .reportBody{
+      padding:12px 14px 14px 14px;
+      max-height:430px;
+      overflow:auto;
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
 
     .item{
       display:flex;
       justify-content:space-between;
       gap:12px;
-      padding:12px 12px;
+      padding:12px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,0.10);
       background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.05));
     }
 
-    .left{ min-width:0; }
+    .left{
+      min-width:0;
+    }
 
     .name{
       font-size:14px;
-      font-weight:750;
+      font-weight:760;
       margin:0 0 8px 0;
       color:var(--text);
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: min(850px, 60vw);
+      max-width:min(900px, 56vw);
     }
 
     .meta{
@@ -178,6 +339,12 @@
       color: rgba(255,255,255,0.92);
     }
 
+    .badge.warn{
+      border-color: rgba(255,138,76,0.50);
+      background: rgba(255,138,76,0.15);
+      color: rgba(255,255,255,0.92);
+    }
+
     .badge.dim{
       border-color: rgba(255,255,255,0.10);
       background: rgba(255,255,255,0.04);
@@ -199,27 +366,51 @@
     }
     a.open:hover{ background:rgba(255,255,255,0.08); }
 
-    .hint{
-      margin-top:10px;
+    .empty{
+      border:1px dashed rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.03);
+      color:var(--muted);
+      padding:14px;
+      border-radius:14px;
+      font-size:13px;
+    }
+
+    .footer{
+      margin-top:2px;
       font-size:12px;
       color:var(--muter);
       display:flex;
-      gap:10px;
+      gap:12px;
       flex-wrap:wrap;
       align-items:center;
+    }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     }
 
     .errorBox{
       border:1px solid rgba(255,80,80,0.45);
       background: rgba(255,80,80,0.10);
-      padding:10px 12px;
+      padding:12px 14px;
       border-radius:14px;
       color: rgba(255,255,255,0.92);
       font-size:13px;
       white-space:pre-wrap;
     }
 
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    @media (max-width: 860px){
+      .item{
+        flex-direction:column;
+      }
+      .name{
+        max-width:100%;
+      }
+      a.open{
+        width:100%;
+        justify-content:center;
+      }
+    }
   </style>
 </head>
 
@@ -227,9 +418,15 @@
   <div class="bg"></div>
 
   <div class="wrap">
-    <div class="card">
+    <div class="shell">
       <div class="header">
-        <h1 class="title">Wrike Projects</h1>
+        <div class="eyebrow">Wrike Governance</div>
+        <h1 class="title">Wrike Governance Dashboard</h1>
+        <p class="subtitle">
+          A governance view for your open project portfolio: your PM-owned projects,
+          missing field checks, overdue work, due-soon review, backlog review, and
+          open-status monitoring.
+        </p>
         <div class="rule"></div>
       </div>
 
@@ -237,14 +434,13 @@
         <div class="statusRow">
           <div class="pill" id="statePill"><span class="dot load"></span><span id="stateText">Starting…</span></div>
           <div class="pill"><span class="dot"></span><span id="userText">—</span></div>
+          <div class="pill"><span class="dot"></span><span id="statusConfigText">Statuses: —</span></div>
         </div>
 
         <div id="main"></div>
 
-        <!-- Totals footer -->
-        <div class="hint" id="totalsLine">
-          <span id="newReqText">New Request: —</span>
-          <span id="activeText">Active: —</span>
+        <div class="footer">
+          <span id="footerSummary">Loading…</span>
           <span class="mono" id="uiVerText">UI v—</span>
         </div>
       </div>
@@ -252,12 +448,10 @@
   </div>
 
   <script>
-    // Bump this to confirm Notion is loading the newest HTML
-    const UI_VERSION = "2026-02-06-2";
+    const UI_VERSION = "2026-03-10-1";
 
-    // IMPORTANT: keep these titles aligned with your Worker defaults
     const DEFAULT_WORKER =
-      "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&dateField=Date&locationField=Location";
+      "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&dateField=Date&locationField=Location&planningStatus=Planning&executionStatus=Execution&backlogStatus=Backlog&dueSoonDays=7&backlogReviewDays=14";
 
     function getWorkerUrl() {
       const params = new URLSearchParams(location.search);
@@ -265,8 +459,25 @@
       const base = override ? override : DEFAULT_WORKER;
 
       const u = new URL(base);
+      const passthrough = [
+        "spaceId",
+        "portfolioFolderId",
+        "pmField",
+        "dateField",
+        "locationField",
+        "planningStatus",
+        "executionStatus",
+        "backlogStatus",
+        "dueSoonDays",
+        "backlogReviewDays",
+        "debug"
+      ];
 
-      // Use Notion/GitHub cache-buster if provided, otherwise timestamp
+      for (const key of passthrough) {
+        const val = params.get(key);
+        if (val) u.searchParams.set(key, val);
+      }
+
       const v = params.get("v");
       u.searchParams.set("t", v ? v : Date.now().toString());
 
@@ -289,86 +500,197 @@
       document.getElementById("stateText").textContent = text;
     }
 
-    function setTotals(newReq, active) {
-      document.getElementById("newReqText").textContent = `New Request: ${newReq}`;
-      document.getElementById("activeText").textContent = `Active: ${active}`;
+    function formatDue(isoDate) {
+      if (!isoDate) return null;
+      const d = new Date(isoDate + "T00:00:00Z");
+      if (isNaN(d.getTime())) return null;
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC"
+      }).format(d);
+    }
+
+    function isOverdue(isoDate) {
+      if (!isoDate) return false;
+      const due = new Date(isoDate + "T00:00:00Z").getTime();
+      if (!Number.isFinite(due)) return false;
+
+      const now = new Date();
+      const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+      return due < todayUtc;
+    }
+
+    function badge(text, cls = "") {
+      return `<span class="badge ${cls}">${esc(text)}</span>`;
+    }
+
+    function renderProjectItem(p) {
+      const duePretty = formatDue(p.dueDate);
+      const dueBadge = duePretty
+        ? badge(`Due: ${duePretty}`, isOverdue(p.dueDate) ? "warn" : "")
+        : badge("Due: —", "dim");
+
+      const statusBadge = p.status ? badge(p.status) : badge("Status: —", "dim");
+      const locationBadge = p.location ? badge(`Location: ${p.location}`) : badge("Location: —", "dim");
+      const roleBadges = (Array.isArray(p.roles) ? p.roles : []).map(r => {
+        const cls = r === "PM" ? "maroon" : "gold";
+        return badge(r, cls);
+      }).join("");
+
+      return `
+        <div class="item">
+          <div class="left">
+            <div class="name" title="${esc(p.title || "")}">${esc(p.title || "(Untitled)")}</div>
+            <div class="meta">
+              ${dueBadge}
+              ${statusBadge}
+              ${locationBadge}
+              ${roleBadges}
+            </div>
+          </div>
+          <div class="right">
+            <a class="open" href="${esc(p.openUrl || "#")}" target="_blank" rel="noopener noreferrer">Open in Wrike ↗</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderList(items, emptyText) {
+      if (!Array.isArray(items) || !items.length) {
+        return `<div class="empty">${esc(emptyText)}</div>`;
+      }
+      return `<div class="list">${items.map(renderProjectItem).join("")}</div>`;
+    }
+
+    function renderMetric(label, value, sub = "") {
+      return `
+        <div class="card metric">
+          <div class="label">${esc(label)}</div>
+          <div class="value">${esc(value)}</div>
+          <div class="sub">${esc(sub)}</div>
+        </div>
+      `;
+    }
+
+    function renderReportCard(title, count, items, emptyText) {
+      return `
+        <div class="reportCard">
+          <div class="reportHead">
+            <h3 class="reportTitle">${esc(title)}</h3>
+            <div class="count">${esc(count)}</div>
+          </div>
+          <div class="reportBody">
+            ${renderList(items, emptyText)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboard(data) {
+      const main = document.getElementById("main");
+      const userName = data?.user?.name || "Unknown user";
+      const totals = data?.totals || {};
+      const config = data?.config || {};
+      const statuses = config?.statuses || {};
+
+      document.getElementById("userText").textContent = userName;
+      document.getElementById("statusConfigText").textContent =
+        `Statuses: ${statuses.planning || "Planning"} / ${statuses.execution || "Execution"} / ${statuses.backlog || "Backlog"}`;
+      document.getElementById("footerSummary").textContent =
+        `Open Projects: ${totals.openProjects ?? 0} • My PM Projects: ${totals.myProjects ?? 0} • Missing PM: ${totals.missingPm ?? 0} • Overdue: ${totals.overdue ?? 0}`;
       document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
+
+      const projects = Array.isArray(data?.projects) ? data.projects : [];
+      const g = data?.governance || {};
+      const buckets = g?.statusBuckets || {};
+
+      main.innerHTML = `
+        <div class="grid metrics">
+          ${renderMetric("Open Projects", totals.openProjects ?? 0, "Planning + Execution + Backlog")}
+          ${renderMetric("My PM Projects", totals.myProjects ?? 0, "Projects assigned to you")}
+          ${renderMetric("New Requests", totals.newRequests ?? 0, "Location contains 00. New Request")}
+          ${renderMetric("Missing PM", totals.missingPm ?? 0, "Project Manager field empty")}
+          ${renderMetric("Missing Date", totals.missingDate ?? 0, "No Date field or project end date")}
+          ${renderMetric("Missing Location", totals.missingLocation ?? 0, "Location field empty")}
+          ${renderMetric("Overdue", totals.overdue ?? 0, "Still open past due")}
+          ${renderMetric(`Due Next ${config.dueSoonDays || 7}`, totals.dueNext ?? 0, "Upcoming review window")}
+          ${renderMetric("Backlog Review", totals.backlogNeedsReview ?? 0, `Backlog due within ${config.backlogReviewDays || 14} days or overdue`)}
+          ${renderMetric("Unexpected Open Status", totals.unexpectedOpenStatuses ?? 0, "Open statuses outside governed set")}
+          ${renderMetric(statuses.planning || "Planning", totals.planning ?? 0, "Open status bucket")}
+          ${renderMetric(statuses.execution || "Execution", totals.execution ?? 0, "Open status bucket")}
+          ${renderMetric(statuses.backlog || "Backlog", totals.backlog ?? 0, "Open status bucket")}
+        </div>
+
+        <div class="section">
+          <div class="sectionHead">
+            <h2 class="sectionTitle">My PM Projects</h2>
+            <p class="sectionDesc">Your current PM-owned open projects, sorted by due date and title.</p>
+          </div>
+          <div class="sectionBody">
+            ${renderList(projects, "No PM-owned open projects were returned.")}
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sectionHead">
+            <h2 class="sectionTitle">Field Governance</h2>
+            <p class="sectionDesc">Use these lists to clean up field completion and improve reporting quality in Wrike.</p>
+          </div>
+          <div class="sectionBody">
+            <div class="grid three">
+              ${renderReportCard("Missing Project Manager", totals.missingPm ?? 0, g.missingPm, "All governed projects have a Project Manager value.")}
+              ${renderReportCard("Missing Date", totals.missingDate ?? 0, g.missingDate, "All governed projects have a due date or project end date.")}
+              ${renderReportCard("Missing Location", totals.missingLocation ?? 0, g.missingLocation, "All governed projects have a Location value.")}
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sectionHead">
+            <h2 class="sectionTitle">Status & Timing Governance</h2>
+            <p class="sectionDesc">These are the highest-value review queues for status hygiene and portfolio governance.</p>
+          </div>
+          <div class="sectionBody">
+            <div class="grid two">
+              ${renderReportCard("Unexpected Open Statuses", totals.unexpectedOpenStatuses ?? 0, g.unexpectedOpenStatuses, "No open projects are in unexpected statuses.")}
+              ${renderReportCard("Overdue Open Projects", totals.overdue ?? 0, g.overdue, "No governed open projects are overdue.")}
+              ${renderReportCard(`Due Next ${config.dueSoonDays || 7} Days`, totals.dueNext ?? 0, g.dueNext, "No governed open projects are due in the upcoming window.")}
+              ${renderReportCard("Backlog Needs Review", totals.backlogNeedsReview ?? 0, g.backlogNeedsReview, "No backlog projects need timing/status review right now.")}
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sectionHead">
+            <h2 class="sectionTitle">Status Buckets</h2>
+            <p class="sectionDesc">A quick operating view of your open project portfolio by governed status.</p>
+          </div>
+          <div class="sectionBody">
+            <div class="grid three">
+              ${renderReportCard(statuses.planning || "Planning", totals.planning ?? 0, buckets.planning, `No projects are currently in ${statuses.planning || "Planning"}.`)}
+              ${renderReportCard(statuses.execution || "Execution", totals.execution ?? 0, buckets.execution, `No projects are currently in ${statuses.execution || "Execution"}.`)}
+              ${renderReportCard(statuses.backlog || "Backlog", totals.backlog ?? 0, buckets.backlog, `No projects are currently in ${statuses.backlog || "Backlog"}.`)}
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function renderError(errText, workerUrl) {
       const main = document.getElementById("main");
       main.innerHTML =
         `<div class="errorBox"><b>Failed to load</b>\n\n${esc(errText)}\n\nWorker URL:\n${esc(workerUrl || "")}</div>`;
-      setTotals(0, 0);
-    }
-
-    function formatDue(isoDate) {
-      if (!isoDate) return null;
-      const d = new Date(isoDate + "T00:00:00Z");
-      if (isNaN(d.getTime())) return null;
-      return new Intl.DateTimeFormat("en-US", {
-        month: "short", day: "numeric", year: "numeric", timeZone: "UTC"
-      }).format(d);
-    }
-
-    function renderProjects(data) {
-      const main = document.getElementById("main");
-      const projects = Array.isArray(data?.projects) ? data.projects : [];
-      const userName = data?.user?.name ? data.user.name : "Unknown user";
-      document.getElementById("userText").textContent = userName;
-
-      // Totals come from the Worker (portfolio-wide), not from the user list
-      const newReq = Number(data?.totals?.newRequests ?? 0);
-      const active = Number(data?.totals?.activeProjects ?? 0);
-      setTotals(newReq, active);
-
-      if (!projects.length) {
-        main.innerHTML = `<div class="errorBox">No projects returned for you (PM) in Active statuses.</div>`;
-        return;
-      }
-
-      const items = projects.map(p => {
-        const title = esc(p.title);
-        const status = esc(p.status || "—");
-        const roles = Array.isArray(p.roles) ? p.roles : [];
-        const url = esc(p.openUrl || "#");
-
-        const duePretty = formatDue(p.dueDate);
-        const dueBadge = duePretty
-          ? `<span class="badge">${esc("Due: " + duePretty)}</span>`
-          : `<span class="badge dim">Due: —</span>`;
-
-        const roleBadges = roles.map(r => {
-          const cls = (r === "PM") ? "badge maroon" : "badge gold";
-          return `<span class="${cls}">${esc(r)}</span>`;
-        }).join("");
-
-        return `
-          <div class="item">
-            <div class="left">
-              <div class="name" title="${title}">${title}</div>
-              <div class="meta">
-                ${dueBadge}
-                <span class="badge">${status}</span>
-                ${roleBadges}
-              </div>
-            </div>
-            <div class="right">
-              <a class="open" href="${url}" target="_blank" rel="noopener noreferrer">Open in Wrike ↗</a>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      main.innerHTML = `<div class="list">${items}</div>`;
+      document.getElementById("footerSummary").textContent = "Dashboard failed to load";
+      document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
     }
 
     async function init() {
       const workerUrl = getWorkerUrl();
 
       try {
-        setState("load", "Fetching projects…");
-        console.log("[Wrike Widget] Worker URL:", workerUrl);
+        setState("load", "Fetching governance dashboard…");
 
         const res = await fetch(workerUrl, {
           cache: "no-store",
@@ -386,11 +708,11 @@
           throw new Error(`Unexpected payload:\n\n${JSON.stringify(data, null, 2)}`);
         }
 
-        renderProjects(data);
-        setState("ok", `Loaded ${data.projects?.length ?? 0} projects`);
+        renderDashboard(data);
+        setState("ok", `Loaded ${data?.totals?.openProjects ?? 0} governed open projects`);
       } catch (e) {
-        console.error("[Wrike Widget] Error:", e);
-        setState("bad", "Failed to load projects");
+        console.error("[Wrike Governance Dashboard] Error:", e);
+        setState("bad", "Failed to load dashboard");
         renderError(e?.message || String(e), workerUrl);
       }
     }
