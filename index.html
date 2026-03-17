@@ -423,7 +423,7 @@
         <div class="eyebrow">Wrike Governance</div>
         <h1 class="title">Wrike Governance Dashboard</h1>
         <p class="subtitle">
-          A governance view for your open project portfolio: your PM-owned projects,
+          A governance view for your open project portfolio: your PM- or Owner-assigned projects,
           missing field checks, overdue work, due-soon review, backlog review, and
           open-status monitoring.
         </p>
@@ -448,7 +448,7 @@
   </div>
 
   <script>
-    const UI_VERSION = "2026-03-10-1";
+    const UI_VERSION = "2026-03-16-1";
 
     const DEFAULT_WORKER =
       "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&dateField=Date&locationField=Location&planningStatus=Planning&executionStatus=Execution&backlogStatus=Backlog&dueSoonDays=7&backlogReviewDays=14";
@@ -599,7 +599,7 @@
       document.getElementById("statusConfigText").textContent =
         `Statuses: ${statuses.planning || "Planning"} / ${statuses.execution || "Execution"} / ${statuses.backlog || "Backlog"}`;
       document.getElementById("footerSummary").textContent =
-        `Open Projects: ${totals.openProjects ?? 0} • My PM Projects: ${totals.myProjects ?? 0} • Missing PM: ${totals.missingPm ?? 0} • Overdue: ${totals.overdue ?? 0}`;
+        `Open Projects: ${totals.openProjects ?? 0} • My Projects: ${totals.myProjects ?? 0} • Missing PM: ${totals.missingPm ?? 0} • Overdue: ${totals.overdue ?? 0}`;
       document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
 
       const projects = Array.isArray(data?.projects) ? data.projects : [];
@@ -609,7 +609,7 @@
       main.innerHTML = `
         <div class="grid metrics">
           ${renderMetric("Open Projects", totals.openProjects ?? 0, "Planning + Execution + Backlog")}
-          ${renderMetric("My PM Projects", totals.myProjects ?? 0, "Projects assigned to you")}
+          ${renderMetric("My Projects", totals.myProjects ?? 0, "Projects where you are PM or Owner")}
           ${renderMetric("New Requests", totals.newRequests ?? 0, "Location contains 00. New Request")}
           ${renderMetric("Missing PM", totals.missingPm ?? 0, "Project Manager field empty")}
           ${renderMetric("Missing Date", totals.missingDate ?? 0, "No Date field or project end date")}
@@ -625,11 +625,11 @@
 
         <div class="section">
           <div class="sectionHead">
-            <h2 class="sectionTitle">My PM Projects</h2>
-            <p class="sectionDesc">Your current PM-owned open projects, sorted by due date and title.</p>
+            <h2 class="sectionTitle">My Projects</h2>
+            <p class="sectionDesc">Your current open projects where you are the Project Manager or Owner, sorted by due date and title.</p>
           </div>
           <div class="sectionBody">
-            ${renderList(projects, "No PM-owned open projects were returned.")}
+            ${renderList(projects, "No open projects were returned where you are the Project Manager or Owner.")}
           </div>
         </div>
 
