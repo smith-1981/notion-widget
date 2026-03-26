@@ -1,258 +1,401 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Wrike Projects</title>
 
-  <!-- Best-effort cache controls -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-
-  <title>ASU Outreach Hub Nav (Dark)</title>
 
   <style>
     :root{
       --asu-maroon:#8C1D40;
       --asu-gold:#FFC627;
 
-      --bg-1:#0b0c10;
-      --bg-2:#12131a;
+      --bg0:#0b0f17;
+      --bg1:#0f1320;
+      --gold-border: rgba(255, 198, 39, .55);
 
-      --text:#f3f4f6;
-      --muted:rgba(243,244,246,.75);
+      --text:rgba(255,255,255,0.92);
+      --muted:rgba(255,255,255,0.70);
+      --muter:rgba(255,255,255,0.55);
 
-      --gold-border:rgba(255,198,39,.55);
-      --gold-border-strong:rgba(255,198,39,.80);
-      --row-border:rgba(255,198,39,.22);
-
-      --shadow: 0 10px 26px rgba(0,0,0,.55);
-      --glow: 0 0 0 1px rgba(255,198,39,.25), 0 0 22px rgba(255,198,39,.10);
-
-      --bg0: #0b0f17;
-      --bg1: #0f1320;
+      --shadow: 0 14px 40px rgba(0,0,0,0.45);
+      --radius:18px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
 
-    html,body{height:100%}
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html,body{ width:100%; height:100%; min-height:100vh; }
+
     body{
       margin:0;
-      background:radial-gradient(900px 420px at 10% 0%, rgba(140, 29, 64, 0.45), transparent 60%), radial-gradient(820px 380px at 95% 12%, rgba(255, 198, 39, 0.28), transparent 62%), linear-gradient(180deg, var(--bg0), var(--bg1));
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);      
-    }
-
-    .wrap{ padding:6px 8px; }
-
-    .bar{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px;
-      border-radius:14px;
-      border:1px solid var(--gold-border);
-      background: linear-gradient(180deg, rgba(140,29,64,.26), rgba(0,0,0,.10)),
-                  linear-gradient(180deg, var(--bg-2), var(--bg-1));
-      box-shadow: var(--shadow), var(--glow);
-      overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding-right:10px;
-      margin-right:4px;
-      border-right:1px solid rgba(255,198,39,.20);
-      flex:0 0 auto;
-    }
-
-    .badge{
-      width:10px;
-      height:10px;
-      border-radius:999px;
-      background:var(--asu-gold);
-      box-shadow: 0 0 0 3px rgba(255,198,39,.18);
-      flex:0 0 auto;
-    }
-
-    .brandtext{
-      display:flex;
-      flex-direction:column;
-      line-height:1.05;
-      white-space:nowrap;
-    }
-
-    .brandtext .t{
-      font-weight:850;
-      font-size:12.5px;
-      letter-spacing:.3px;
+      font-family:var(--font);
       color:var(--text);
+      background: transparent;
+      overflow-x:hidden;
     }
 
-    .brandtext .s{
-      margin-top:3px;
-      font-size:11px;
-      color:var(--muted);
+    .bg{
+      position:fixed;
+      inset:-160px;
+      z-index:-2;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 420px at 10% 0%, rgba(140,29,64,0.45), transparent 60%),
+        radial-gradient(820px 380px at 95% 12%, rgba(255,198,39,0.28), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      filter: saturate(1.05);
     }
 
-    .items{
+    .wrap{ padding:14px; min-height:100vh; }
+
+    .card{
+      position:relative;
+      isolation:isolate;
+      border-radius:var(--radius);
+      border:1px solid var(--gold-border); 
+      background:rgba(8,10,16,0.62);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-140px;
+      z-index:0;
+      pointer-events:none;
+      background:
+        radial-gradient(760px 340px at 12% 0%, rgba(140,29,64,0.42), transparent 60%),
+        radial-gradient(700px 320px at 92% 10%, rgba(255,198,39,0.22), transparent 62%);
+      filter: blur(18px);
+      opacity:0.95;
+    }
+
+    .card > *{ position:relative; z-index:1; }
+
+    .header{ padding:16px 18px 10px 18px; }
+
+    .title{
+      font-size:26px;
+      font-weight:800;
+      letter-spacing:0.2px;
+      margin:0 0 10px 0;
+      color:var(--asu-gold);
+    }
+
+    .rule{
+      height:2px;
+      width:100%;
+      background:linear-gradient(90deg, var(--asu-gold), rgba(255,198,39,0.18));
+      opacity:0.95;
+    }
+
+    .content{ padding:14px 18px 18px 18px; }
+
+    .statusRow{
       display:flex;
       gap:10px;
-      flex:1 1 auto;
-      min-width:0;
-    }
-
-    a.item{
-      display:flex;
       align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--row-border);
-      background: linear-gradient(90deg, rgba(140,29,64,.28), rgba(0,0,0,.15));
-      color:var(--text);
-      text-decoration:none;
-      white-space:nowrap;
-      flex:0 0 auto;
-      transition: transform .10s ease, border-color .12s ease, background .12s ease;
+      margin-bottom:12px;
+      flex-wrap:wrap;
     }
 
-    a.item:hover{
-      transform: translateY(-1px);
-      border-color: var(--gold-border-strong);
-      background: linear-gradient(90deg, rgba(140,29,64,.36), rgba(0,0,0,.20));
-    }
-
-    .left{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      min-width:0;
-    }
-
-    .icon{
-      width:22px;
-      height:22px;
-      border-radius:10px;
+    .pill{
       display:inline-flex;
       align-items:center;
-      justify-content:center;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      flex:0 0 auto;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px dashed rgba(255,255,255,0.16);
+      background:rgba(255,255,255,0.05);
+      color:var(--muted);
       font-size:13px;
       line-height:1;
     }
 
-    .label{
-      font-weight:800;
-      font-size:13px;
+    .dot{ width:8px;height:8px;border-radius:50%; background:rgba(255,255,255,0.28); }
+    .dot.ok{ background:rgba(0,255,170,0.55); }
+    .dot.bad{ background:rgba(255,80,80,0.70); }
+    .dot.load{ background:rgba(255,198,39,0.85); }
+
+    .list{ display:flex; flex-direction:column; gap:10px; }
+
+    .item{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.05));
+    }
+
+    .left{ min-width:0; }
+
+    .name{
+      font-size:14px;
+      font-weight:750;
+      margin:0 0 8px 0;
+      color:var(--text);
+      white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width:220px;
+      max-width: min(850px, 60vw);
     }
 
-    .open{
-      margin-left:8px;
-      padding:7px 12px;
-      border-radius:12px;
-      background: linear-gradient(180deg, #FFE08A, var(--asu-gold));
-      color:#111;
-      font-weight:900;
+    .meta{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .badge{
       font-size:12px;
-      letter-spacing:.2px;
-      border:1px solid rgba(0,0,0,.18);
-      box-shadow: 0 6px 14px rgba(0,0,0,.35);
-      flex:0 0 auto;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.06);
+      color:var(--muted);
     }
 
-    /* compact on small embeds */
-    @media (max-width:600px){
-      .brand{display:none;}
-      .wrap{padding:6px;}
-      .bar{padding:9px;}
-      a.item{padding:9px 10px;}
-      .label{max-width:160px;}
-      .open{padding:6px 10px;}
+    .badge.maroon{
+      border-color: rgba(140,29,64,0.55);
+      background: rgba(140,29,64,0.18);
+      color: rgba(255,255,255,0.92);
     }
+
+    .badge.gold{
+      border-color: rgba(255,198,39,0.55);
+      background: rgba(255,198,39,0.12);
+      color: rgba(255,255,255,0.92);
+    }
+
+    .badge.dim{
+      border-color: rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.62);
+    }
+
+    a.open{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.05);
+      color:rgba(255,255,255,0.92);
+      text-decoration:none;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    a.open:hover{ background:rgba(255,255,255,0.08); }
+
+    .hint{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muter);
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .errorBox{
+      border:1px solid rgba(255,80,80,0.45);
+      background: rgba(255,80,80,0.10);
+      padding:10px 12px;
+      border-radius:14px;
+      color: rgba(255,255,255,0.92);
+      font-size:13px;
+      white-space:pre-wrap;
+    }
+
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
   </style>
-
-  <script>
-    // Helps with stale Notion embed caching. Adds ?v=timestamp once per load.
-    (function () {
-      try {
-        const u = new URL(window.location.href);
-        if (!u.searchParams.has("v")) {
-          u.searchParams.set("v", Date.now().toString());
-          window.location.replace(u.toString());
-        }
-      } catch (e) {}
-    })();
-  </script>
 </head>
 
 <body>
+  <div class="bg"></div>
+
   <div class="wrap">
-    <div class="bar" role="navigation" aria-label="ASU Outreach Hub Navigation (Dark)">
-      <div class="brand" aria-hidden="true">
-        <div class="badge"></div>
-        <div class="brandtext">
-          <div class="t">ASU Outreach Hub</div>
-          <div class="s">Quick links</div>
-        </div>
+    <div class="card">
+      <div class="header">
+        <h1 class="title">Wrike Projects</h1>
+        <div class="rule"></div>
       </div>
 
-      <div class="items">
-        <a class="item"
-           href="https://www.notion.so/Notes-2a2f187ac1be806f8690f0cce85d8eaf?source=copy_link"
-           target="_top" rel="noopener">
-          <div class="left">
-            <span class="icon">📝</span>
-            <span class="label">Notes</span>
-          </div>
-          <span class="open">Open</span>
-        </a>
+      <div class="content">
+        <div class="statusRow">
+          <div class="pill" id="statePill"><span class="dot load"></span><span id="stateText">Starting…</span></div>
+          <div class="pill"><span class="dot"></span><span id="userText">—</span></div>
+        </div>
 
-        <a class="item"
-           href="https://www.notion.so/Tasks-and-Initiatives-2a4f187ac1be800c85f3eaa5ea2704f3?source=copy_link"
-           target="_top" rel="noopener">
-          <div class="left">
-            <span class="icon">✅</span>
-            <span class="label">Tasks &amp; Initiatives</span>
-          </div>
-          <span class="open">Open</span>
-        </a>
+        <div id="main"></div>
 
-        <a class="item"
-           href="https://docs.google.com/document/d/1eF7myQINXl8mcoa1QINES7yeMET1NaX92LnjNmvS1Qw/edit?tab=t.0#heading=h.k5ll9k6j39p7"
-           target="_top" rel="noopener">
-          <div class="left">
-            <span class="icon">📅</span>
-            <span class="label">Team Agenda</span>
-          </div>
-          <span class="open">Open</span>
-        </a>
-        <a class="item"
-           href="https://www.notion.so/PMO-Process-Governance-Tools-2e9f187ac1be8025bd9fca1a4064c5d1"
-           target="_top" rel="noopener">
-          <div class="left">
-            <span class="icon">📝</span>
-            <span class="label">Governance</span>
-          </div>
-          <span class="open">Open</span>
-        </a>
-        <a class="item"
-           href="https://www.notion.so/Status-Updates-02-13-2026-2e6f187ac1be80569b05f7d8f347e19b"
-           target="_top" rel="noopener">
-          <div class="left">
-            <span class="icon">📝</span>
-            <span class="label">Status</span>
-          </div>
-          <span class="open">Open</span>
-        </a>
+        <!-- Totals footer -->
+        <div class="hint" id="totalsLine">
+          <span id="newReqText">New Request: —</span>
+          <span id="activeText">Active: —</span>
+          <span class="mono" id="uiVerText">UI v—</span>
+        </div>
       </div>
     </div>
   </div>
+
+  <script>
+    // Bump this to confirm Notion is loading the newest HTML
+    const UI_VERSION = "2026-02-06-2";
+
+    // IMPORTANT: keep these titles aligned with your Worker defaults
+    const DEFAULT_WORKER =
+      "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&dateField=Date&locationField=Location";
+
+    function getWorkerUrl() {
+      const params = new URLSearchParams(location.search);
+      const override = params.get("worker");
+      const base = override ? override : DEFAULT_WORKER;
+
+      const u = new URL(base);
+
+      // Use Notion/GitHub cache-buster if provided, otherwise timestamp
+      const v = params.get("v");
+      u.searchParams.set("t", v ? v : Date.now().toString());
+
+      return u.toString();
+    }
+
+    function esc(s) {
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+    }
+
+    function setState(kind, text) {
+      const pill = document.getElementById("statePill");
+      const dot = pill.querySelector(".dot");
+      dot.className = "dot " + (kind === "ok" ? "ok" : kind === "bad" ? "bad" : "load");
+      document.getElementById("stateText").textContent = text;
+    }
+
+    function setTotals(newReq, active) {
+      document.getElementById("newReqText").textContent = `New Request: ${newReq}`;
+      document.getElementById("activeText").textContent = `Active: ${active}`;
+      document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
+    }
+
+    function renderError(errText, workerUrl) {
+      const main = document.getElementById("main");
+      main.innerHTML =
+        `<div class="errorBox"><b>Failed to load</b>\n\n${esc(errText)}\n\nWorker URL:\n${esc(workerUrl || "")}</div>`;
+      setTotals(0, 0);
+    }
+
+    function formatDue(isoDate) {
+      if (!isoDate) return null;
+      const d = new Date(isoDate + "T00:00:00Z");
+      if (isNaN(d.getTime())) return null;
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short", day: "numeric", year: "numeric", timeZone: "UTC"
+      }).format(d);
+    }
+
+    function renderProjects(data) {
+      const main = document.getElementById("main");
+      const projects = Array.isArray(data?.projects) ? data.projects : [];
+      const userName = data?.user?.name ? data.user.name : "Unknown user";
+      document.getElementById("userText").textContent = userName;
+
+      // Totals come from the Worker (portfolio-wide), not from the user list
+      const newReq = Number(data?.totals?.newRequests ?? 0);
+      const active = Number(data?.totals?.activeProjects ?? 0);
+      setTotals(newReq, active);
+
+      if (!projects.length) {
+        main.innerHTML = `<div class="errorBox">No projects returned for you (PM) in Active statuses.</div>`;
+        return;
+      }
+
+      const items = projects.map(p => {
+        const title = esc(p.title);
+        const status = esc(p.status || "—");
+        const roles = Array.isArray(p.roles) ? p.roles : [];
+        const url = esc(p.openUrl || "#");
+
+        const duePretty = formatDue(p.dueDate);
+        const dueBadge = duePretty
+          ? `<span class="badge">${esc("Due: " + duePretty)}</span>`
+          : `<span class="badge dim">Due: —</span>`;
+
+        const roleBadges = roles.map(r => {
+          const cls = (r === "PM") ? "badge maroon" : "badge gold";
+          return `<span class="${cls}">${esc(r)}</span>`;
+        }).join("");
+
+        return `
+          <div class="item">
+            <div class="left">
+              <div class="name" title="${title}">${title}</div>
+              <div class="meta">
+                ${dueBadge}
+                <span class="badge">${status}</span>
+                ${roleBadges}
+              </div>
+            </div>
+            <div class="right">
+              <a class="open" href="${url}" target="_blank" rel="noopener noreferrer">Open in Wrike ↗</a>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      main.innerHTML = `<div class="list">${items}</div>`;
+    }
+
+    async function init() {
+      const workerUrl = getWorkerUrl();
+
+      try {
+        setState("load", "Fetching projects…");
+        console.log("[Wrike Widget] Worker URL:", workerUrl);
+
+        const res = await fetch(workerUrl, {
+          cache: "no-store",
+          mode: "cors",
+          credentials: "omit"
+        });
+
+        if (!res.ok) {
+          const txt = await res.text().catch(() => "");
+          throw new Error(`Worker returned ${res.status}\n\n${txt}`);
+        }
+
+        const data = await res.json();
+        if (!data || data.ok !== true) {
+          throw new Error(`Unexpected payload:\n\n${JSON.stringify(data, null, 2)}`);
+        }
+
+        renderProjects(data);
+        setState("ok", `Loaded ${data.projects?.length ?? 0} projects`);
+      } catch (e) {
+        console.error("[Wrike Widget] Error:", e);
+        setState("bad", "Failed to load projects");
+        renderError(e?.message || String(e), workerUrl);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
 </body>
 </html>
