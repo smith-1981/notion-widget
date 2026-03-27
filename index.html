@@ -1,401 +1,608 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Wrike Projects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+
+  <title>ASU Outreach Hub Projects (Dark)</title>
 
   <style>
     :root{
       --asu-maroon:#8C1D40;
       --asu-gold:#FFC627;
 
+      --bg-1:#0b0c10;
+      --bg-2:#12131a;
+
+      --text:#f3f4f6;
+      --muted:rgba(243,244,246,.75);
+
+      --gold-border:rgba(255,198,39,.55);
+      --gold-border-strong:rgba(255,198,39,.80);
+      --row-border:rgba(255,198,39,.22);
+
+      --shadow: 0 10px 26px rgba(0,0,0,.55);
+      --glow: 0 0 0 1px rgba(255,198,39,.25), 0 0 22px rgba(255,198,39,.10);
+
       --bg0:#0b0f17;
       --bg1:#0f1320;
-      --gold-border: rgba(255, 198, 39, .55);
-
-      --text:rgba(255,255,255,0.92);
-      --muted:rgba(255,255,255,0.70);
-      --muter:rgba(255,255,255,0.55);
-
-      --shadow: 0 14px 40px rgba(0,0,0,0.45);
-      --radius:18px;
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
 
-    *, *::before, *::after { box-sizing: border-box; }
-
-    html,body{ width:100%; height:100%; min-height:100vh; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
 
     body{
       margin:0;
-      font-family:var(--font);
-      color:var(--text);
-      background: transparent;
-      overflow-x:hidden;
-    }
-
-    .bg{
-      position:fixed;
-      inset:-160px;
-      z-index:-2;
-      pointer-events:none;
       background:
-        radial-gradient(900px 420px at 10% 0%, rgba(140,29,64,0.45), transparent 60%),
-        radial-gradient(820px 380px at 95% 12%, rgba(255,198,39,0.28), transparent 62%),
+        radial-gradient(900px 420px at 10% 0%, rgba(140,29,64,.45), transparent 60%),
+        radial-gradient(820px 380px at 95% 12%, rgba(255,198,39,.28), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
-      filter: saturate(1.05);
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
     }
 
-    .wrap{ padding:14px; min-height:100vh; }
-
-    .card{
-      position:relative;
-      isolation:isolate;
-      border-radius:var(--radius);
-      border:1px solid var(--gold-border); 
-      background:rgba(8,10,16,0.62);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+    .wrap{
+      padding:8px;
     }
 
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:-140px;
-      z-index:0;
-      pointer-events:none;
-      background:
-        radial-gradient(760px 340px at 12% 0%, rgba(140,29,64,0.42), transparent 60%),
-        radial-gradient(700px 320px at 92% 10%, rgba(255,198,39,0.22), transparent 62%);
-      filter: blur(18px);
-      opacity:0.95;
-    }
-
-    .card > *{ position:relative; z-index:1; }
-
-    .header{ padding:16px 18px 10px 18px; }
-
-    .title{
-      font-size:26px;
-      font-weight:800;
-      letter-spacing:0.2px;
-      margin:0 0 10px 0;
-      color:var(--asu-gold);
-    }
-
-    .rule{
-      height:2px;
-      width:100%;
-      background:linear-gradient(90deg, var(--asu-gold), rgba(255,198,39,0.18));
-      opacity:0.95;
-    }
-
-    .content{ padding:14px 18px 18px 18px; }
-
-    .statusRow{
+    .stack{
       display:flex;
+      flex-direction:column;
       gap:10px;
+    }
+
+    .bar,
+    .lane{
+      border-radius:14px;
+      border:1px solid var(--gold-border);
+      background:
+        linear-gradient(180deg, rgba(140,29,64,.26), rgba(0,0,0,.10)),
+        linear-gradient(180deg, var(--bg-2), var(--bg-1));
+      box-shadow:var(--shadow), var(--glow);
+    }
+
+    .bar{
+      display:flex;
       align-items:center;
-      margin-bottom:12px;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px;
       flex-wrap:wrap;
     }
 
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px dashed rgba(255,255,255,0.16);
-      background:rgba(255,255,255,0.05);
-      color:var(--muted);
-      font-size:13px;
-      line-height:1;
-    }
-
-    .dot{ width:8px;height:8px;border-radius:50%; background:rgba(255,255,255,0.28); }
-    .dot.ok{ background:rgba(0,255,170,0.55); }
-    .dot.bad{ background:rgba(255,80,80,0.70); }
-    .dot.load{ background:rgba(255,198,39,0.85); }
-
-    .list{ display:flex; flex-direction:column; gap:10px; }
-
-    .item{
+    .brand{
       display:flex;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,0.10);
-      background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.05));
+      align-items:center;
+      gap:10px;
+      min-width:0;
     }
 
-    .left{ min-width:0; }
+    .badge{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:var(--asu-gold);
+      box-shadow:0 0 0 3px rgba(255,198,39,.18);
+      flex:0 0 auto;
+    }
 
-    .name{
-      font-size:14px;
-      font-weight:750;
-      margin:0 0 8px 0;
+    .brandtext{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+      min-width:0;
+    }
+
+    .brandtext .t{
+      font-weight:850;
+      font-size:12.5px;
+      letter-spacing:.3px;
       color:var(--text);
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: min(850px, 60vw);
+    }
+
+    .brandtext .s{
+      margin-top:3px;
+      font-size:11px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .meta{
       display:flex;
       gap:8px;
       flex-wrap:wrap;
-      align-items:center;
+      justify-content:flex-end;
     }
 
-    .badge{
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid var(--row-border);
+      background:linear-gradient(90deg, rgba(140,29,64,.28), rgba(0,0,0,.15));
+      color:var(--text);
       font-size:12px;
-      padding:5px 8px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .board{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .top-grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:10px;
+      align-items:start;
+    }
+
+    .bottom-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:10px;
+    }
+
+    .lane{
+      padding:10px;
+      min-height:220px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .lane-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding-bottom:8px;
+      border-bottom:1px solid rgba(255,198,39,.18);
+    }
+
+    .lane-title{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+
+    .lane-title .dot{
+      width:8px;
+      height:8px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,0.12);
-      background:rgba(255,255,255,0.06);
+      background:var(--asu-gold);
+      opacity:.95;
+      flex:0 0 auto;
+    }
+
+    .lane-title .text{
+      font-weight:850;
+      font-size:13px;
+      letter-spacing:.25px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .count{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:26px;
+      height:26px;
+      padding:0 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      font-size:12px;
+      font-weight:900;
+      color:var(--text);
+      flex:0 0 auto;
+    }
+
+    .lane-items{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-height:40px;
+    }
+
+    .item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--row-border);
+      background:linear-gradient(90deg, rgba(140,29,64,.28), rgba(0,0,0,.15));
+      color:var(--text);
+      text-decoration:none;
+      transition:transform .10s ease, border-color .12s ease, background .12s ease;
+    }
+
+    .item:hover{
+      transform:translateY(-1px);
+      border-color:var(--gold-border-strong);
+      background:linear-gradient(90deg, rgba(140,29,64,.36), rgba(0,0,0,.20));
+    }
+
+    .left{
+      display:flex;
+      align-items:flex-start;
+      gap:8px;
+      min-width:0;
+      flex:1 1 auto;
+    }
+
+    .icon{
+      width:22px;
+      height:22px;
+      border-radius:10px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      flex:0 0 auto;
+      font-size:13px;
+      line-height:1;
+      margin-top:1px;
+    }
+
+    .copy{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width:0;
+    }
+
+    .label{
+      font-weight:800;
+      font-size:13px;
+      line-height:1.25;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+    }
+
+    .sub{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      flex-wrap:wrap;
+      font-size:11px;
       color:var(--muted);
     }
 
-    .badge.maroon{
-      border-color: rgba(140,29,64,0.55);
-      background: rgba(140,29,64,0.18);
-      color: rgba(255,255,255,0.92);
-    }
-
-    .badge.gold{
-      border-color: rgba(255,198,39,0.55);
-      background: rgba(255,198,39,0.12);
-      color: rgba(255,255,255,0.92);
-    }
-
-    .badge.dim{
-      border-color: rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.04);
-      color: rgba(255,255,255,0.62);
-    }
-
-    a.open{
+    .tag{
       display:inline-flex;
       align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.14);
-      background:rgba(255,255,255,0.05);
-      color:rgba(255,255,255,0.92);
-      text-decoration:none;
-      font-weight:700;
+      gap:4px;
+      padding:3px 7px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
       white-space:nowrap;
     }
-    a.open:hover{ background:rgba(255,255,255,0.08); }
 
-    .hint{
-      margin-top:10px;
-      font-size:12px;
-      color:var(--muter);
+    .actions{
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
       align-items:center;
+      gap:8px;
+      flex:0 0 auto;
     }
 
-    .errorBox{
-      border:1px solid rgba(255,80,80,0.45);
-      background: rgba(255,80,80,0.10);
-      padding:10px 12px;
+    .open{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:32px;
+      padding:7px 12px;
+      border-radius:12px;
+      background:linear-gradient(180deg, #FFE08A, var(--asu-gold));
+      color:#111;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.2px;
+      border:1px solid rgba(0,0,0,.18);
+      box-shadow:0 6px 14px rgba(0,0,0,.35);
+      text-decoration:none;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+
+    .empty,
+    .state,
+    .error{
+      padding:12px;
       border-radius:14px;
-      color: rgba(255,255,255,0.92);
-      font-size:13px;
-      white-space:pre-wrap;
+      border:1px dashed rgba(255,198,39,.25);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
     }
 
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .state,
+    .error{
+      border-style:solid;
+    }
+
+    .error{
+      border-color:rgba(255,120,120,.35);
+      color:#ffd6d6;
+      background:rgba(120,0,0,.10);
+    }
+
+    @media (max-width:1200px){
+      .top-grid{grid-template-columns:repeat(2, minmax(0, 1fr));}
+    }
+
+    @media (max-width:760px){
+      .wrap{padding:6px;}
+      .bar{padding:9px;}
+      .top-grid,
+      .bottom-grid{grid-template-columns:1fr;}
+      .item{padding:9px 10px; align-items:flex-start;}
+      .actions{align-self:center;}
+      .brand{width:100%;}
+      .meta{justify-content:flex-start;}
+    }
   </style>
+
+  <script>
+    (function () {
+      try {
+        const u = new URL(window.location.href);
+        if (!u.searchParams.has("v")) {
+          u.searchParams.set("v", Date.now().toString());
+          window.location.replace(u.toString());
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 
 <body>
-  <div class="bg"></div>
-
   <div class="wrap">
-    <div class="card">
-      <div class="header">
-        <h1 class="title">Wrike Projects</h1>
-        <div class="rule"></div>
+    <div class="stack">
+      <div class="bar">
+        <div class="brand" aria-hidden="true">
+          <div class="badge"></div>
+          <div class="brandtext">
+            <div class="t">ASU Outreach Hub</div>
+            <div class="s" id="subtitle">Projects grouped by OH project workflow status</div>
+          </div>
+        </div>
+
+        <div class="meta" id="meta">
+          <span class="pill">Loading projects…</span>
+        </div>
       </div>
 
-      <div class="content">
-        <div class="statusRow">
-          <div class="pill" id="statePill"><span class="dot load"></span><span id="stateText">Starting…</span></div>
-          <div class="pill"><span class="dot"></span><span id="userText">—</span></div>
-        </div>
+      <div class="board">
+        <div id="statusMessage" class="state">Loading project groups…</div>
 
-        <div id="main"></div>
-
-        <!-- Totals footer -->
-        <div class="hint" id="totalsLine">
-          <span id="newReqText">New Request: —</span>
-          <span id="activeText">Active: —</span>
-          <span class="mono" id="uiVerText">UI v—</span>
-        </div>
+        <div class="top-grid" id="topGrid" hidden></div>
+        <div class="bottom-grid" id="bottomGrid" hidden></div>
       </div>
     </div>
   </div>
 
   <script>
-    // Bump this to confirm Notion is loading the newest HTML
-    const UI_VERSION = "2026-02-06-2";
+    const DEFAULT_API_URL = ""; // Optional: paste your Worker /api/projects URL here if this file is hosted on GitHub Pages.
 
-    // IMPORTANT: keep these titles aligned with your Worker defaults
-    const DEFAULT_WORKER =
-      "https://wrike-proxy.dustinjsmith.workers.dev/?pmField=Project+Manager&dateField=Date&locationField=Location";
+    const TOP_GROUPS = [
+      { key: "planning", title: "Planning", icon: "🗂️" },
+      { key: "execution", title: "Execution", icon: "🚀" },
+      { key: "reporting", title: "Reporting", icon: "📊" },
+      { key: "onHold", title: "On Hold", icon: "⏸️" }
+    ];
 
-    function getWorkerUrl() {
-      const params = new URLSearchParams(location.search);
-      const override = params.get("worker");
-      const base = override ? override : DEFAULT_WORKER;
+    const BOTTOM_GROUPS = [
+      { key: "completed", title: "Completed", icon: "✅" },
+      { key: "cancelled", title: "Cancelled", icon: "⛔" }
+    ];
 
-      const u = new URL(base);
-
-      // Use Notion/GitHub cache-buster if provided, otherwise timestamp
-      const v = params.get("v");
-      u.searchParams.set("t", v ? v : Date.now().toString());
-
-      return u.toString();
+    function getApiUrl() {
+      const u = new URL(window.location.href);
+      const qpApi = u.searchParams.get("api");
+      if (qpApi) return qpApi;
+      if (DEFAULT_API_URL) return DEFAULT_API_URL;
+      return "/api/projects";
     }
 
-    function esc(s) {
-      return String(s ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#39;");
-    }
+    function buildApiUrl() {
+      const api = new URL(getApiUrl(), window.location.href);
+      const page = new URL(window.location.href);
 
-    function setState(kind, text) {
-      const pill = document.getElementById("statePill");
-      const dot = pill.querySelector(".dot");
-      dot.className = "dot " + (kind === "ok" ? "ok" : kind === "bad" ? "bad" : "load");
-      document.getElementById("stateText").textContent = text;
-    }
+      const passthrough = [
+        "spaceId",
+        "portfolioFolderId",
+        "pmField",
+        "pmMatchName",
+        "dateField",
+        "locationField",
+        "workflowName",
+        "debug"
+      ];
 
-    function setTotals(newReq, active) {
-      document.getElementById("newReqText").textContent = `New Request: ${newReq}`;
-      document.getElementById("activeText").textContent = `Active: ${active}`;
-      document.getElementById("uiVerText").textContent = `UI v${UI_VERSION}`;
-    }
-
-    function renderError(errText, workerUrl) {
-      const main = document.getElementById("main");
-      main.innerHTML =
-        `<div class="errorBox"><b>Failed to load</b>\n\n${esc(errText)}\n\nWorker URL:\n${esc(workerUrl || "")}</div>`;
-      setTotals(0, 0);
-    }
-
-    function formatDue(isoDate) {
-      if (!isoDate) return null;
-      const d = new Date(isoDate + "T00:00:00Z");
-      if (isNaN(d.getTime())) return null;
-      return new Intl.DateTimeFormat("en-US", {
-        month: "short", day: "numeric", year: "numeric", timeZone: "UTC"
-      }).format(d);
-    }
-
-    function renderProjects(data) {
-      const main = document.getElementById("main");
-      const projects = Array.isArray(data?.projects) ? data.projects : [];
-      const userName = data?.user?.name ? data.user.name : "Unknown user";
-      document.getElementById("userText").textContent = userName;
-
-      // Totals come from the Worker (portfolio-wide), not from the user list
-      const newReq = Number(data?.totals?.newRequests ?? 0);
-      const active = Number(data?.totals?.activeProjects ?? 0);
-      setTotals(newReq, active);
-
-      if (!projects.length) {
-        main.innerHTML = `<div class="errorBox">No projects returned for you (PM) in Active statuses.</div>`;
-        return;
+      for (const key of passthrough) {
+        const value = page.searchParams.get(key);
+        if (value) api.searchParams.set(key, value);
       }
 
-      const items = projects.map(p => {
-        const title = esc(p.title);
-        const status = esc(p.status || "—");
-        const roles = Array.isArray(p.roles) ? p.roles : [];
-        const url = esc(p.openUrl || "#");
+      api.searchParams.set("_", Date.now().toString());
+      return api.toString();
+    }
 
-        const duePretty = formatDue(p.dueDate);
-        const dueBadge = duePretty
-          ? `<span class="badge">${esc("Due: " + duePretty)}</span>`
-          : `<span class="badge dim">Due: —</span>`;
+    function formatDate(iso) {
+      if (!iso) return "No due date";
+      const d = new Date(iso + "T00:00:00");
+      if (Number.isNaN(d.getTime())) return iso;
+      return d.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      });
+    }
 
-        const roleBadges = roles.map(r => {
-          const cls = (r === "PM") ? "badge maroon" : "badge gold";
-          return `<span class="${cls}">${esc(r)}</span>`;
-        }).join("");
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
 
-        return `
-          <div class="item">
-            <div class="left">
-              <div class="name" title="${title}">${title}</div>
-              <div class="meta">
-                ${dueBadge}
-                <span class="badge">${status}</span>
-                ${roleBadges}
+    function renderMeta(data) {
+      const meta = document.getElementById("meta");
+      const counts = data.counts || {};
+      const total = (data.projects || []).length;
+      const activeTotal =
+        (counts.planning || 0) +
+        (counts.execution || 0) +
+        (counts.reporting || 0) +
+        (counts.onHold || 0);
+
+      meta.innerHTML = [
+        `<span class="pill">PM: ${escapeHtml(data.matchTarget || data.user?.name || "Dustin Smith")}</span>`,
+        `<span class="pill">Visible: ${total}</span>`,
+        `<span class="pill">Open / Deferred: ${activeTotal}</span>`,
+        `<span class="pill">Completed: ${counts.completed || 0}</span>`,
+        `<span class="pill">Cancelled: ${counts.cancelled || 0}</span>`
+      ].join("");
+    }
+
+    function renderLane(def, items) {
+      const lane = document.createElement("section");
+      lane.className = "lane";
+      lane.innerHTML = `
+        <div class="lane-head">
+          <div class="lane-title">
+            <span class="dot"></span>
+            <span class="text">${escapeHtml(def.title)}</span>
+          </div>
+          <span class="count">${items.length}</span>
+        </div>
+        <div class="lane-items"></div>
+      `;
+
+      const itemsEl = lane.querySelector(".lane-items");
+
+      if (!items.length) {
+        itemsEl.innerHTML = `<div class="empty">No ${escapeHtml(def.title.toLowerCase())} projects right now.</div>`;
+        return lane;
+      }
+
+      for (const item of items) {
+        const row = document.createElement("div");
+        row.className = "item";
+        row.innerHTML = `
+          <div class="left">
+            <span class="icon">${escapeHtml(def.icon)}</span>
+            <div class="copy">
+              <div class="label">${escapeHtml(item.title || "(Untitled)")}</div>
+              <div class="sub">
+                <span class="tag">${escapeHtml(item.status || def.title)}</span>
+                <span class="tag">${escapeHtml(formatDate(item.dueDate))}</span>
               </div>
             </div>
-            <div class="right">
-              <a class="open" href="${url}" target="_blank" rel="noopener noreferrer">Open in Wrike ↗</a>
-            </div>
+          </div>
+          <div class="actions">
+            <a class="open" href="${escapeHtml(item.openUrl || "#")}" target="_top" rel="noopener">Open</a>
           </div>
         `;
-      }).join("");
+        itemsEl.appendChild(row);
+      }
 
-      main.innerHTML = `<div class="list">${items}</div>`;
+      return lane;
     }
 
-    async function init() {
-      const workerUrl = getWorkerUrl();
+    function normalizeKey(key) {
+      if (key === "onhold") return "onHold";
+      if (key === "complete") return "completed";
+      return key;
+    }
+
+    function ensureGroups(data) {
+      const existing = data.groupedProjects || {};
+      return {
+        planning: existing.planning || [],
+        execution: existing.execution || [],
+        reporting: existing.reporting || [],
+        onHold: existing.onHold || existing.onhold || [],
+        completed: existing.completed || existing.complete || [],
+        cancelled: existing.cancelled || []
+      };
+    }
+
+    async function loadProjects() {
+      const statusMessage = document.getElementById("statusMessage");
+      const subtitle = document.getElementById("subtitle");
+      const topGrid = document.getElementById("topGrid");
+      const bottomGrid = document.getElementById("bottomGrid");
 
       try {
-        setState("load", "Fetching projects…");
-        console.log("[Wrike Widget] Worker URL:", workerUrl);
-
-        const res = await fetch(workerUrl, {
-          cache: "no-store",
-          mode: "cors",
-          credentials: "omit"
+        const res = await fetch(buildApiUrl(), {
+          method: "GET",
+          headers: { "Accept": "application/json" },
+          cache: "no-store"
         });
 
-        if (!res.ok) {
-          const txt = await res.text().catch(() => "");
-          throw new Error(`Worker returned ${res.status}\n\n${txt}`);
-        }
-
         const data = await res.json();
-        if (!data || data.ok !== true) {
-          throw new Error(`Unexpected payload:\n\n${JSON.stringify(data, null, 2)}`);
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data?.error || `Request failed with ${res.status}`);
         }
 
-        renderProjects(data);
-        setState("ok", `Loaded ${data.projects?.length ?? 0} projects`);
-      } catch (e) {
-        console.error("[Wrike Widget] Error:", e);
-        setState("bad", "Failed to load projects");
-        renderError(e?.message || String(e), workerUrl);
+        const groups = ensureGroups(data);
+
+        subtitle.textContent = `Projects for ${data.matchTarget || data.user?.name || "Dustin Smith"} grouped by OH project workflow status`;
+        renderMeta(data);
+
+        topGrid.innerHTML = "";
+        bottomGrid.innerHTML = "";
+
+        TOP_GROUPS.forEach((def) => {
+          topGrid.appendChild(renderLane(def, groups[def.key] || []));
+        });
+
+        BOTTOM_GROUPS.forEach((def) => {
+          bottomGrid.appendChild(renderLane(def, groups[def.key] || []));
+        });
+
+        statusMessage.hidden = true;
+        topGrid.hidden = false;
+        bottomGrid.hidden = false;
+      } catch (err) {
+        statusMessage.className = "error";
+        statusMessage.textContent =
+          "Could not load projects. " +
+          (err && err.message ? err.message : String(err));
       }
     }
 
-    window.addEventListener("DOMContentLoaded", init);
+    loadProjects();
   </script>
 </body>
 </html>
