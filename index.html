@@ -30,6 +30,8 @@
 
       --bg0:#0b0f17;
       --bg1:#0f1320;
+
+      --lane-height: 340px;
     }
 
     *{box-sizing:border-box}
@@ -47,7 +49,7 @@
 
     .wrap{
       padding:6px;
-      max-width:1600px;
+      max-width:1650px;
       margin:0 auto;
     }
 
@@ -148,27 +150,26 @@
     .lane-grid{
       display:grid;
       gap:8px;
-      align-items:start;
+      align-items:stretch;
     }
 
     .grid-top{
-      grid-template-columns:repeat(3, minmax(0, 1fr));
-    }
-
-    .grid-middle{
-      grid-template-columns:repeat(2, minmax(0, 1fr));
+      grid-template-columns:repeat(4, minmax(0, 1fr));
     }
 
     .grid-bottom{
-      grid-template-columns:repeat(2, minmax(0, 1fr));
+      grid-template-columns:repeat(3, minmax(0, 1fr));
     }
 
     .lane{
       padding:8px;
-      min-height:170px;
+      height:var(--lane-height);
+      min-height:var(--lane-height);
+      max-height:var(--lane-height);
       display:flex;
       flex-direction:column;
       gap:8px;
+      overflow:hidden;
     }
 
     .lane-head{
@@ -178,6 +179,7 @@
       gap:8px;
       padding-bottom:7px;
       border-bottom:1px solid rgba(255,198,39,.18);
+      flex:0 0 auto;
     }
 
     .lane-title{
@@ -225,7 +227,29 @@
       display:flex;
       flex-direction:column;
       gap:6px;
-      min-height:36px;
+      min-height:0;
+      flex:1 1 auto;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding-right:2px;
+    }
+
+    .lane-items::-webkit-scrollbar{
+      width:8px;
+    }
+
+    .lane-items::-webkit-scrollbar-track{
+      background:rgba(255,255,255,.04);
+      border-radius:999px;
+    }
+
+    .lane-items::-webkit-scrollbar-thumb{
+      background:rgba(255,198,39,.35);
+      border-radius:999px;
+    }
+
+    .lane-items::-webkit-scrollbar-thumb:hover{
+      background:rgba(255,198,39,.55);
     }
 
     .item{
@@ -240,6 +264,7 @@
       color:var(--text);
       text-decoration:none;
       transition:transform .10s ease, border-color .12s ease, background .12s ease;
+      flex:0 0 auto;
     }
 
     .item:hover{
@@ -359,25 +384,21 @@
       background:rgba(120,0,0,.10);
     }
 
-    @media (max-width:1250px){
+    @media (max-width:1400px){
       .grid-top{grid-template-columns:repeat(2, minmax(0, 1fr));}
-    }
-
-    @media (max-width:900px){
-      .grid-middle,
-      .grid-bottom{grid-template-columns:1fr;}
+      .grid-bottom{grid-template-columns:repeat(2, minmax(0, 1fr));}
     }
 
     @media (max-width:760px){
       .wrap{padding:5px;}
       .bar{padding:8px 9px;}
       .grid-top,
-      .grid-middle,
       .grid-bottom{grid-template-columns:1fr;}
       .item{padding:8px 9px; align-items:flex-start;}
       .actions{align-self:center;}
       .brand{width:100%;}
       .meta{justify-content:flex-start;}
+      :root{ --lane-height: 300px; }
     }
   </style>
 
@@ -415,7 +436,6 @@
         <div id="statusMessage" class="state">Loading project groups…</div>
 
         <div class="lane-grid grid-top" id="topGrid" hidden></div>
-        <div class="lane-grid grid-middle" id="middleGrid" hidden></div>
         <div class="lane-grid grid-bottom" id="bottomGrid" hidden></div>
       </div>
     </div>
@@ -425,19 +445,16 @@
     const DEFAULT_API_URL = "https://wrike-proxy.dustinjsmith.workers.dev/api/projects?pmField=Project%20Manager&pmMatchName=Dustin%20Smith&workflowName=OH%20project%20workflow&dateField=Date&locationField=Location";
 
     const TOP_GROUPS = [
+      { key: "portfolioBacklog", title: "Portfolio Backlog", icon: "🗃️" },
       { key: "planning", title: "Planning", icon: "🗂️" },
       { key: "execution", title: "Execution", icon: "🚀" },
       { key: "reporting", title: "Reporting", icon: "📊" }
     ];
 
-    const MIDDLE_GROUPS = [
-      { key: "onHold", title: "On Hold", icon: "⏸️" },
-      { key: "portfolioBacklog", title: "Portfolio Backlog", icon: "🗃️" }
-    ];
-
     const BOTTOM_GROUPS = [
-      { key: "completed", title: "Completed", icon: "✅" },
-      { key: "cancelled", title: "Cancelled", icon: "⛔" }
+      { key: "onHold", title: "On Hold", icon: "⏸️" },
+      { key: "cancelled", title: "Cancelled", icon: "⛔" },
+      { key: "completed", title: "Completed", icon: "✅" }
     ];
 
     function getApiUrl() {
@@ -574,7 +591,6 @@
       const statusMessage = document.getElementById("statusMessage");
       const subtitle = document.getElementById("subtitle");
       const topGrid = document.getElementById("topGrid");
-      const middleGrid = document.getElementById("middleGrid");
       const bottomGrid = document.getElementById("bottomGrid");
 
       try {
@@ -603,15 +619,10 @@
         renderMeta(data);
 
         topGrid.innerHTML = "";
-        middleGrid.innerHTML = "";
         bottomGrid.innerHTML = "";
 
         TOP_GROUPS.forEach((def) => {
           topGrid.appendChild(renderLane(def, groups[def.key] || []));
-        });
-
-        MIDDLE_GROUPS.forEach((def) => {
-          middleGrid.appendChild(renderLane(def, groups[def.key] || []));
         });
 
         BOTTOM_GROUPS.forEach((def) => {
@@ -620,7 +631,6 @@
 
         statusMessage.hidden = true;
         topGrid.hidden = false;
-        middleGrid.hidden = false;
         bottomGrid.hidden = false;
       } catch (err) {
         statusMessage.className = "error";
