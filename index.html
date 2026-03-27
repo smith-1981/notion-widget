@@ -46,13 +46,15 @@
     }
 
     .wrap{
-      padding:8px;
+      padding:6px;
+      max-width:1600px;
+      margin:0 auto;
     }
 
     .stack{
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:8px;
     }
 
     .bar,
@@ -69,8 +71,8 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      padding:10px;
+      gap:10px;
+      padding:9px 10px;
       flex-wrap:wrap;
     }
 
@@ -118,7 +120,7 @@
 
     .meta{
       display:flex;
-      gap:8px;
+      gap:6px;
       flex-wrap:wrap;
       justify-content:flex-end;
     }
@@ -127,12 +129,12 @@
       display:inline-flex;
       align-items:center;
       gap:6px;
-      padding:8px 10px;
+      padding:7px 9px;
       border-radius:12px;
       border:1px solid var(--row-border);
       background:linear-gradient(90deg, rgba(140,29,64,.28), rgba(0,0,0,.15));
       color:var(--text);
-      font-size:12px;
+      font-size:11.5px;
       font-weight:800;
       white-space:nowrap;
     }
@@ -140,36 +142,41 @@
     .board{
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:8px;
     }
 
-    .top-grid{
+    .lane-grid{
       display:grid;
-      grid-template-columns:repeat(4, minmax(0, 1fr));
-      gap:10px;
+      gap:8px;
       align-items:start;
     }
 
-    .bottom-grid{
-      display:grid;
+    .grid-top{
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-middle{
       grid-template-columns:repeat(2, minmax(0, 1fr));
-      gap:10px;
+    }
+
+    .grid-bottom{
+      grid-template-columns:repeat(2, minmax(0, 1fr));
     }
 
     .lane{
-      padding:10px;
-      min-height:220px;
+      padding:8px;
+      min-height:170px;
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:8px;
     }
 
     .lane-head{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
-      padding-bottom:8px;
+      gap:8px;
+      padding-bottom:7px;
       border-bottom:1px solid rgba(255,198,39,.18);
     }
 
@@ -191,8 +198,8 @@
 
     .lane-title .text{
       font-weight:850;
-      font-size:13px;
-      letter-spacing:.25px;
+      font-size:12.5px;
+      letter-spacing:.2px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
@@ -202,13 +209,13 @@
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-width:26px;
-      height:26px;
-      padding:0 8px;
+      min-width:24px;
+      height:24px;
+      padding:0 7px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.06);
-      font-size:12px;
+      font-size:11px;
       font-weight:900;
       color:var(--text);
       flex:0 0 auto;
@@ -217,17 +224,17 @@
     .lane-items{
       display:flex;
       flex-direction:column;
-      gap:8px;
-      min-height:40px;
+      gap:6px;
+      min-height:36px;
     }
 
     .item{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:12px;
       border:1px solid var(--row-border);
       background:linear-gradient(90deg, rgba(140,29,64,.28), rgba(0,0,0,.15));
       color:var(--text);
@@ -250,16 +257,16 @@
     }
 
     .icon{
-      width:22px;
-      height:22px;
-      border-radius:10px;
+      width:20px;
+      height:20px;
+      border-radius:9px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
       background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
       flex:0 0 auto;
-      font-size:13px;
+      font-size:12px;
       line-height:1;
       margin-top:1px;
     }
@@ -267,14 +274,14 @@
     .copy{
       display:flex;
       flex-direction:column;
-      gap:4px;
+      gap:3px;
       min-width:0;
     }
 
     .label{
       font-weight:800;
-      font-size:13px;
-      line-height:1.25;
+      font-size:12px;
+      line-height:1.22;
       overflow:hidden;
       text-overflow:ellipsis;
       display:-webkit-box;
@@ -285,9 +292,9 @@
     .sub{
       display:flex;
       align-items:center;
-      gap:6px;
+      gap:5px;
       flex-wrap:wrap;
-      font-size:11px;
+      font-size:10.5px;
       color:var(--muted);
     }
 
@@ -295,7 +302,7 @@
       display:inline-flex;
       align-items:center;
       gap:4px;
-      padding:3px 7px;
+      padding:2px 6px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(255,255,255,.05);
@@ -314,13 +321,13 @@
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-height:32px;
-      padding:7px 12px;
-      border-radius:12px;
+      min-height:29px;
+      padding:6px 10px;
+      border-radius:11px;
       background:linear-gradient(180deg, #FFE08A, var(--asu-gold));
       color:#111;
       font-weight:900;
-      font-size:12px;
+      font-size:11px;
       letter-spacing:.2px;
       border:1px solid rgba(0,0,0,.18);
       box-shadow:0 6px 14px rgba(0,0,0,.35);
@@ -332,13 +339,13 @@
     .empty,
     .state,
     .error{
-      padding:12px;
-      border-radius:14px;
+      padding:10px 11px;
+      border-radius:12px;
       border:1px dashed rgba(255,198,39,.25);
       background:rgba(255,255,255,.03);
       color:var(--muted);
-      font-size:12px;
-      line-height:1.45;
+      font-size:11.5px;
+      line-height:1.4;
     }
 
     .state,
@@ -352,16 +359,22 @@
       background:rgba(120,0,0,.10);
     }
 
-    @media (max-width:1200px){
-      .top-grid{grid-template-columns:repeat(2, minmax(0, 1fr));}
+    @media (max-width:1250px){
+      .grid-top{grid-template-columns:repeat(2, minmax(0, 1fr));}
+    }
+
+    @media (max-width:900px){
+      .grid-middle,
+      .grid-bottom{grid-template-columns:1fr;}
     }
 
     @media (max-width:760px){
-      .wrap{padding:6px;}
-      .bar{padding:9px;}
-      .top-grid,
-      .bottom-grid{grid-template-columns:1fr;}
-      .item{padding:9px 10px; align-items:flex-start;}
+      .wrap{padding:5px;}
+      .bar{padding:8px 9px;}
+      .grid-top,
+      .grid-middle,
+      .grid-bottom{grid-template-columns:1fr;}
+      .item{padding:8px 9px; align-items:flex-start;}
       .actions{align-self:center;}
       .brand{width:100%;}
       .meta{justify-content:flex-start;}
@@ -401,8 +414,9 @@
       <div class="board">
         <div id="statusMessage" class="state">Loading project groups…</div>
 
-        <div class="top-grid" id="topGrid" hidden></div>
-        <div class="bottom-grid" id="bottomGrid" hidden></div>
+        <div class="lane-grid grid-top" id="topGrid" hidden></div>
+        <div class="lane-grid grid-middle" id="middleGrid" hidden></div>
+        <div class="lane-grid grid-bottom" id="bottomGrid" hidden></div>
       </div>
     </div>
   </div>
@@ -413,8 +427,12 @@
     const TOP_GROUPS = [
       { key: "planning", title: "Planning", icon: "🗂️" },
       { key: "execution", title: "Execution", icon: "🚀" },
-      { key: "reporting", title: "Reporting", icon: "📊" },
-      { key: "onHold", title: "On Hold", icon: "⏸️" }
+      { key: "reporting", title: "Reporting", icon: "📊" }
+    ];
+
+    const MIDDLE_GROUPS = [
+      { key: "onHold", title: "On Hold", icon: "⏸️" },
+      { key: "portfolioBacklog", title: "Portfolio Backlog", icon: "🗃️" }
     ];
 
     const BOTTOM_GROUPS = [
@@ -482,7 +500,8 @@
         (counts.planning || 0) +
         (counts.execution || 0) +
         (counts.reporting || 0) +
-        (counts.onHold || 0);
+        (counts.onHold || 0) +
+        (counts.portfolioBacklog || 0);
 
       meta.innerHTML = [
         `<span class="pill">PM: ${escapeHtml(data.matchTarget || data.user?.name || "Dustin Smith")}</span>`,
@@ -545,6 +564,7 @@
         execution: existing.execution || [],
         reporting: existing.reporting || [],
         onHold: existing.onHold || existing.onhold || [],
+        portfolioBacklog: existing.portfolioBacklog || existing.backlog || [],
         completed: existing.completed || existing.complete || [],
         cancelled: existing.cancelled || []
       };
@@ -554,6 +574,7 @@
       const statusMessage = document.getElementById("statusMessage");
       const subtitle = document.getElementById("subtitle");
       const topGrid = document.getElementById("topGrid");
+      const middleGrid = document.getElementById("middleGrid");
       const bottomGrid = document.getElementById("bottomGrid");
 
       try {
@@ -582,10 +603,15 @@
         renderMeta(data);
 
         topGrid.innerHTML = "";
+        middleGrid.innerHTML = "";
         bottomGrid.innerHTML = "";
 
         TOP_GROUPS.forEach((def) => {
           topGrid.appendChild(renderLane(def, groups[def.key] || []));
+        });
+
+        MIDDLE_GROUPS.forEach((def) => {
+          middleGrid.appendChild(renderLane(def, groups[def.key] || []));
         });
 
         BOTTOM_GROUPS.forEach((def) => {
@@ -594,6 +620,7 @@
 
         statusMessage.hidden = true;
         topGrid.hidden = false;
+        middleGrid.hidden = false;
         bottomGrid.hidden = false;
       } catch (err) {
         statusMessage.className = "error";
