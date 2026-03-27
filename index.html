@@ -442,7 +442,7 @@
   </div>
 
   <script>
-    const DEFAULT_API_URL = "https://wrike-proxy.dustinjsmith.workers.dev/api/projects?pmField=Project%20Manager&pmMatchName=Dustin%20Smith&workflowName=OH%20project%20workflow&dateField=Date&clientRequestedDateField=Client%20requested%20date&locationField=Location";
+    const DEFAULT_API_URL = "https://wrike-proxy.dustinjsmith.workers.dev/api/projects?pmField=Project%20Manager&pmMatchName=Dustin%20Smith&workflowName=OH%20project%20workflow&clientRequestedDateField=Client%20requested%20date&locationField=Location";
 
     const TOP_GROUPS = [
       { key: "portfolioBacklog", title: "Portfolio Backlog", icon: "🗃️" },
@@ -474,7 +474,6 @@
         "portfolioFolderId",
         "pmField",
         "pmMatchName",
-        "dateField",
         "clientRequestedDateField",
         "locationField",
         "workflowName",
@@ -561,7 +560,9 @@
               <div class="label">${escapeHtml(item.title || "(Untitled)")}</div>
               <div class="sub">
                 <span class="tag">${escapeHtml(item.status || def.title)}</span>
-                <span class="tag">Proj Date: ${escapeHtml(formatDate(item.projectDate))}</span>
+                <span class="tag">Start: ${escapeHtml(formatDate(item.projectStartDate))}</span>
+                <span class="tag">End: ${escapeHtml(formatDate(item.projectEndDate))}</span>
+                <span class="tag">Created: ${escapeHtml(formatDate(item.projectCreatedDate))}</span>
                 <span class="tag">Client Req: ${escapeHtml(formatDate(item.clientRequestedDate))}</span>
               </div>
             </div>
