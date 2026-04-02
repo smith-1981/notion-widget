@@ -84,8 +84,7 @@
     }
 
     .workflow-shell,
-    .compare-shell,
-    .footer-shell {
+    .compare-shell {
       border: 4px solid var(--asu-maroon);
       border-radius: 20px;
       overflow: hidden;
@@ -96,8 +95,7 @@
     }
 
     .workflow-header,
-    .compare-header,
-    .footer-header {
+    .compare-header {
       background: var(--asu-maroon);
       color: var(--asu-white);
       padding: 18px 24px;
@@ -105,8 +103,7 @@
     }
 
     .workflow-header h2,
-    .compare-header h2,
-    .footer-header h2 {
+    .compare-header h2 {
       margin: 0 0 5px;
       font-size: 27px;
       line-height: 1.2;
@@ -115,8 +112,7 @@
     }
 
     .workflow-header p,
-    .compare-header p,
-    .footer-header p {
+    .compare-header p {
       margin: 0;
       font-size: 14px;
       line-height: 1.45;
@@ -124,8 +120,7 @@
     }
 
     .workflow-body,
-    .compare-body,
-    .footer-body {
+    .compare-body {
       padding: 18px;
       background: linear-gradient(to bottom, #fffdfa, #ffffff);
     }
@@ -182,8 +177,7 @@
     }
 
     .status-card,
-    .compare-card,
-    .footer-card {
+    .compare-card {
       background: var(--asu-white);
       border: 1px solid #e3e3e3;
       border-left: 8px solid var(--asu-maroon);
@@ -195,8 +189,7 @@
     }
 
     .status-card h3,
-    .compare-card h3,
-    .footer-card h3 {
+    .compare-card h3 {
       margin: 0 0 8px;
       font-size: 18px;
       color: var(--asu-maroon);
@@ -204,8 +197,7 @@
     }
 
     .status-card ul,
-    .compare-card ul,
-    .footer-card ul {
+    .compare-card ul {
       margin: 0;
       padding-left: 18px;
       font-size: 13px;
@@ -213,8 +205,7 @@
     }
 
     .status-card li + li,
-    .compare-card li + li,
-    .footer-card li + li {
+    .compare-card li + li {
       margin-top: 3px;
     }
 
@@ -232,8 +223,7 @@
       border-left-color: var(--completed-accent);
     }
 
-    .compare-card.tip,
-    .footer-card {
+    .compare-card.tip {
       border-left-color: var(--asu-gold);
     }
 
@@ -282,8 +272,7 @@
       }
 
       .workflow-header h2,
-      .compare-header h2,
-      .footer-header h2 {
+      .compare-header h2 {
         font-size: 24px;
       }
 
@@ -313,8 +302,7 @@
 
       .page-title,
       .workflow-shell,
-      .compare-shell,
-      .footer-shell {
+      .compare-shell {
         box-shadow: none;
       }
 
@@ -352,36 +340,31 @@
       }
 
       .workflow-shell,
-      .compare-shell,
-      .footer-shell {
+      .compare-shell {
         border-width: 2px;
         border-radius: 10px;
       }
 
       .workflow-header,
-      .compare-header,
-      .footer-header {
+      .compare-header {
         padding: 10px 14px;
         border-bottom-width: 4px;
       }
 
       .workflow-header h2,
-      .compare-header h2,
-      .footer-header h2 {
+      .compare-header h2 {
         font-size: 18px;
         margin-bottom: 3px;
       }
 
       .workflow-header p,
-      .compare-header p,
-      .footer-header p {
+      .compare-header p {
         font-size: 10px;
         line-height: 1.25;
       }
 
       .workflow-body,
-      .compare-body,
-      .footer-body {
+      .compare-body {
         padding: 10px;
       }
 
@@ -421,8 +404,7 @@
       }
 
       .status-card,
-      .compare-card,
-      .footer-card {
+      .compare-card {
         border-radius: 8px;
         border-left-width: 5px;
         padding: 8px 8px 10px;
@@ -430,23 +412,20 @@
       }
 
       .status-card h3,
-      .compare-card h3,
-      .footer-card h3 {
+      .compare-card h3 {
         font-size: 12px;
         margin-bottom: 5px;
       }
 
       .status-card ul,
-      .compare-card ul,
-      .footer-card ul {
+      .compare-card ul {
         font-size: 9px;
         line-height: 1.2;
         padding-left: 14px;
       }
 
       .status-card li + li,
-      .compare-card li + li,
-      .footer-card li + li {
+      .compare-card li + li {
         margin-top: 2px;
       }
 
@@ -469,10 +448,48 @@
       <div class="intro">
         <h3>Introduction</h3>
         <p>
-          This guide is designed to help teams understand the difference between project-level and task-level statuses,
-          how each status group is organized, and when to update statuses as work moves through planning, execution,
-          review, completion, pause, or cancellation.
+          This guide is intended to help OH teams consistently understand and apply project-level and task-level
+          statuses in Wrike. Use it as a quick reference during training and day-to-day work to determine how statuses
+          are grouped, what each status represents, and when updates should be made.
         </p>
+      </div>
+    </section>
+
+    <section class="compare-shell">
+      <div class="compare-header">
+        <h2>Project vs Task</h2>
+        <p>Use this quick comparison to explain the difference before reviewing the detailed workflow boards below.</p>
+      </div>
+
+      <div class="compare-body">
+        <div class="compare-grid">
+          <div class="compare-card project">
+            <h3>Project-Level = The Big Picture</h3>
+            <ul>
+              <li>Represents the overall campaign or initiative lifecycle</li>
+              <li>Helps teams and leaders understand where the full project stands</li>
+              <li>Usually updated by Project Management</li>
+            </ul>
+          </div>
+
+          <div class="compare-card task">
+            <h3>Task-Level = The Actual Deliverable</h3>
+            <ul>
+              <li>Represents the state of an individual asset or work item</li>
+              <li>Shows whether work is ready, underway, waiting, in review, or done</li>
+              <li>Updated by the assignee and/or Project Management</li>
+            </ul>
+          </div>
+
+          <div class="compare-card tip">
+            <h3>Key Team Reminder</h3>
+            <ul>
+              <li>A project can be in <strong>Execution</strong> while different tasks are in <strong>To Do</strong>, <strong>In Progress</strong>, or <strong>In Review</strong></li>
+              <li>Project status and task status should support each other, but they are not the same thing</li>
+              <li>Always update the status that best reflects the current level of work</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -579,44 +596,6 @@
             </div>
           </section>
 
-        </div>
-      </div>
-    </section>
-
-    <section class="compare-shell">
-      <div class="compare-header">
-        <h2>Project vs Task</h2>
-        <p>Use this quick comparison to explain the difference before reviewing the detailed workflow boards below.</p>
-      </div>
-
-      <div class="compare-body">
-        <div class="compare-grid">
-          <div class="compare-card project">
-            <h3>Project-Level = The Big Picture</h3>
-            <ul>
-              <li>Represents the overall campaign or initiative lifecycle</li>
-              <li>Helps teams and leaders understand where the full project stands</li>
-              <li>Usually updated by Project Management</li>
-            </ul>
-          </div>
-
-          <div class="compare-card task">
-            <h3>Task-Level = The Actual Deliverable</h3>
-            <ul>
-              <li>Represents the state of an individual asset or work item</li>
-              <li>Shows whether work is ready, underway, waiting, in review, or done</li>
-              <li>Updated by the assignee and/or Project Management</li>
-            </ul>
-          </div>
-
-          <div class="compare-card tip">
-            <h3>Key Team Reminder</h3>
-            <ul>
-              <li>A project can be in <strong>Execution</strong> while different tasks are in <strong>To Do</strong>, <strong>In Progress</strong>, or <strong>In Review</strong></li>
-              <li>Project status and task status should support each other, but they are not the same thing</li>
-              <li>Always update the status that best reflects the current level of work</li>
-            </ul>
-          </div>
         </div>
       </div>
     </section>
@@ -750,24 +729,6 @@
             </div>
           </section>
 
-        </div>
-      </div>
-    </section>
-
-    <section class="footer-shell">
-      <div class="footer-header">
-        <h2>Team Guidance</h2>
-        <p>Use this reminder to reinforce consistent status updates across the OH.</p>
-      </div>
-
-      <div class="footer-body">
-        <div class="footer-card">
-          <h3>When in Doubt</h3>
-          <ul>
-            <li>Choose the status that best reflects the current state of work</li>
-            <li>Leave a comment with context when a status may not be obvious to others</li>
-            <li>Use project status for the overall initiative and task status for the specific deliverable</li>
-          </ul>
         </div>
       </div>
     </section>
