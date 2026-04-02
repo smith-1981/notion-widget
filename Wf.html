@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project-Level Workflow</title>
+  <style>
+    :root {
+      --asu-maroon: #8C1D40;
+      --asu-gold: #FFC627;
+      --asu-white: #FFFFFF;
+      --asu-gray: #F5F5F5;
+      --asu-text: #2D2D2D;
+      --asu-border: #D9D9D9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f4f6;
+      color: var(--asu-text);
+    }
+
+    .workflow-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: var(--asu-white);
+      border: 4px solid var(--asu-maroon);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .workflow-header {
+      background: var(--asu-maroon);
+      color: var(--asu-white);
+      padding: 20px 28px;
+      border-bottom: 6px solid var(--asu-gold);
+    }
+
+    .workflow-header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .workflow-body {
+      padding: 28px;
+      background: linear-gradient(to bottom, #fffdf8, #ffffff);
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .status-card {
+      background: var(--asu-gray);
+      border: 2px solid var(--asu-border);
+      border-top: 8px solid var(--asu-maroon);
+      border-radius: 16px;
+      padding: 18px 18px 20px;
+      min-height: 220px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .status-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    }
+
+    .status-label {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 12px;
+      background: var(--asu-maroon);
+      color: var(--asu-white);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .status-card h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+      color: var(--asu-maroon);
+      line-height: 1.2;
+    }
+
+    .status-card p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .status-card.active {
+      border-top-color: var(--asu-maroon);
+    }
+
+    .status-card.complete {
+      border-top-color: #2e7d32;
+    }
+
+    .status-card.hold {
+      border-top-color: #b26a00;
+    }
+
+    .status-card.cancelled {
+      border-top-color: #b3261e;
+    }
+
+    @media (max-width: 1100px) {
+      .workflow-grid {
+        grid-template-columns: repeat(2, minmax(280px, 1fr));
+      }
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 16px;
+      }
+
+      .workflow-body {
+        padding: 18px;
+      }
+
+      .workflow-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workflow-header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="workflow-wrapper">
+    <div class="workflow-header">
+      <h1>Project-Level Workflow</h1>
+    </div>
+
+    <div class="workflow-body">
+      <div class="workflow-grid">
+
+        <div class="status-card active">
+          <div class="status-label">Deferred</div>
+          <h2>Portfolio Backlog</h2>
+          <p>
+            Default status when a request form is submitted. The project
+            auto-creates in Wrike with this status.
+          </p>
+        </div>
+
+        <div class="status-card active">
+          <div class="status-label">Active</div>
+          <h2>Planning</h2>
+          <p>
+            PM is ready to begin reviews/refine the creative brief, confirms
+            assets and channels, builds the Wrike project plan, assigns and
+            aligns resources, and confirms dates and metrics.
+          </p>
+        </div>
+
+        <div class="status-card active">
+          <div class="status-label">Active</div>
+          <h2>Execution</h2>
+          <p>
+            Select when assets are actively being produced. Cross-team
+            coordination is underway. This status generally begins when work
+            tasks are assigned to doers and continues until campaign
+            deliverables are ready for launch.
+          </p>
+        </div>
+
+        <div class="status-card active">
+          <div class="status-label">Deferred</div>
+          <h2>Reporting</h2>
+          <p>
+            Move to this phase when the campaign is launched. During this phase
+            the PM monitors performance, makes minor optimizations, and completes
+            wrap-up tasks such as reporting, documenting lessons learned, and
+            archiving.
+          </p>
+        </div>
+
+        <div class="status-card complete">
+          <div class="status-label">Completed</div>
+          <h2>Complete</h2>
+          <p>
+            Use when the campaign is formally closed and no more active work will
+            occur. This status is necessary for accurate reporting and to indicate
+            that all tasks are completed.
+          </p>
+        </div>
+
+        <div class="status-card hold">
+          <div class="status-label">Deferred</div>
+          <h2>On Hold</h2>
+          <p>
+            Use only if the project is intentionally paused for a significant
+            period. Provide context in the project description or comments.
+            Reactivate by moving back to the appropriate active phase once work
+            resumes.
+          </p>
+        </div>
+
+        <div class="status-card cancelled">
+          <div class="status-label">Cancelled</div>
+          <h2>Cancelled</h2>
+          <p>
+            Use when the project will not be completed. All associated tasks
+            should be cancelled or updated accordingly. Document the rationale
+            in comments.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
