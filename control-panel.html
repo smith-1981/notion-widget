@@ -39,7 +39,6 @@ html, body {
   overflow: hidden;
 }
 
-/* ── Background ── */
 .bg {
   position: fixed; inset: -80px; z-index: 0; pointer-events: none;
   background:
@@ -56,19 +55,15 @@ html, body {
   gap: 10px;
 }
 
-/* ── Header ── */
 .hdr {
   display: flex; align-items: center; justify-content: space-between;
   flex-shrink: 0;
 }
-.hdr-title {
-  display: flex; align-items: center; gap: 10px;
-}
+.hdr-title { display: flex; align-items: center; gap: 10px; }
 .hdr-icon {
   width: 32px; height: 32px; border-radius: 8px;
   background: var(--maroon-dim); border: 1px solid var(--maroon-border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 15px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
 }
 .hdr-text h1 { font-size: 15px; font-weight: 600; letter-spacing: 0.01em; }
 .hdr-text p  { font-size: 11px; color: var(--muted); margin-top: 1px; }
@@ -76,101 +71,65 @@ html, body {
   font-size: 10px; font-weight: 500; font-family: var(--mono);
   color: var(--gold); background: var(--gold-dim);
   border: 1px solid var(--gold-border);
-  padding: 3px 8px; border-radius: 999px;
-  letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: 999px; letter-spacing: 0.04em;
 }
 
-/* ── Tabs ── */
 .tabs {
   display: flex; gap: 4px; flex-shrink: 0;
   background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 3px;
+  border-radius: 10px; padding: 3px;
 }
 .tab {
   flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 7px 6px;
-  border-radius: 8px;
+  padding: 7px 6px; border-radius: 8px;
   border: none; background: transparent;
   color: var(--muted); font-family: var(--font); font-size: 12px; font-weight: 500;
   cursor: pointer; transition: all 0.18s; white-space: nowrap;
 }
 .tab:hover { color: var(--text); background: rgba(255,255,255,0.06); }
-.tab.active {
-  background: var(--maroon-dim);
-  border: 1px solid var(--maroon-border);
-  color: var(--text);
-}
-.tab .tab-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--muted); flex-shrink: 0; transition: background 0.18s;
-}
+.tab.active { background: var(--maroon-dim); border: 1px solid var(--maroon-border); color: var(--text); }
+.tab .tab-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: background 0.18s; }
 .tab.active .tab-dot { background: var(--gold); }
 .tab .tab-icon { font-size: 13px; }
 
-/* ── Panel ── */
 .panels { flex: 1; min-height: 0; position: relative; }
-.panel {
-  display: none; flex-direction: column; gap: 10px;
-  height: 100%;
-}
+.panel { display: none; flex-direction: column; gap: 10px; height: 100%; }
 .panel.active { display: flex; }
 
-/* ── Panel header ── */
-.panel-hdr {
-  display: flex; align-items: center; justify-content: space-between;
-  flex-shrink: 0; gap: 10px;
-}
-.panel-title {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; font-weight: 600;
-}
-.panel-title .dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: rgba(255,255,255,0.2); flex-shrink: 0;
-  transition: background 0.2s;
-}
+.panel-hdr { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 10px; }
+.panel-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+.panel-title .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); flex-shrink: 0; transition: background 0.2s; }
 .panel-title .dot.ok  { background: rgba(0,220,130,0.7); }
 .panel-title .dot.bad { background: rgba(255,80,80,0.8); }
 .panel-title .dot.run { background: var(--gold); }
 .panel-status { font-size: 11px; color: var(--muted); font-family: var(--mono); }
 
-/* ── Buttons ── */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 14px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--bg3);
+  border: 1px solid var(--border); background: var(--bg3);
   color: var(--text); font-family: var(--font); font-size: 12px; font-weight: 500;
   cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
 }
 .btn:hover:not(:disabled) { border-color: var(--border-hover); background: rgba(255,255,255,0.10); }
 .btn:active:not(:disabled) { transform: scale(0.97); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn-primary {
-  background: var(--maroon-dim); border-color: var(--maroon-border); color: #fff;
-}
+.btn-primary { background: var(--maroon-dim); border-color: var(--maroon-border); color: #fff; }
 .btn-primary:hover:not(:disabled) { background: rgba(140,29,64,0.30); }
-.btn-gold {
-  background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold);
-}
+.btn-gold { background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold); }
 .btn-gold:hover:not(:disabled) { background: rgba(255,198,39,0.22); }
 .btn-row { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
 
-/* ── Scroll area ── */
 .scroll {
-  flex: 1; min-height: 0;
-  overflow-y: auto;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
+  flex: 1; min-height: 0; overflow-y: auto;
+  border-radius: var(--radius-sm); border: 1px solid var(--border);
   background: rgba(255,255,255,0.025);
 }
 .scroll::-webkit-scrollbar { width: 4px; }
 .scroll::-webkit-scrollbar-track { background: transparent; }
 .scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
 
-/* ── Log lines ── */
 .log { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
 .log-line {
   font-size: 11px; font-family: var(--mono); color: var(--muted);
@@ -179,17 +138,15 @@ html, body {
 }
 .log-line:last-child { border-bottom: none; }
 .log-line .ts { color: rgba(255,255,255,0.25); flex-shrink: 0; }
-.log-line.ok  .msg { color: rgba(0,220,130,0.85); }
-.log-line.bad .msg { color: rgba(255,100,100,0.85); }
+.log-line.ok   .msg { color: rgba(0,220,130,0.85); }
+.log-line.bad  .msg { color: rgba(255,100,100,0.85); }
 .log-line.info .msg { color: var(--gold); }
 .log-empty {
-  padding: 32px 12px; text-align: center;
-  font-size: 12px; color: var(--muted);
+  padding: 32px 12px; text-align: center; font-size: 12px; color: var(--muted);
   display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
 .log-empty .ico { font-size: 28px; opacity: 0.5; }
 
-/* ── Project list (top priority) ── */
 .proj-list { padding: 8px; display: flex; flex-direction: column; gap: 5px; }
 .proj-item {
   display: flex; gap: 10px; align-items: flex-start;
@@ -214,30 +171,20 @@ html, body {
 .proj-tags { display: flex; flex-wrap: wrap; gap: 4px; }
 .badge {
   font-size: 10px; font-weight: 500; font-family: var(--mono);
-  padding: 2px 7px; border-radius: 999px; border: 1px solid;
-  white-space: nowrap;
+  padding: 2px 7px; border-radius: 999px; border: 1px solid; white-space: nowrap;
 }
-.badge-ov    { background: rgba(255,80,80,0.12); color: rgba(255,120,120,0.9); border-color: rgba(255,80,80,0.3); }
-.badge-due   { background: rgba(255,198,39,0.10); color: rgba(255,198,39,0.85); border-color: rgba(255,198,39,0.3); }
-.badge-exec  { background: rgba(50,150,255,0.10); color: rgba(100,180,255,0.85); border-color: rgba(50,150,255,0.3); }
+.badge-ov    { background: rgba(255,80,80,0.12);   color: rgba(255,120,120,0.9); border-color: rgba(255,80,80,0.3); }
+.badge-due   { background: rgba(255,198,39,0.10);  color: rgba(255,198,39,0.85); border-color: rgba(255,198,39,0.3); }
+.badge-exec  { background: rgba(50,150,255,0.10);  color: rgba(100,180,255,0.85); border-color: rgba(50,150,255,0.3); }
 .badge-plan  { background: rgba(160,100,255,0.10); color: rgba(180,140,255,0.85); border-color: rgba(160,100,255,0.3); }
 .badge-other { background: var(--bg2); color: var(--muted); border-color: var(--border); }
 
-/* ── Stats row ── */
-.stats {
-  display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; flex-shrink: 0;
-}
-.stat {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 8px 10px; text-align: center;
-}
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; flex-shrink: 0; }
+.stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; text-align: center; }
 .stat .n { font-size: 22px; font-weight: 600; color: var(--gold); font-family: var(--mono); display: block; line-height: 1; }
 .stat .l { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 3px; }
 
-/* ── Field auditor input ── */
-.field-row {
-  display: flex; gap: 6px; flex-shrink: 0;
-}
+.field-row { display: flex; gap: 6px; flex-shrink: 0; }
 .field-input {
   flex: 1; background: var(--bg2); border: 1px solid var(--border);
   border-radius: var(--radius-sm); padding: 8px 12px;
@@ -247,7 +194,6 @@ html, body {
 .field-input::placeholder { color: var(--muted); }
 .field-input:focus { border-color: var(--gold-border); }
 
-/* ── Spinner ── */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spin {
   width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0;
@@ -255,11 +201,7 @@ html, body {
   animation: spin 0.7s linear infinite;
 }
 
-/* ── Stagger fade-in ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .proj-item { animation: fadeUp 0.2s ease both; }
 </style>
 </head>
@@ -267,7 +209,6 @@ html, body {
 <div class="bg"></div>
 <div class="wrap">
 
-  <!-- Header -->
   <div class="hdr">
     <div class="hdr-title">
       <div class="hdr-icon">🛠</div>
@@ -279,7 +220,6 @@ html, body {
     <div class="hdr-badge">dustinjsmith.workers.dev</div>
   </div>
 
-  <!-- Tabs -->
   <div class="tabs">
     <button class="tab active" onclick="switchTab('priority',this)">
       <span class="tab-dot"></span><span class="tab-icon">🔴</span> Top Priority
@@ -295,16 +235,12 @@ html, body {
     </button>
   </div>
 
-  <!-- Panels -->
   <div class="panels">
 
-    <!-- ── TOP PRIORITY ── -->
+    <!-- TOP PRIORITY -->
     <div class="panel active" id="panel-priority">
       <div class="panel-hdr">
-        <div class="panel-title">
-          <div class="dot" id="p-dot"></div>
-          Top Priority Projects
-        </div>
+        <div class="panel-title"><div class="dot" id="p-dot"></div>Top Priority Projects</div>
         <span class="panel-status" id="p-status">Not synced</span>
       </div>
       <div class="stats">
@@ -332,13 +268,10 @@ html, body {
       </div>
     </div>
 
-    <!-- ── PROJECT SUMMARIES ── -->
+    <!-- PROJECT SUMMARIES -->
     <div class="panel" id="panel-summaries">
       <div class="panel-hdr">
-        <div class="panel-title">
-          <div class="dot" id="s-dot"></div>
-          Project Summaries → Notion
-        </div>
+        <div class="panel-title"><div class="dot" id="s-dot"></div>Project Summaries → Notion</div>
         <span class="panel-status" id="s-status">Not synced</span>
       </div>
       <div class="btn-row">
@@ -352,13 +285,10 @@ html, body {
       </div>
     </div>
 
-    <!-- ── PROJECT LIST (wrike-proxy) ── -->
+    <!-- PROJECT LIST -->
     <div class="panel" id="panel-proxy">
       <div class="panel-hdr">
-        <div class="panel-title">
-          <div class="dot" id="x-dot"></div>
-          Wrike Project List → Notion DB
-        </div>
+        <div class="panel-title"><div class="dot" id="x-dot"></div>Wrike Project List → Notion DB</div>
         <span class="panel-status" id="x-status">Not synced</span>
       </div>
       <div class="btn-row">
@@ -368,17 +298,14 @@ html, body {
         </button>
       </div>
       <div class="scroll" id="x-scroll">
-        <div class="log-empty"><span class="ico">📁</span>Syncs your active Wrike project list to the Notion Wrike Projects database.</div>
+        <div class="log-empty"><span class="ico">📁</span>Syncs all active Wrike projects to your Notion Wrike Projects database.</div>
       </div>
     </div>
 
-    <!-- ── FIELD AUDITOR ── -->
+    <!-- FIELD AUDITOR -->
     <div class="panel" id="panel-auditor">
       <div class="panel-hdr">
-        <div class="panel-title">
-          <div class="dot" id="a-dot"></div>
-          Custom Field Auditor
-        </div>
+        <div class="panel-title"><div class="dot" id="a-dot"></div>Custom Field Auditor</div>
         <span class="panel-status" id="a-status">Ready</span>
       </div>
       <div class="field-row">
@@ -393,22 +320,20 @@ html, body {
       </div>
     </div>
 
-  </div><!-- /panels -->
-</div><!-- /wrap -->
+  </div>
+</div>
 
 <script>
-// ── Worker URLs ──────────────────────────────────────────────────
 const WORKERS = {
-  priority:   'https://wrike-top-priority.dustinjsmith.workers.dev',
-  summaries:  'https://wrike-project-summaries.dustinjsmith.workers.dev',
-  proxy:      'https://wrike-proxy.dustinjsmith.workers.dev',
-  auditor:    'https://wrike-field-auditor.dustinjsmith.workers.dev',
+  priority:  'https://wrike-top-priority.dustinjsmith.workers.dev',
+  summaries: 'https://wrike-project-summaries.dustinjsmith.workers.dev',
+  sync:      'https://wrike-notion-sync.dustinjsmith.workers.dev',
+  auditor:   'https://wrike-field-auditor.dustinjsmith.workers.dev',
 };
+const SYNC_KEY = 'dustin-sync-2026-keep-this-private-839214';
 
-// ── State ────────────────────────────────────────────────────────
 let priorityData = null;
 
-// ── Tab switching ────────────────────────────────────────────────
 function switchTab(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -416,7 +341,6 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
-// ── Helpers ──────────────────────────────────────────────────────
 function ts() {
   return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
 }
@@ -438,25 +362,19 @@ function stClass(g) {
   return 'badge-other';
 }
 function setDot(id, state) {
-  const d = document.getElementById(id);
-  d.className = 'dot' + (state ? ' ' + state : '');
+  document.getElementById(id).className = 'dot' + (state ? ' ' + state : '');
 }
 function setStatus(id, txt) {
   document.getElementById(id).textContent = txt;
 }
-function setBtnLoading(id, loading, originalHTML) {
+function setBtnLoading(id, loading, orig) {
   const b = document.getElementById(id);
   b.disabled = loading;
-  b.innerHTML = loading
-    ? '<div class="spin"></div> Working…'
-    : originalHTML;
+  b.innerHTML = loading ? '<div class="spin"></div> Working…' : orig;
 }
-
 function appendLog(scrollId, text, type) {
   const el = document.getElementById(scrollId);
-  // clear empty state
-  const empty = el.querySelector('.log-empty');
-  if (empty) { el.innerHTML = '<div class="log"></div>'; }
+  if (el.querySelector('.log-empty')) el.innerHTML = '<div class="log"></div>';
   let log = el.querySelector('.log');
   if (!log) { el.innerHTML = '<div class="log"></div>'; log = el.querySelector('.log'); }
   const line = document.createElement('div');
@@ -465,35 +383,34 @@ function appendLog(scrollId, text, type) {
   log.appendChild(line);
   el.scrollTop = el.scrollHeight;
 }
-
-function clearScroll(scrollId, emptyHTML) {
-  document.getElementById(scrollId).innerHTML = emptyHTML;
+function clearScroll(id, html) {
+  document.getElementById(id).innerHTML = html;
 }
 
 // ── TOP PRIORITY ─────────────────────────────────────────────────
-const P_BTN_HTML = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Sync from Wrike';
+const P_BTN = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Sync from Wrike';
 
 async function syncPriority() {
-  setBtnLoading('p-sync-btn', true, P_BTN_HTML);
+  setBtnLoading('p-sync-btn', true, P_BTN);
   setDot('p-dot', 'run');
   setStatus('p-status', 'Syncing…');
   clearScroll('p-scroll', '<div class="log-empty"><span class="ico">⏳</span>Fetching from Wrike…</div>');
   try {
-    const res = await fetch(WORKERS.priority + '/api/top-priority');
+    const res  = await fetch(WORKERS.priority + '/api/top-priority');
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || 'Unknown error');
     priorityData = data;
     renderPriority(data);
     setDot('p-dot', 'ok');
     setStatus('p-status', '✓ Synced at ' + ts());
-    document.getElementById('p-dl-btn').disabled = false;
+    document.getElementById('p-dl-btn').disabled   = false;
     document.getElementById('p-copy-btn').disabled = false;
   } catch(e) {
     setDot('p-dot', 'bad');
     setStatus('p-status', '⚠ Error');
     clearScroll('p-scroll', `<div class="log-empty"><span class="ico">⚠️</span>${e.message}</div>`);
   }
-  setBtnLoading('p-sync-btn', false, P_BTN_HTML);
+  setBtnLoading('p-sync-btn', false, P_BTN);
 }
 
 function renderPriority(data) {
@@ -504,34 +421,31 @@ function renderPriority(data) {
   document.getElementById('p-overdue').textContent = ov;
   document.getElementById('p-exec').textContent    = ex;
   document.getElementById('p-plan').textContent    = projs.length - ex;
-
   if (!projs.length) {
     clearScroll('p-scroll', '<div class="log-empty"><span class="ico">✅</span>No top priority projects found.</div>');
     return;
   }
-  const html = '<div class="proj-list">' + projs.map((p, i) => {
-    const over = isOv(p.dueDate);
+  document.getElementById('p-scroll').innerHTML = '<div class="proj-list">' + projs.map((p, i) => {
+    const over    = isOv(p.dueDate);
     const dtBadge = over
       ? `<span class="badge badge-ov">⚠ Due ${fmtDate(p.dueDate)} (overdue)</span>`
       : `<span class="badge badge-due">Due ${fmtDate(p.dueDate) || 'TBD'}</span>`;
-    const stBadge = `<span class="badge ${stClass(p.statusGroup)}">${p.statusLabel}</span>`;
     return `<div class="proj-item" style="animation-delay:${i*0.04}s">
       <div class="proj-num">${i+1}</div>
       <div class="proj-body">
         <a class="proj-name" href="${p.openUrl}" target="_blank" rel="noopener">${p.title}</a>
-        <div class="proj-tags">${dtBadge}${stBadge}</div>
+        <div class="proj-tags">${dtBadge}<span class="badge ${stClass(p.statusGroup)}">${p.statusLabel}</span></div>
       </div>
     </div>`;
   }).join('') + '</div>';
-  document.getElementById('p-scroll').innerHTML = html;
 }
 
 async function exportPriority() {
   if (!priorityData) return;
-  const res = await fetch(WORKERS.priority + '/api/export');
+  const res  = await fetch(WORKERS.priority + '/api/export');
   const blob = await res.blob();
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
   a.download = 'top-priority-projects.html';
   document.body.appendChild(a); a.click();
   setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 1000);
@@ -539,10 +453,10 @@ async function exportPriority() {
 
 async function copyPriority() {
   if (!priorityData) return;
-  const btn = document.getElementById('p-copy-btn');
+  const btn  = document.getElementById('p-copy-btn');
   const orig = btn.innerHTML;
   try {
-    const res = await fetch(WORKERS.priority + '/api/export');
+    const res  = await fetch(WORKERS.priority + '/api/export');
     const html = await res.text();
     if (navigator.clipboard && window.ClipboardItem) {
       try {
@@ -566,102 +480,127 @@ async function copyPriority() {
 }
 
 // ── PROJECT SUMMARIES ────────────────────────────────────────────
-const S_BTN_HTML = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Run Sync';
+const S_BTN = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Run Sync';
 
 async function runSummaries() {
-  setBtnLoading('s-sync-btn', true, S_BTN_HTML);
+  setBtnLoading('s-sync-btn', true, S_BTN);
   setDot('s-dot', 'run');
   setStatus('s-status', 'Running…');
-  clearScroll('s-scroll', '<div class="log"><div class="log-line info"><span class="ts">' + ts() + '</span><span class="msg">Starting project summaries sync…</span></div></div>');
+  clearScroll('s-scroll', '<div class="log"></div>');
+  appendLog('s-scroll', 'Starting project summaries sync…', 'info');
   try {
-    const res = await fetch(WORKERS.summaries + '/run');
-    const data = await res.json();
-    clearScroll('s-scroll', '<div class="log"></div>');
-    if (data.log && Array.isArray(data.log)) {
-      data.log.forEach(line => appendLog('s-scroll', line, 'info'));
+    const res  = await fetch(WORKERS.summaries + '/run');
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
+    if (data.raw) {
+      appendLog('s-scroll', 'Sync triggered — check Notion for updated summaries.', 'ok');
+      setDot('s-dot', 'ok');
+      setStatus('s-status', `✓ Done at ${ts()}`);
+    } else {
+      if (Array.isArray(data.log)) data.log.forEach(l => appendLog('s-scroll', l, 'info'));
+      const added   = data.added   ?? data.synced   ?? data.created ?? '?';
+      const skipped = data.skipped ?? data.existing ?? '?';
+      const errors  = data.errors  ?? data.errorCount ?? 0;
+      appendLog('s-scroll', `Done — ${added} added/updated, ${skipped} skipped, ${errors} errors`, errors ? 'bad' : 'ok');
+      setDot('s-dot', errors ? 'bad' : 'ok');
+      setStatus('s-status', `✓ Synced at ${ts()}`);
     }
-    const added   = data.added   ?? data.synced  ?? '?';
-    const skipped = data.skipped ?? data.existing ?? '?';
-    const errors  = data.errors  ?? 0;
-    appendLog('s-scroll', `Done — ${added} added, ${skipped} skipped, ${errors} errors`, errors ? 'bad' : 'ok');
-    setDot('s-dot', errors ? 'bad' : 'ok');
-    setStatus('s-status', `✓ Synced at ${ts()}`);
   } catch(e) {
     appendLog('s-scroll', 'Error: ' + e.message, 'bad');
     setDot('s-dot', 'bad');
     setStatus('s-status', '⚠ Error');
   }
-  setBtnLoading('s-sync-btn', false, S_BTN_HTML);
+  setBtnLoading('s-sync-btn', false, S_BTN);
 }
 
-// ── PROXY / PROJECT LIST ─────────────────────────────────────────
-const X_BTN_HTML = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Sync Now';
+// ── PROJECT LIST → wrike-notion-sync ─────────────────────────────
+const X_BTN = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Sync Now';
 
 async function runProxy() {
-  setBtnLoading('x-sync-btn', true, X_BTN_HTML);
+  setBtnLoading('x-sync-btn', true, X_BTN);
   setDot('x-dot', 'run');
   setStatus('x-status', 'Syncing…');
-  appendLog('x-scroll', 'Fetching Wrike project list…', 'info');
+  clearScroll('x-scroll', '<div class="log"></div>');
+  appendLog('x-scroll', 'Starting Wrike → Notion DB sync…', 'info');
   try {
-    const res  = await fetch(WORKERS.proxy + '/api/projects');
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Unknown error');
-    const count = data.projects?.length ?? '?';
-    appendLog('x-scroll', `Fetched ${count} projects from Wrike`, 'info');
-    appendLog('x-scroll', `User: ${data.user?.name || 'Unknown'}`, 'info');
-    appendLog('x-scroll', `Totals — Active: ${data.totals?.activeProjects ?? '?'}, New Requests: ${data.totals?.newRequests ?? '?'}`, 'info');
-    appendLog('x-scroll', 'Sync complete ✓', 'ok');
-    setDot('x-dot', 'ok');
-    setStatus('x-status', `✓ ${count} projects · ${ts()}`);
+    let start = 0, batch = 0, totalCreated = 0, totalUpdated = 0, totalSkipped = 0, totalErrors = 0;
+    while (true) {
+      batch++;
+      const res  = await fetch(`${WORKERS.sync}/sync?key=${SYNC_KEY}&start=${start}&limit=20`);
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Sync failed');
+      const created = data.created ?? 0;
+      const updated = data.updated ?? 0;
+      const skipped = data.skipped ?? 0;
+      const errors  = data.errorCount ?? 0;
+      totalCreated += created;
+      totalUpdated += updated;
+      totalSkipped += skipped;
+      totalErrors  += errors;
+      appendLog('x-scroll', `Batch ${batch}: ${data.processed} processed — ${created} created, ${updated} updated, ${skipped} skipped${errors ? ', ⚠ ' + errors + ' error(s)' : ''}`, errors ? 'bad' : 'info');
+      if (data.nextStart === null || data.remaining === 0) break;
+      start = data.nextStart;
+    }
+    appendLog('x-scroll', `Done — ${totalCreated} created, ${totalUpdated} updated, ${totalSkipped} skipped, ${totalErrors} errors`, totalErrors ? 'bad' : 'ok');
+    setDot('x-dot', totalErrors ? 'bad' : 'ok');
+    setStatus('x-status', `✓ Synced at ${ts()}`);
   } catch(e) {
     appendLog('x-scroll', 'Error: ' + e.message, 'bad');
     setDot('x-dot', 'bad');
     setStatus('x-status', '⚠ Error');
   }
-  setBtnLoading('x-sync-btn', false, X_BTN_HTML);
+  setBtnLoading('x-sync-btn', false, X_BTN);
 }
 
 // ── FIELD AUDITOR ────────────────────────────────────────────────
-const A_BTN_HTML = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/></svg> Look Up';
+const A_BTN = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/></svg> Look Up';
 
 async function runAuditor() {
   const q = document.getElementById('a-input').value.trim();
   if (!q) { document.getElementById('a-input').focus(); return; }
-  setBtnLoading('a-btn', true, A_BTN_HTML);
+  setBtnLoading('a-btn', true, A_BTN);
   setDot('a-dot', 'run');
   setStatus('a-status', 'Searching…');
   clearScroll('a-scroll', '<div class="log"></div>');
-  appendLog('a-scroll', `Looking up field: "${q}"…`, 'info');
+  appendLog('a-scroll', `Looking up: "${q}"…`, 'info');
   try {
-    const url = WORKERS.auditor + '/api/audit?field=' + encodeURIComponent(q);
-    const res  = await fetch(url);
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Unknown error');
-
-    const f = data.field;
-    if (!f) {
-      appendLog('a-scroll', `Field "${q}" not found in your space.`, 'bad');
+    const res  = await fetch(WORKERS.auditor + '/api/audit?field=' + encodeURIComponent(q));
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
+    if (data.raw || (!res.ok && !data.ok)) {
+      appendLog('a-scroll', `Unexpected response (${res.status}) — check the auditor worker endpoint.`, 'bad');
+      appendLog('a-scroll', text.slice(0, 150), '');
       setDot('a-dot', 'bad');
-      setStatus('a-status', 'Not found');
+      setStatus('a-status', '⚠ Check endpoint');
     } else {
-      appendLog('a-scroll', `Found: "${f.title}" (ID: ${f.id})`, 'ok');
-      appendLog('a-scroll', `Type: ${f.type || '?'} · Scope: ${f.scope || 'account'}`, 'info');
-      if (data.projects?.length) {
-        appendLog('a-scroll', `Used in ${data.projects.length} project(s):`, 'info');
-        data.projects.slice(0, 15).forEach(p => appendLog('a-scroll', `  · ${p.title}`, ''));
-        if (data.projects.length > 15) appendLog('a-scroll', `  …and ${data.projects.length - 15} more`, '');
+      const f = data.field || data.customField || null;
+      if (!f) {
+        appendLog('a-scroll', `"${q}" not found in your space.`, 'bad');
+        setDot('a-dot', 'bad');
+        setStatus('a-status', 'Not found');
       } else {
-        appendLog('a-scroll', 'Not used in any active projects.', '');
+        appendLog('a-scroll', `Found: "${f.title || f.name}" (ID: ${f.id})`, 'ok');
+        appendLog('a-scroll', `Type: ${f.type || '?'} · Scope: ${f.scope || 'account'}`, 'info');
+        const used = data.projects || data.usedIn || data.folders || [];
+        if (used.length) {
+          appendLog('a-scroll', `Used in ${used.length} project(s):`, 'info');
+          used.slice(0, 15).forEach(p => appendLog('a-scroll', `  · ${p.title || p.name}`, ''));
+          if (used.length > 15) appendLog('a-scroll', `  …and ${used.length - 15} more`, '');
+        } else {
+          appendLog('a-scroll', 'Not used in any active projects.', '');
+        }
+        setDot('a-dot', 'ok');
+        setStatus('a-status', `Found · ${ts()}`);
       }
-      setDot('a-dot', 'ok');
-      setStatus('a-status', `Found · ${ts()}`);
     }
   } catch(e) {
     appendLog('a-scroll', 'Error: ' + e.message, 'bad');
     setDot('a-dot', 'bad');
     setStatus('a-status', '⚠ Error');
   }
-  setBtnLoading('a-btn', false, A_BTN_HTML);
+  setBtnLoading('a-btn', false, A_BTN);
 }
 </script>
 </body>
