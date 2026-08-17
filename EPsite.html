@@ -171,7 +171,7 @@
 
   .track {
     position: relative;
-    height: 132px;
+    height: 192px;
     background: var(--rail-track);
     border: 1px solid var(--border-soft);
     border-radius: 8px;
@@ -211,6 +211,17 @@
     border: 1px dashed var(--band-border);
     color: var(--text-muted);
     font-weight: normal;
+  }
+
+  .bar-out {
+    position: absolute;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--text);
+    white-space: nowrap;
   }
 
   .marker {
@@ -356,7 +367,7 @@
     body { padding: 12px 10px 40px; }
     .wrap { padding: 20px 16px 24px; }
     h1 { font-size: 22px; }
-    .track { height: 168px; }
+    .track { height: 200px; }
     .bar { font-size: 11px; padding: 0 6px; }
     .marker b { display: none; }
   }
@@ -388,7 +399,7 @@
 
   <div class="rail-head">
     <h2>Where this lands in FY 2026&ndash;2027</h2>
-    <p class="note">Dates assume an Oct 1, 2026 start. Shift the start and everything after it moves with it.</p>
+    <p class="note">Dates assume the EP brand workshop starts Sep 1, 2026.</p>
   </div>
 
   <div class="rail">
@@ -402,14 +413,15 @@
     <div class="track">
       <div class="month-lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
-      <div class="bar" style="left:25%;   width:16.67%; top:14px;">Lockdown &middot; 2m</div>
-      <div class="bar" style="left:41.67%; width:20.83%; top:48px;">Finalize site concept &middot; 2.5m</div>
-      <div class="bar" style="left:62.5%;  width:16.67%; top:82px;">Web build &middot; 2m</div>
-      <div class="bar" style="left:79.17%; width:8.33%;  top:116px; height:22px;">Reviews + go-live &middot; 1m</div>
-      <div class="bar buffer" style="left:87.5%; width:12.5%; top:116px; height:22px;">Buffer</div>
+      <div class="bar" style="left:16.67%; width:16.67%; top:14px;">Lockdown &middot; 2m</div>
+      <div class="bar" style="left:33.33%; width:20.83%; top:48px;">Finalize site concept &middot; 2.5m</div>
+      <div class="bar" style="left:54.17%; width:16.67%; top:82px;">Web build &middot; 2m</div>
+      <div class="bar" style="left:70.83%; width:8.33%;  top:116px;"></div>
+      <div class="bar-out" style="left:80.2%; top:116px;">Reviews + go-live &middot; 1m</div>
+      <div class="bar buffer" style="left:79.17%; width:20.83%; top:152px;">Buffer &middot; 2.5m</div>
 
-      <div class="marker" style="left:41.67%;"><b>Site concept layout start</b></div>
-      <div class="marker right" style="left:87.5%;"><b>Go-live</b></div>
+      <div class="marker" style="left:33.33%;"><b>Site concept layout start</b></div>
+      <div class="marker right" style="left:79.17%;"><b>Go-live</b></div>
     </div>
 
     <div class="months">
@@ -426,14 +438,13 @@
   <div class="cards">
     <div class="card milestone">
       <h4>EP brand workshop</h4>
-      <div class="pills"><span class="pill">Start gate</span><span class="pill plain">Date to confirm</span></div>
+      <div class="pills"><span class="pill">Start gate</span><span class="pill plain">Sep 1, 2026</span><span class="pill plain">Q1</span></div>
       <ul>
         <li>The redesign start date is set by when this workshop begins</li>
-        <li>No site phase can be scheduled with confidence until it is on the calendar</li>
-        <li>An Oct 1 start is the working assumption behind every date shown here</li>
+        <li>Lockdown starts the same day the workshop opens</li>
+        <li>Every date that follows moves with this one</li>
       </ul>
       <p class="meta"><b>Responsible:</b> EP Brand</p>
-      <p class="open"><b>Open question:</b> when does the EP brand workshop start?</p>
     </div>
   </div>
 
@@ -445,7 +456,7 @@
   <div class="cards">
     <div class="card">
       <h4>Lockdown &mdash; EP site brand direction and strategy</h4>
-      <div class="pills"><span class="pill">2 months</span><span class="pill plain">Oct&ndash;Nov 2026</span><span class="pill plain">Q2</span></div>
+      <div class="pills"><span class="pill">2 months</span><span class="pill plain">Sep&ndash;Oct 2026</span><span class="pill plain">Q1&ndash;Q2</span></div>
       <ul>
         <li>Lock the brand direction for the site</li>
         <li>Settle strategy before any layout work opens</li>
@@ -456,7 +467,7 @@
 
     <div class="card milestone">
       <h4>Site concept layout start</h4>
-      <div class="pills"><span class="pill">Milestone</span><span class="pill plain">Dec 1, 2026</span></div>
+      <div class="pills"><span class="pill">Milestone</span><span class="pill plain">Nov 1, 2026</span></div>
       <ul>
         <li>The handoff point from strategy to creative</li>
         <li>Signals that the brand guide is usable and layout can begin</li>
@@ -474,7 +485,7 @@
   <div class="cards">
     <div class="card">
       <h4>Finalize site concept</h4>
-      <div class="pills"><span class="pill">2.5 months</span><span class="pill plain">Dec 2026 &ndash; mid-Feb 2027</span><span class="pill plain">Q2&ndash;Q3</span></div>
+      <div class="pills"><span class="pill">2.5 months</span><span class="pill plain">Nov 2026 &ndash; mid-Jan 2027</span><span class="pill plain">Q2&ndash;Q3</span></div>
       <ul>
         <li>Web and creative develop the concept to final</li>
         <li>Copy and content are written alongside design, not after it</li>
@@ -485,7 +496,7 @@
 
     <div class="card">
       <h4>Web build</h4>
-      <div class="pills"><span class="pill">2 months</span><span class="pill plain">mid-Feb &ndash; mid-Apr 2027</span><span class="pill plain">Q3&ndash;Q4</span></div>
+      <div class="pills"><span class="pill">2 months</span><span class="pill plain">mid-Jan &ndash; mid-Mar 2027</span><span class="pill plain">Q3</span></div>
       <ul>
         <li>The approved concept is built out</li>
         <li>Content is loaded and the site is assembled</li>
@@ -503,7 +514,7 @@
   <div class="cards">
     <div class="card">
       <h4>Final reviews and go-live</h4>
-      <div class="pills"><span class="pill">1 month</span><span class="pill plain">mid-Apr &ndash; mid-May 2027</span><span class="pill plain">Q4</span></div>
+      <div class="pills"><span class="pill">1 month</span><span class="pill plain">mid-Mar &ndash; mid-Apr 2027</span><span class="pill plain">Q3&ndash;Q4</span></div>
       <ul>
         <li>Stakeholder and leadership review</li>
         <li>Accessibility, proofing, and testing passes</li>
@@ -514,10 +525,10 @@
 
     <div class="card milestone">
       <h4>Go-live</h4>
-      <div class="pills"><span class="pill">Milestone</span><span class="pill plain">Mid-May 2027</span><span class="pill plain">Q4</span></div>
+      <div class="pills"><span class="pill">Milestone</span><span class="pill plain">Mid-Apr 2027</span><span class="pill plain">Q4</span></div>
       <ul>
         <li>Site is live and the redesign closes</li>
-        <li>Mid-May through June holds as buffer before the fiscal year ends</li>
+        <li>Mid-Apr through June holds as buffer before the fiscal year ends</li>
         <li>Reporting and lessons learned follow launch</li>
       </ul>
       <p class="meta"><b>Responsible:</b> Project Management</p>
@@ -526,7 +537,7 @@
 
   <footer>
     <span>Outreach Hub &middot; Marketing Project Management</span>
-    <span>Draft &middot; dates pending EP brand workshop start</span>
+    <span>Draft &middot; assumes a Sep 1, 2026 workshop start</span>
   </footer>
 
 </div>
