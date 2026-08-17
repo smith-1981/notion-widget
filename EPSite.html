@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EP Site Redesign Phase Guide</title>
+<style>
+  :root {
+    --font: Arial, Helvetica, "Nimbus Sans L", "Liberation Sans", FreeSans, sans-serif;
+    --maroon: #8C1D40;
+    --gold: #FFC627;
+    --ink: #1B1B1B;
+  }
+
+  html[data-theme="dark"] {
+    --bg: #0b0f17;
+    --surface: rgba(255,255,255,0.045);
+    --surface-2: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.12);
+    --border-soft: rgba(255,255,255,0.08);
+    --text: rgba(255,255,255,0.92);
+    --text-muted: rgba(255,255,255,0.62);
+    --rail-track: rgba(255,255,255,0.06);
+    --frame: rgba(255,198,39,0.55);
+    --band: rgba(140,29,64,0.30);
+    --band-border: rgba(140,29,64,0.65);
+    --gold-soft: rgba(255,198,39,0.14);
+  }
+
+  html[data-theme="light"] {
+    --bg: #FFFFFF;
+    --surface: #FAFAFA;
+    --surface-2: #F2F2F2;
+    --border: #D0D0D0;
+    --border-soft: #E8E8E8;
+    --text: #191919;
+    --text-muted: #565656;
+    --rail-track: #E8E8E8;
+    --frame: rgba(140,29,64,0.35);
+    --band: rgba(140,29,64,0.10);
+    --band-border: rgba(140,29,64,0.45);
+    --gold-soft: rgba(255,198,39,0.28);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 24px 20px 56px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 940px;
+    margin: 0 auto;
+    border: 2px solid var(--frame);
+    border-radius: 12px;
+    padding: 28px 26px 32px;
+    background: var(--bg);
+  }
+
+  /* ---------- Header ---------- */
+
+  .topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    margin: 0 0 6px;
+    font-weight: bold;
+  }
+
+  html[data-theme="light"] .eyebrow { color: var(--maroon); }
+
+  h1 {
+    font-size: 26px;
+    line-height: 1.25;
+    margin: 0 0 10px;
+    font-weight: bold;
+  }
+
+  .lede {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--text-muted);
+  }
+
+  .theme-toggle {
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .theme-toggle:hover { background: var(--surface-2); }
+  .theme-toggle:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  hr.rule {
+    border: 0;
+    border-top: 1px solid var(--border-soft);
+    margin: 26px 0;
+  }
+
+  /* ---------- FY rail ---------- */
+
+  .rail-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin: 0;
+    font-weight: bold;
+  }
+
+  .note {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .rail {
+    position: relative;
+    margin-top: 8px;
+  }
+
+  .quarters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .q {
+    background: var(--gold-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    color: var(--text);
+  }
+
+  .q span {
+    display: block;
+    font-weight: normal;
+    color: var(--text-muted);
+  }
+
+  .track {
+    position: relative;
+    height: 132px;
+    background: var(--rail-track);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .month-lines {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    pointer-events: none;
+  }
+
+  .month-lines i { border-right: 1px solid var(--border-soft); }
+  .month-lines i:last-child { border-right: 0; }
+
+  .bar {
+    position: absolute;
+    height: 26px;
+    background: var(--maroon);
+    border: 1px solid var(--band-border);
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    padding: 0 9px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar.buffer {
+    background: transparent;
+    border: 1px dashed var(--band-border);
+    color: var(--text-muted);
+    font-weight: normal;
+  }
+
+  .marker {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--gold);
+  }
+
+  .marker b {
+    position: absolute;
+    top: -1px;
+    left: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  html[data-theme="light"] .marker b { color: var(--ink); background: var(--gold); padding: 1px 4px; border-radius: 3px; }
+
+  .marker.right b { left: auto; right: 5px; }
+
+  .months {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* ---------- Phase bands and cards ---------- */
+
+  .band {
+    background: var(--band);
+    border: 1px solid var(--band-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 26px 0 14px;
+  }
+
+  .band h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  .band p {
+    margin: 3px 0 0;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--maroon);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+
+  .card.milestone { border-left-color: var(--gold); }
+
+  .card h4 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .pill {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--ink);
+  }
+
+  .pill.plain {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-weight: normal;
+  }
+
+  .card ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .card li { margin-bottom: 4px; }
+  .card li:last-child { margin-bottom: 0; }
+
+  .meta {
+    margin: 12px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-soft);
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .meta b { color: var(--text); }
+
+  .open {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--gold-soft);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+
+  footer {
+    margin-top: 30px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-soft);
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Responsive ---------- */
+
+  @media (max-width: 620px) {
+    body { padding: 12px 10px 40px; }
+    .wrap { padding: 20px 16px 24px; }
+    h1 { font-size: 22px; }
+    .track { height: 168px; }
+    .bar { font-size: 11px; padding: 0 6px; }
+    .marker b { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  @media print {
+    .theme-toggle { display: none; }
+    body { background: #FFFFFF; color: #191919; padding: 0; }
+    .wrap { border-color: #8C1D40; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <p class="eyebrow">ASU Enterprise Partners &middot; Outreach Hub</p>
+      <h1>EP site redesign phase guide</h1>
+      <p class="lede">This reference outlines the 5 phases of the EP site redesign, what happens in each, who owns it, and what it produces. Phases are mapped to the ASU fiscal year so leadership can see where the work lands against FY 2026&ndash;2027 planning.</p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button">Switch to light</button>
+  </div>
+
+  <hr class="rule">
+
+  <div class="rail-head">
+    <h2>Where this lands in FY 2026&ndash;2027</h2>
+    <p class="note">Dates assume an Oct 1, 2026 start. Shift the start and everything after it moves with it.</p>
+  </div>
+
+  <div class="rail">
+    <div class="quarters">
+      <div class="q">Q1 <span>Jul&ndash;Sep 2026</span></div>
+      <div class="q">Q2 <span>Oct&ndash;Dec 2026</span></div>
+      <div class="q">Q3 <span>Jan&ndash;Mar 2027</span></div>
+      <div class="q">Q4 <span>Apr&ndash;Jun 2027</span></div>
+    </div>
+
+    <div class="track">
+      <div class="month-lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+      <div class="bar" style="left:25%;   width:16.67%; top:14px;">Lockdown &middot; 2m</div>
+      <div class="bar" style="left:41.67%; width:20.83%; top:48px;">Finalize site concept &middot; 2.5m</div>
+      <div class="bar" style="left:62.5%;  width:16.67%; top:82px;">Web build &middot; 2m</div>
+      <div class="bar" style="left:79.17%; width:12.5%;  top:116px; height:22px;">Reviews + go-live &middot; 1.5m</div>
+      <div class="bar buffer" style="left:91.67%; width:8.33%; top:116px; height:22px;">Buffer</div>
+
+      <div class="marker" style="left:41.67%;"><b>Site concept layout start</b></div>
+      <div class="marker right" style="left:91.67%;"><b>Go-live</b></div>
+    </div>
+
+    <div class="months">
+      <div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div><div>Nov</div><div>Dec</div>
+      <div>Jan</div><div>Feb</div><div>Mar</div><div>Apr</div><div>May</div><div>Jun</div>
+    </div>
+  </div>
+
+  <div class="band">
+    <h3>Before the clock starts</h3>
+    <p>Work cannot begin until the upstream dependency clears.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card milestone">
+      <h4>EP brand workshop</h4>
+      <div class="pills"><span class="pill">Start gate</span><span class="pill plain">Date to confirm</span></div>
+      <ul>
+        <li>The redesign start date is set by when this workshop begins</li>
+        <li>No site phase can be scheduled with confidence until it is on the calendar</li>
+        <li>An Oct 1 start is the working assumption behind every date shown here</li>
+      </ul>
+      <p class="meta"><b>Responsible:</b> EP Brand</p>
+      <p class="open"><b>Open question:</b> when does the EP brand workshop start?</p>
+    </div>
+  </div>
+
+  <div class="band">
+    <h3>Direction</h3>
+    <p>Brand and strategy decisions are settled so design has something firm to build against.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h4>Lockdown &mdash; EP site brand direction and strategy</h4>
+      <div class="pills"><span class="pill">2 months</span><span class="pill plain">Oct&ndash;Nov 2026</span><span class="pill plain">Q2</span></div>
+      <ul>
+        <li>Lock the brand direction for the site</li>
+        <li>Settle strategy before any layout work opens</li>
+        <li>Nothing downstream starts until this closes</li>
+      </ul>
+      <p class="meta"><b>Output:</b> EP brand guide, with the web style guide inside it<br><b>Responsible:</b> EP Brand with Outreach Hub</p>
+    </div>
+
+    <div class="card milestone">
+      <h4>Site concept layout start</h4>
+      <div class="pills"><span class="pill">Milestone</span><span class="pill plain">Dec 1, 2026</span></div>
+      <ul>
+        <li>The handoff point from strategy to creative</li>
+        <li>Signals that the brand guide is usable and layout can begin</li>
+        <li>Slipping this date pushes go-live out of Q4</li>
+      </ul>
+      <p class="meta"><b>Responsible:</b> Project Management</p>
+    </div>
+  </div>
+
+  <div class="band">
+    <h3>Make</h3>
+    <p>The site is designed, written, and built.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h4>Finalize site concept</h4>
+      <div class="pills"><span class="pill">2.5 months</span><span class="pill plain">Dec 2026 &ndash; mid-Feb 2027</span><span class="pill plain">Q2&ndash;Q3</span></div>
+      <ul>
+        <li>Web and creative develop the concept to final</li>
+        <li>Copy and content are written alongside design, not after it</li>
+        <li>Concept is approved before build opens</li>
+      </ul>
+      <p class="meta"><b>Output:</b> approved site concept with copy and content<br><b>Responsible:</b> Web, Creative, Content with Project Management</p>
+    </div>
+
+    <div class="card">
+      <h4>Web build</h4>
+      <div class="pills"><span class="pill">2 months</span><span class="pill plain">mid-Feb &ndash; mid-Apr 2027</span><span class="pill plain">Q3&ndash;Q4</span></div>
+      <ul>
+        <li>The approved concept is built out</li>
+        <li>Content is loaded and the site is assembled</li>
+        <li>Runs until the site is review-ready</li>
+      </ul>
+      <p class="meta"><b>Responsible:</b> Web</p>
+    </div>
+  </div>
+
+  <div class="band">
+    <h3>Launch</h3>
+    <p>Final approvals, then the site goes live inside Q4.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h4>Final reviews and go-live</h4>
+      <div class="pills"><span class="pill">1.5 months</span><span class="pill plain">mid-Apr &ndash; May 2027</span><span class="pill plain">Q4</span></div>
+      <ul>
+        <li>Stakeholder and leadership review</li>
+        <li>Accessibility, proofing, and testing passes</li>
+        <li>Launch once approvals are complete</li>
+      </ul>
+      <p class="meta"><b>Responsible:</b> Project Management with Web</p>
+    </div>
+
+    <div class="card milestone">
+      <h4>Go-live</h4>
+      <div class="pills"><span class="pill">Milestone</span><span class="pill plain">End of May 2027</span><span class="pill plain">Q4</span></div>
+      <ul>
+        <li>Site is live and the redesign closes</li>
+        <li>June holds as buffer before the fiscal year ends</li>
+        <li>Reporting and lessons learned follow launch</li>
+      </ul>
+      <p class="meta"><b>Responsible:</b> Project Management</p>
+    </div>
+  </div>
+
+  <div class="band">
+    <h3>Related tracks</h3>
+    <p>Two adjacent timelines still need to be placed against this one.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card milestone">
+      <h4>ASURE timeline</h4>
+      <div class="pills"><span class="pill plain">Not yet mapped</span></div>
+      <ul>
+        <li>Needs a duration and a connection point to the site phases</li>
+      </ul>
+      <p class="meta"><b>Responsible:</b> to confirm</p>
+    </div>
+
+    <div class="card milestone">
+      <h4>SDR updates timeline</h4>
+      <div class="pills"><span class="pill plain">Not yet mapped</span></div>
+      <ul>
+        <li>Needs a duration and a connection point to the site phases</li>
+      </ul>
+      <p class="meta"><b>Responsible:</b> to confirm</p>
+    </div>
+  </div>
+
+  <footer>
+    <span>Outreach Hub &middot; Marketing Project Management</span>
+    <span>Draft &middot; dates pending EP brand workshop start</span>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('theme') === 'light') { root.setAttribute('data-theme', 'light'); }
+
+    function label() {
+      btn.textContent = root.getAttribute('data-theme') === 'light' ? 'Switch to dark' : 'Switch to light';
+    }
+
+    btn.addEventListener('click', function () {
+      root.setAttribute('data-theme', root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+      label();
+    });
+
+    label();
+  })();
+</script>
+</body>
+</html>
