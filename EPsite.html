@@ -255,62 +255,41 @@
     text-align: center;
   }
 
-  /* Braces and phase labels below the bar */
-  .braces {
+  /* One label per phase, in a single row below the month axis */
+  .phases {
     position: relative;
-    height: 128px;
-    margin-top: 4px;
+    height: 62px;
+    margin-top: 2px;
   }
 
-  .brace {
+  .phase {
     position: absolute;
     top: 0;
-    height: 9px;
-    border-top: 2px solid var(--band-border);
-    border-left: 2px solid var(--band-border);
-    border-right: 2px solid var(--band-border);
-    border-radius: 7px 7px 0 0;
+    padding-right: 12px;
   }
 
-  .brace.hold { border-color: var(--border); }
-
-  .brace i {
-    position: absolute;
-    left: 50%;
-    top: 9px;
+  .phase i {
+    display: block;
     width: 2px;
+    height: 11px;
     background: var(--band-border);
+    margin-bottom: 7px;
   }
 
-  .brace.hold i { background: var(--border); }
-
-  .brace b {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 150px;
-    text-align: center;
+  .phase b {
+    display: block;
     font-size: 13px;
     font-weight: bold;
     color: var(--text);
-    line-height: 1.3;
+    line-height: 1.25;
   }
 
-  .brace b span {
+  .phase span {
     display: block;
-    font-weight: normal;
     font-size: 12px;
     color: var(--text-muted);
+    line-height: 1.3;
   }
-
-  /* Level A sits close to the bar, level B drops lower so
-     neighbouring labels never collide. */
-  .brace.a i { height: 14px; }
-  .brace.a b { top: 25px; }
-  .brace.b i { height: 68px; }
-  .brace.b b { top: 79px; }
-
-  .brace.last b { transform: translateX(-62%); }
 
   /* ---------- Phase bands and cards ---------- */
 
@@ -423,20 +402,18 @@
   /* Narrower containers: tighten the label blocks so neighbouring
      phases keep clear of each other. */
   @media (max-width: 860px) {
-    .brace b { width: 118px; font-size: 12px; }
-    .brace b span { font-size: 11px; }
-    .braces { height: 140px; }
-    .brace.b i { height: 76px; }
-    .brace.b b { top: 87px; }
+    .phase b { font-size: 12px; }
+    .phase span { font-size: 11px; }
+    .phases { height: 72px; }
   }
 
   @media (max-width: 620px) {
     body { padding: 12px 10px 40px; }
     .wrap { padding: 20px 16px 24px; }
     h1 { font-size: 22px; }
-    .brace b { width: 92px; font-size: 11px; }
-    .brace b span { font-size: 10px; }
-    .braces { height: 150px; }
+    .phase b { font-size: 11px; }
+    .phase span { font-size: 10px; }
+    .phases { height: 86px; }
     .callout b { font-size: 10px; padding: 2px 6px; }
     .months { font-size: 10px; }
   }
@@ -480,10 +457,7 @@
     </div>
 
     <div class="callouts">
-      <div class="callout" style="left:16.67%;"><b>ASUEP Workshop</b><i></i></div>
-      <div class="callout" style="left:33.33%;"><b>Concept Phase</b><i></i></div>
-      <div class="callout" style="left:58.33%;"><b>Development Phase</b><i></i></div>
-      <div class="callout" style="left:75%;"><b>Reviews/QA</b><i></i></div>
+      <div class="callout" style="left:33.33%;"><b>Concept start</b><i></i></div>
       <div class="callout" style="left:83.33%;"><b>Go-live</b><i></i></div>
     </div>
 
@@ -496,10 +470,7 @@
       <div class="seg" style="left:75%;    width:7.83%;"></div>
       <div class="seg hold" style="left:83.33%; width:16.67%;"></div>
 
-      <div class="tick" style="left:16.67%;"></div>
       <div class="tick" style="left:33.33%;"></div>
-      <div class="tick" style="left:58.33%;"></div>
-      <div class="tick" style="left:75%;"></div>
       <div class="tick" style="left:83.33%;"></div>
     </div>
 
@@ -508,12 +479,11 @@
       <div>Jan</div><div>Feb</div><div>Mar</div><div>Apr</div><div>May</div><div>Jun</div>
     </div>
 
-    <div class="braces">
-      <div class="brace a" style="left:16.67%; width:16.67%;"><i></i><b>Brand workshop<span>2m &middot; Sep&ndash;Oct 2026</span></b></div>
-      <div class="brace b" style="left:33.33%; width:25%;"><i></i><b>Finalize site concept<span>3m &middot; Nov 2026&ndash;Jan 2027</span></b></div>
-      <div class="brace a" style="left:58.33%; width:16.67%;"><i></i><b>Web build<span>2m &middot; Feb&ndash;Mar 2027</span></b></div>
-      <div class="brace b" style="left:75%; width:8.33%;"><i></i><b>Final reviews + go-live<span>1m &middot; Apr 2027</span></b></div>
-     <!-- <div class="brace a hold last" style="left:83.33%; width:16.67%;"><i></i><b>Buffer<span>2m &middot; May&ndash;Jun 2027</span></b></div> -->
+    <div class="phases">
+      <div class="phase" style="left:16.67%; width:16.67%;"><i></i><b>Brand workshop</b><span>2m &middot; Sep&ndash;Oct 2026</span></div>
+      <div class="phase" style="left:33.33%; width:25%;"><i></i><b>Finalize site concept</b><span>3m &middot; Nov 2026&ndash;Jan 2027</span></div>
+      <div class="phase" style="left:58.33%; width:16.67%;"><i></i><b>Development</b><span>2m &middot; Feb&ndash;Mar 2027</span></div>
+      <div class="phase" style="left:75%; width:25%;"><i></i><b>Final reviews + go-live</b><span>1m &middot; Apr 2027</span></div>
     </div>
   </div>
 
