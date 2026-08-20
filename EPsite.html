@@ -22,7 +22,6 @@
     --text-muted: rgba(255,255,255,0.62);
     --rail-track: rgba(255,255,255,0.06);
     --frame: rgba(255,198,39,0.55);
-    --band: rgba(140,29,64,0.30);
     --band-border: rgba(140,29,64,0.65);
     --gold-soft: rgba(255,198,39,0.14);
   }
@@ -37,7 +36,6 @@
     --text-muted: #565656;
     --rail-track: #E8E8E8;
     --frame: rgba(140,29,64,0.35);
-    --band: rgba(140,29,64,0.10);
     --band-border: rgba(140,29,64,0.45);
     --gold-soft: rgba(255,198,39,0.28);
   }
@@ -363,27 +361,7 @@
     color: var(--text-muted);
   }
 
-  /* ---------- Phase bands and cards ---------- */
-
-  .band {
-    background: var(--band);
-    border: 1px solid var(--band-border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin: 26px 0 14px;
-  }
-
-  .band h3 {
-    margin: 0;
-    font-size: 15px;
-    font-weight: bold;
-  }
-
-  .band p {
-    margin: 3px 0 0;
-    font-size: 13px;
-    color: var(--text-muted);
-  }
+  /* ---------- Phase cards ---------- */
 
   .cards {
     display: grid;
@@ -398,8 +376,6 @@
     border-radius: 8px;
     padding: 16px 18px;
   }
-
-  .card.milestone { border-left-color: var(--gold); }
 
   .card h4 {
     margin: 0 0 8px;
@@ -447,15 +423,6 @@
   }
 
   .meta b { color: var(--text); }
-
-  .open {
-    margin-top: 10px;
-    font-size: 13px;
-    color: var(--text);
-    background: var(--gold-soft);
-    border-radius: 6px;
-    padding: 8px 10px;
-  }
 
   footer {
     margin-top: 30px;
