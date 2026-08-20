@@ -109,6 +109,12 @@
     white-space: nowrap;
   }
 
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
   .theme-toggle:hover { background: var(--surface-2); }
   .theme-toggle:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
@@ -489,9 +495,38 @@
   }
 
   @media print {
-    .theme-toggle { display: none; }
-    body { background: #FFFFFF; color: #191919; padding: 0; }
-    .wrap { border-color: #8C1D40; }
+    /* Landscape gives the timeline enough width to stay full size. */
+    @page { size: letter landscape; margin: 0.5in; }
+
+    /* Print background fills, or the maroon bars disappear. */
+    *, *::before, *::after {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    html, body { background: #FFFFFF !important; }
+    body { padding: 0; }
+
+    .actions { display: none !important; }
+
+    .wrap {
+      border: 1px solid #8C1D40;
+      border-radius: 0;
+      padding: 16px 20px 20px;
+    }
+
+    /* Keep blocks whole across page breaks. */
+    .rail, .phases, .ask, .card, .note-card, footer {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .section-head, h1, h2 {
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    p, li { orphans: 3; widows: 3; }
   }
 </style>
 </head>
@@ -504,7 +539,10 @@
       <h1>ASUEP site redesign</h1>
       <p class="lede">A proposed timeline for rebuilding the ASUEP site, from brand workshop through go-live inside FY 2026&ndash;2027.</p>
     </div>
-    <button class="theme-toggle" id="themeToggle" type="button">Switch to light</button>
+    <div class="actions">
+      <button class="theme-toggle" id="printBtn" type="button">Save as PDF</button>
+      <button class="theme-toggle" id="themeToggle" type="button">Switch to light</button>
+    </div>
   </div>
 
   <hr class="rule">
@@ -554,10 +592,10 @@
   </div>
 
   <div class="ask">
-    <h3>What's needed</h3>
+    <h3>What we're asking for</h3>
     <ul>
       <li>Agreement that this timeline is the right shape for the site redesign</li>
-      <li>A confirmed start date for the ASUEP brand workshop</li>
+      <li>A confirmed start date for the ASUEP brand workshop &mdash; it sets the start, and every date after it moves with it</li>
     </ul>
   </div>
 
@@ -575,7 +613,7 @@
         <li>Settle site strategy before any layout work begins</li>
         <li>Nothing downstream starts until this is complete</li>
       </ul>
-      <p class="meta"><b>Output:</b> ASUEP brand guide, with the web style guide inside it<br><b>Responsible:</b> ASUEP/Outreach Hub</p>
+      <p class="meta"><b>Output:</b> ASUEP brand guide, with the web style guide inside it<br><b>Responsible:</b> ASUEP brand with Outreach Hub</p>
     </div>
 
     <div class="card">
@@ -586,7 +624,7 @@
         <li>Copy and content are written alongside concept design</li>
         <li>Concept is approved before development begins</li>
       </ul>
-      <p class="meta"><b>Output:</b> approved site concept with copy and content<br><b>Responsible:</b> Web, Creative, Content Solutions, Project Management</p>
+      <p class="meta"><b>Output:</b> approved site concept with copy and content<br><b>Responsible:</b> Web, Creative, Content with Project Management</p>
     </div>
 
     <div class="card">
@@ -608,7 +646,7 @@
         <li>Accessibility, proofing, and testing passes</li>
         <li>Site goes live once approvals are complete; reporting and lessons learned follow</li>
       </ul>
-      <p class="meta"><b>Output:</b> the new site, live end of April 2027<br><b>Responsible:</b> Web, Creative, Project Management </p>
+      <p class="meta"><b>Output:</b> the new site, live end of April 2027<br><b>Responsible:</b> Project Management, Web, Creative</p>
     </div>
   </div>
 
@@ -656,6 +694,35 @@
     });
 
     label();
+
+    // Printing: force the light theme so the PDF isn't a dark slab,
+    // then restore whatever the reader was using.
+    var themeBeforePrint = null;
+
+    function goLight() {
+      if (themeBeforePrint === null) {
+        themeBeforePrint = root.getAttribute('data-theme');
+        root.setAttribute('data-theme', 'light');
+        label();
+      }
+    }
+
+    function restoreTheme() {
+      if (themeBeforePrint !== null) {
+        root.setAttribute('data-theme', themeBeforePrint);
+        themeBeforePrint = null;
+        label();
+      }
+    }
+
+    window.addEventListener('beforeprint', goLight);
+    window.addEventListener('afterprint', restoreTheme);
+
+    document.getElementById('printBtn').addEventListener('click', function () {
+      goLight();                       // covers browsers that skip beforeprint
+      window.print();
+      setTimeout(restoreTheme, 1000);  // fallback if afterprint never fires
+    });
   })();
 </script>
 </body>
