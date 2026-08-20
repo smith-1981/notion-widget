@@ -107,12 +107,6 @@
     white-space: nowrap;
   }
 
-  .actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
   .theme-toggle:hover { background: var(--surface-2); }
   .theme-toggle:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
@@ -462,38 +456,9 @@
   }
 
   @media print {
-    /* Landscape gives the timeline enough width to stay full size. */
-    @page { size: letter landscape; margin: 0.5in; }
-
-    /* Print background fills, or the maroon bars disappear. */
-    *, *::before, *::after {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-
-    html, body { background: #FFFFFF !important; }
-    body { padding: 0; }
-
-    .actions { display: none !important; }
-
-    .wrap {
-      border: 1px solid #8C1D40;
-      border-radius: 0;
-      padding: 16px 20px 20px;
-    }
-
-    /* Keep blocks whole across page breaks. */
-    .rail, .phases, .ask, .card, .note-card, footer {
-      break-inside: avoid;
-      page-break-inside: avoid;
-    }
-
-    .section-head, h1, h2 {
-      break-after: avoid;
-      page-break-after: avoid;
-    }
-
-    p, li { orphans: 3; widows: 3; }
+    .theme-toggle { display: none; }
+    body { background: #FFFFFF; color: #191919; padding: 0; }
+    .wrap { border-color: #8C1D40; }
   }
 </style>
 </head>
@@ -506,10 +471,7 @@
       <h1>ASUEP site redesign</h1>
       <p class="lede">A proposed timeline for rebuilding the ASUEP site, from brand workshop through go-live inside FY 2026&ndash;2027.</p>
     </div>
-    <div class="actions">
-      <button class="theme-toggle" id="printBtn" type="button">Save as PDF</button>
-      <button class="theme-toggle" id="themeToggle" type="button">Switch to light</button>
-    </div>
+    <button class="theme-toggle" id="themeToggle" type="button">Switch to light</button>
   </div>
 
   <hr class="rule">
@@ -662,34 +624,6 @@
 
     label();
 
-    // Printing: force the light theme so the PDF isn't a dark slab,
-    // then restore whatever the reader was using.
-    var themeBeforePrint = null;
-
-    function goLight() {
-      if (themeBeforePrint === null) {
-        themeBeforePrint = root.getAttribute('data-theme');
-        root.setAttribute('data-theme', 'light');
-        label();
-      }
-    }
-
-    function restoreTheme() {
-      if (themeBeforePrint !== null) {
-        root.setAttribute('data-theme', themeBeforePrint);
-        themeBeforePrint = null;
-        label();
-      }
-    }
-
-    window.addEventListener('beforeprint', goLight);
-    window.addEventListener('afterprint', restoreTheme);
-
-    document.getElementById('printBtn').addEventListener('click', function () {
-      goLight();                       // covers browsers that skip beforeprint
-      window.print();
-      setTimeout(restoreTheme, 1000);  // fallback if afterprint never fires
-    });
   })();
 </script>
 </body>
