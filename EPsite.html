@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EP Site Redesign Phase Guide</title>
+<title>ASUEP site redesign — proposed timeline</title>
 <style>
   :root {
     --font: Arial, Helvetica, "Nimbus Sans L", "Liberation Sans", FreeSans, sans-serif;
@@ -236,6 +236,13 @@
   .seg.hold {
     background: transparent;
     border: 1px dashed var(--band-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .tick {
@@ -291,6 +298,65 @@
     line-height: 1.3;
   }
 
+  /* The ask, stated up front */
+  .ask {
+    background: var(--gold-soft);
+    border: 1px solid var(--band-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 26px;
+  }
+
+  .ask h3 {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--text);
+  }
+
+  .ask ul { margin: 0; padding-left: 18px; }
+  .ask li { margin-bottom: 3px; }
+  .ask li:last-child { margin-bottom: 0; }
+
+  .section-head {
+    margin: 30px 0 14px;
+  }
+
+  .section-head h2 { margin: 0 0 3px; }
+
+  .section-head p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* Key points below the phases */
+  .notes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .note-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+
+  .note-card b {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .note-card span {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
   /* ---------- Phase bands and cards ---------- */
 
   .band {
@@ -315,7 +381,7 @@
 
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: 14px;
   }
 
@@ -436,7 +502,7 @@
     <div>
       <p class="eyebrow">ASU Enterprise Partners &middot; Outreach Hub</p>
       <h1>ASUEP site redesign</h1>
-      <p class="lede">This reference outlines the proposed phases of the EP site redesign, what happens in each, who owns it, and what it produces.</p>
+      <p class="lede">A proposed timeline for rebuilding the ASUEP site, from brand workshop through go-live inside FY 2026&ndash;2027.</p>
     </div>
     <button class="theme-toggle" id="themeToggle" type="button">Switch to light</button>
   </div>
@@ -468,7 +534,7 @@
       <div class="seg" style="left:33.33%; width:24.50%;"></div>
       <div class="seg" style="left:58.33%; width:16.17%;"></div>
       <div class="seg" style="left:75%;    width:7.83%;"></div>
-      <div class="seg hold" style="left:83.33%; width:16.67%;"></div>
+      <div class="seg hold" style="left:83.33%; width:16.67%;">Buffer &middot; 2m</div>
 
       <div class="tick" style="left:33.33%;"></div>
       <div class="tick" style="left:83.33%;"></div>
@@ -487,107 +553,81 @@
     </div>
   </div>
 
-  <div class="band">
-    <h3>Before the clock starts</h3>
-    <p>Site development is dependent on finalizing the ASUEP Brand Standards.</p>
+  <div class="ask">
+    <h3>What we're asking for</h3>
+    <ul>
+      <li>Agreement that this timeline is the right shape for the site redesign</li>
+      <li>A confirmed start date for the ASUEP brand workshop &mdash; it sets the start, and every date after it moves with it</li>
+    </ul>
   </div>
 
-  <div class="cards">
-    <div class="card milestone">
-      <h4>ASUEP brand workshop</h4>
-      <div class="pills"><span class="pill">Start gate</span><span class="pill plain">Sep 1, 2026</span><span class="pill plain">Q1</span></div>
-      <ul>
-        <li>The site development start date is set by when this workshop begins</li>
-        <li>Every date that follows moves with this one</li>
-      </ul>
-      <p class="meta"><b>Responsible:</b> EP Brand</p>
-    </div>
-  </div>
-
-  <div class="band">
-    <h3>Direction</h3>
-    <p>Brand and strategy decisions are settled so design has something firm to build against.</p>
+  <div class="section-head">
+    <h2>The 4 phases</h2>
+    <p>What happens in each, who owns it, and what it produces.</p>
   </div>
 
   <div class="cards">
     <div class="card">
-      <h4>EP brand workshop - EP site brand direction and strategy</h4>
+      <h4>Brand workshop</h4>
       <div class="pills"><span class="pill">2 months</span><span class="pill plain">Sep&ndash;Oct 2026</span><span class="pill plain">Q1&ndash;Q2</span></div>
       <ul>
-        <li>Lockdown ASUEP brand standards that includes web design standards</li>
-        <li>Settle strategy before any layout work begins</li>
+        <li>Lock the ASUEP brand standards, including web design standards</li>
+        <li>Settle site strategy before any layout work begins</li>
         <li>Nothing downstream starts until this is complete</li>
       </ul>
-      <p class="meta"><b>Output:</b> EP brand guide, with the web style guide inside it<br><b>Responsible:</b> ASUEP/Outreach Hub</p>
+      <p class="meta"><b>Output:</b> ASUEP brand guide, with the web style guide inside it<br><b>Responsible:</b> ASUEP brand with Outreach Hub</p>
     </div>
 
-    <div class="card milestone">
-      <h4>Concept phase start</h4>
-      <div class="pills"><span class="pill">Milestone</span><span class="pill plain">Nov 1, 2026</span></div>
-      <ul>
-        <li>The handoff point from strategy to creative/web</li>
-        <li>Signals that the brand guide is usable and research, site strategy and design can begin</li>
-        <li>Slipping this date may push out go-live to later in the fiscal year</li>
-      </ul>
-      <p class="meta"><b>Responsible:</b> Creative, Web, Project Management</p>
-    </div>
-  </div>
-
-  <div class="band">
-    <h3>Concept and Development</h3>
-    <p>The site is designed, written, and built.</p>
-  </div>
-
-  <div class="cards">
     <div class="card">
-      <h4>Concept Phase - Research, Strategy and Design</h4>
+      <h4>Finalize site concept</h4>
       <div class="pills"><span class="pill">3 months</span><span class="pill plain">Nov 2026&ndash;Jan 2027</span><span class="pill plain">Q2&ndash;Q3</span></div>
       <ul>
-        <li>This phase includes site audits, data gathering, information architecture, content, wireframing and design system creation</li>
+        <li>Site audits, data gathering, information architecture, wireframing and design system creation</li>
         <li>Copy and content are written alongside concept design</li>
-        <li>Concept is approved before web development begins</li>
+        <li>Concept is approved before development begins</li>
       </ul>
       <p class="meta"><b>Output:</b> approved site concept with copy and content<br><b>Responsible:</b> Web, Creative, Content with Project Management</p>
     </div>
 
     <div class="card">
-      <h4>Development Phase</h4>
+      <h4>Development</h4>
       <div class="pills"><span class="pill">2 months</span><span class="pill plain">Feb&ndash;Mar 2027</span><span class="pill plain">Q3</span></div>
       <ul>
-        <li>This phase includes migration strategies, launch plans, SEO, redirects, T&S technical requirements, etc</li>
+        <li>Migration strategy, launch plan, SEO, redirects, and technology and security requirements</li>
         <li>Content is loaded and the site is assembled</li>
         <li>Runs until the site is review-ready</li>
       </ul>
-      <p class="meta"><b>Responsible:</b> Web, Creative, Project Management</p>
+      <p class="meta"><b>Output:</b> a built, review-ready site<br><b>Responsible:</b> Web, Creative, Project Management</p>
     </div>
-  </div>
 
-  <div class="band">
-    <h3>Launch</h3>
-    <p>Final approvals and QA, then the site goes live before the fiscal year closes.</p>
-  </div>
-
-  <div class="cards">
     <div class="card">
-      <h4>Final reviews and go-live</h4>
+      <h4>Final reviews + go-live</h4>
       <div class="pills"><span class="pill">1 month</span><span class="pill plain">Apr 2027</span><span class="pill plain">Q4</span></div>
       <ul>
-        <li>Final Stakeholder and leadership reviews</li>
+        <li>Stakeholder and leadership reviews</li>
         <li>Accessibility, proofing, and testing passes</li>
-        <li>Launch once approvals are complete</li>
+        <li>Site goes live once approvals are complete; reporting and lessons learned follow</li>
       </ul>
-      <p class="meta"><b>Responsible:</b> Project Management, Web, Creative</p>
+      <p class="meta"><b>Output:</b> the new site, live end of April 2027<br><b>Responsible:</b> Project Management, Web, Creative</p>
     </div>
+  </div>
 
-    <div class="card milestone">
-      <h4>Go-live</h4>
-      <div class="pills"><span class="pill">Milestone</span><span class="pill plain">End of Apr 2027</span><span class="pill plain">Q4</span></div>
-      <ul>
-        <li>Site is live and project is complete</li>
-        <!-- <li>May through June holds as buffer before the fiscal year ends</li> -->
-        <li>Reporting and lessons learned follow launch</li>
-      </ul>
-      <p class="meta"><b>Responsible:</b> Project Management</p>
+  <div class="section-head">
+    <h2>What to know</h2>
+  </div>
+
+  <div class="notes">
+    <div class="note-card">
+      <b>The start gate</b>
+      <span>Nothing begins until the brand workshop opens. Sep 1, 2026 is the working assumption behind every date here.</span>
+    </div>
+    <div class="note-card">
+      <b>How much can slip</b>
+      <span>Roughly 2 months. Go-live is end of April 2027 and the fiscal year closes end of June, so May and June are held as buffer.</span>
+    </div>
+    <div class="note-card">
+      <b>The handoff to watch</b>
+      <span>Nov 1, 2026. The brand guide has to be usable by then for concept work to begin on schedule.</span>
     </div>
   </div>
 
