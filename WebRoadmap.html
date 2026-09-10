@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outreach Hub web project roadmap</title>
+<style>
+  :root{
+    --maroon:#8C1D40;
+    --gold:#FFC627;
+    --black:#000000;
+    --white:#FFFFFF;
+    --gray:#747474;
+    --gray4:#BFBFBF;
+    --gray5:#D0D0D0;
+    --gray6:#E8E8E8;
+    --gray7:#FAFAFA;
+    --label-col:300px;
+    --row-h:72px;
+    --track-w:1800px;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, "Nimbus Sans L", "Liberation Sans", FreeSans, sans-serif;
+    color:var(--black);
+    background:var(--white);
+    font-size:14px;
+    line-height:1.45;
+  }
+
+  .page{max-width:1600px;margin:0 auto;padding:32px 28px 56px;}
+
+  header{border-bottom:4px solid var(--maroon);padding-bottom:18px;margin-bottom:20px;}
+  h1{font-size:28px;line-height:1.2;margin:0 0 6px;font-weight:bold;}
+  .sub{color:var(--gray);margin:0;max-width:64ch;}
+  .updated{color:var(--gray);margin:10px 0 0;font-size:12px;}
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    padding:12px 14px;margin-bottom:14px;
+    background:var(--gray7);border:1px solid var(--gray5);border-radius:4px;
+  }
+  .toolbar .group{display:flex;align-items:center;gap:6px;}
+  .toolbar .divider{width:1px;align-self:stretch;background:var(--gray5);margin:0 4px;}
+  .toolbar label.cap{font-size:12px;color:var(--gray);margin-right:2px;}
+
+  button{
+    font-family:inherit;font-size:12px;
+    background:var(--white);color:var(--maroon);
+    border:1px solid var(--gray5);border-radius:3px;
+    padding:6px 12px;cursor:pointer;
+  }
+  button:hover{background:var(--gray6);}
+  button.on{background:var(--maroon);color:var(--white);border-color:var(--maroon);}
+  button.primary{background:var(--maroon);color:var(--white);border-color:var(--maroon);}
+  button.primary:hover{background:#731734;}
+  button:focus-visible{outline:2px solid var(--maroon);outline-offset:2px;}
+
+  .hint{
+    font-size:12px;color:var(--black);background:var(--gold);
+    border-radius:3px;padding:6px 12px;margin-bottom:14px;
+  }
+  .hint[hidden]{display:none;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-bottom:14px;}
+  .legend div{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray);}
+  .swatch.diamond{width:12px;height:12px;background:var(--gold);border:2px solid var(--maroon);transform:rotate(45deg);border-radius:1px;display:inline-block;}
+  .swatch.line{width:3px;height:14px;background:var(--maroon);display:inline-block;}
+
+  /* ---------- Add project form ---------- */
+  .addbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;}
+  .addbar[hidden]{display:none;}
+  .addbar input{
+    font-family:inherit;font-size:13px;padding:7px 10px;
+    border:1px solid var(--gray5);border-radius:3px;
+  }
+  .addbar input:focus-visible{outline:2px solid var(--maroon);outline-offset:1px;}
+  .addbar input.name{width:280px;}
+  .addbar input.client{width:220px;}
+
+  /* ---------- Per-project editor ---------- */
+  .editpanel{
+    border:1px solid var(--gray5);border-top:4px solid var(--maroon);
+    border-radius:4px;padding:14px 16px;margin-bottom:14px;background:var(--white);
+  }
+  .editpanel[hidden]{display:none;}
+  .ep-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
+  .ep-head strong{font-size:15px;}
+  .ep-fields{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;}
+  .ep-fields label,.ep-dates label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--gray);}
+  .editpanel input{
+    font-family:inherit;font-size:13px;padding:7px 10px;
+    border:1px solid var(--gray5);border-radius:3px;color:var(--black);
+  }
+  .editpanel input:focus-visible{outline:2px solid var(--maroon);outline-offset:1px;}
+  .ep-fields input.name{width:300px;}
+  .ep-fields input.client{width:240px;}
+  .ep-dates{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:12px;}
+  .ep-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--gold);color:var(--black);
+    border-radius:3px;padding:5px 8px 5px 10px;font-size:12px;
+  }
+  .chip button{
+    border:none;background:transparent;color:var(--black);
+    padding:0 2px;font-size:14px;line-height:1;cursor:pointer;
+  }
+  .chip button:hover{color:var(--maroon);}
+  .ep-none{font-size:12px;color:var(--gray);}
+  .ep-foot{display:flex;gap:8px;align-items:center;border-top:1px solid var(--gray6);padding-top:12px;}
+  .ep-warn{font-size:12px;color:var(--maroon);}
+  .ep-warn[hidden]{display:none;}
+
+  /* ---------- Timeline ---------- */
+  .scroller{overflow-x:auto;border:1px solid var(--gray5);border-radius:4px;}
+  .chart{width:calc(var(--label-col) + var(--track-w));position:relative;}
+
+  .row{display:flex;align-items:stretch;}
+
+  .label{
+    width:var(--label-col);min-width:var(--label-col);
+    position:sticky;left:0;z-index:4;
+    background:var(--white);
+    border-right:2px solid var(--maroon);
+    padding:8px 14px;
+    display:flex;flex-direction:column;justify-content:center;
+  }
+  .head-months .label,.head-weeks .label{position:sticky;}
+  .label .name{font-weight:bold;line-height:1.25;padding-right:22px;}
+  .label .client{color:var(--gray);font-size:11px;margin-top:2px;}
+
+  .del{
+    position:absolute;top:6px;right:6px;
+    width:20px;height:20px;padding:0;line-height:1;
+    border:none;background:transparent;color:var(--gray);
+    font-size:15px;cursor:pointer;display:none;border-radius:3px;
+  }
+  .editing .proj:hover .del{display:block;}
+  .del:hover{background:var(--gray6);color:var(--maroon);}
+
+  .editing .proj .label{cursor:pointer;padding-left:22px;}
+  .editing .proj .label:hover{background:var(--gray7);}
+  .proj.selected .label{background:var(--gray6);}
+  .editing .blank .label{cursor:default;}
+  .editing .blank .label:hover{background:var(--white);}
+
+  .handle{
+    position:absolute;left:2px;top:50%;transform:translateY(-50%);
+    display:none;padding:6px 3px;border:none;background:transparent;
+    color:var(--gray4);font-size:13px;line-height:1;cursor:grab;
+    letter-spacing:-1px;touch-action:none;
+  }
+  .editing .proj:not(.blank) .handle{display:block;}
+  .handle:hover{color:var(--maroon);}
+  .proj.lifting .label{opacity:0.45;}
+
+  .droptarget{
+    position:absolute;left:0;height:3px;background:var(--maroon);
+    z-index:7;pointer-events:none;
+  }
+
+  .track{width:var(--track-w);min-width:var(--track-w);position:relative;}
+  .editing .proj .track{cursor:crosshair;}
+
+  .head-months .label,.head-months .track{border-bottom:1px solid var(--gray5);background:var(--gray7);}
+  .head-months .track{height:28px;}
+  .mo{
+    position:absolute;top:0;bottom:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:bold;
+    border-left:1px solid var(--gray4);
+    overflow:hidden;white-space:nowrap;
+  }
+
+  .head-weeks .label,.head-weeks .track{border-bottom:2px solid var(--maroon);}
+  .head-weeks .track{height:22px;}
+  .wk{
+    position:absolute;top:0;bottom:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;color:var(--gray);
+    border-left:1px solid var(--gray6);overflow:hidden;
+  }
+
+  .proj{border-bottom:1px solid var(--gray5);}
+  .proj .track{height:var(--row-h);}
+  .blank .label .name{color:var(--gray4);font-weight:normal;}
+  .blank .label{border-right-color:var(--gray5);}
+
+  .gl{position:absolute;top:0;bottom:0;width:1px;background:var(--gray6);pointer-events:none;}
+  .gl.month{background:var(--gray4);}
+
+  .bar{
+    position:absolute;top:50%;transform:translateY(-50%);
+    height:26px;border-radius:3px;display:flex;align-items:center;
+    padding:0 8px;font-size:11px;white-space:nowrap;overflow:hidden;z-index:1;
+  }
+  .bar.design{background:var(--gold);color:var(--black);}
+  .bar.build{background:var(--maroon);color:var(--white);}
+  .bar.review{background:var(--gray);color:var(--white);}
+
+  .milestone{
+    position:absolute;top:50%;transform:translateY(-50%);
+    display:flex;align-items:center;z-index:2;
+  }
+  .milestone .dot{
+    width:15px;height:15px;background:var(--gold);
+    border:2px solid var(--maroon);transform:rotate(45deg);border-radius:1px;flex:none;
+    margin-left:-7.5px;
+  }
+  .milestone .ms-label{margin-left:13px;font-size:11px;white-space:nowrap;}
+  .editing .milestone{cursor:grab;}
+  .editing .milestone.dragging{cursor:grabbing;z-index:6;}
+  .milestone.dragging .ms-label{font-weight:bold;}
+
+  .today{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--maroon);z-index:3;}
+  .today::after{
+    content:"Today";position:absolute;bottom:4px;left:5px;
+    font-size:10px;color:var(--maroon);font-weight:bold;background:var(--white);padding:0 3px;
+  }
+  .overlay{position:absolute;left:var(--label-col);top:0;bottom:0;width:var(--track-w);pointer-events:none;}
+
+  footer{margin-top:26px;border-top:1px solid var(--gray5);padding-top:14px;font-size:12px;color:var(--gray);}
+
+  /* ---------- Export panel ---------- */
+  .export{margin-top:18px;}
+  .export[hidden]{display:none;}
+  .export textarea{
+    width:100%;height:240px;font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:12px;padding:12px;border:1px solid var(--gray5);border-radius:4px;
+  }
+  .export p{font-size:12px;color:var(--gray);margin:0 0 8px;}
+
+  /* ---------- Print view (toggled on screen, and real printing) ---------- */
+  @page{ size:36in 24in; margin:0.75in; }
+
+  body.printview{--track-w:2900px;--row-h:104px;--label-col:340px;}
+  body.printview .toolbar,
+  body.printview .addbar,
+  body.printview .hint,
+  body.printview .export,
+  body.printview footer{display:none;}
+  body.printview .scroller{overflow:visible;border:none;}
+  body.printview .chart{width:auto;}
+  body.printview .label{position:static;}
+  body.printview .page{max-width:none;}
+  body.printview .gl{background:var(--gray5);}
+  body.printview .gl.month{background:var(--gray);}
+  body.printview .milestone .ms-label{font-size:13px;}
+  body.printview .del{display:none !important;}
+
+  @media print{
+    :root{--track-w:2900px;--row-h:104px;--label-col:340px;}
+    .toolbar,.addbar,.hint,.export,footer,.del{display:none !important;}
+    .scroller{overflow:visible;border:none;}
+    .chart{width:auto;}
+    .label{position:static;}
+    .page{max-width:none;padding:0;}
+    body{font-size:15px;}
+    h1{font-size:34px;}
+    .gl{background:var(--gray5);}
+    .gl.month{background:var(--gray);}
+    .milestone .ms-label{font-size:13px;}
+  }
+
+  @media (max-width:700px){
+    :root{--label-col:180px;}
+    .page{padding:20px 14px 40px;}
+    h1{font-size:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Outreach Hub web project roadmap</h1>
+    <p class="sub">Every web project in the OH portfolio through the close of FY27, sequenced against a single build team. Lanes without a marker are not yet scheduled.</p>
+    <p class="updated" id="updated"></p>
+  </header>
+
+  <div class="toolbar">
+    <div class="group">
+      <span class="cap">Week width</span>
+      <button type="button" class="zoom" data-w="16">Compact</button>
+      <button type="button" class="zoom" data-w="26">Standard</button>
+      <button type="button" class="zoom" data-w="44">Wide</button>
+    </div>
+    <div class="divider"></div>
+    <div class="group">
+      <button type="button" id="btn-today">Today line</button>
+      <button type="button" id="btn-print">Print view</button>
+    </div>
+    <div class="divider"></div>
+    <div class="group">
+      <button type="button" id="btn-edit" class="primary">Edit mode</button>
+      <button type="button" id="btn-add">Add project</button>
+      <button type="button" id="btn-sort">Sort by date</button>
+    </div>
+    <div class="divider"></div>
+    <div class="group">
+      <button type="button" id="btn-export">Export</button>
+      <button type="button" id="btn-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="addbar" id="addbar" hidden>
+    <input class="name" id="new-name" type="text" placeholder="Project name" aria-label="Project name">
+    <input class="client" id="new-client" type="text" placeholder="Client (optional)" aria-label="Client">
+    <button type="button" class="primary" id="btn-add-confirm">Add to roadmap</button>
+    <button type="button" id="btn-add-cancel">Cancel</button>
+  </div>
+
+  <div class="editpanel" id="editpanel" hidden>
+    <div class="ep-head">
+      <strong id="ep-title">Edit project</strong>
+      <button type="button" id="ep-close">Close</button>
+    </div>
+    <div class="ep-fields">
+      <label>Project name
+        <input class="name" id="ep-name" type="text">
+      </label>
+      <label>Client
+        <input class="client" id="ep-client" type="text">
+      </label>
+    </div>
+    <div class="ep-dates">
+      <label>Add a date
+        <input id="ep-date" type="date">
+      </label>
+      <button type="button" class="primary" id="ep-add-date">Add date</button>
+      <div class="ep-chips" id="ep-chips"></div>
+    </div>
+    <p class="ep-warn" id="ep-warn" hidden></p>
+    <div class="ep-foot">
+      <button type="button" id="ep-delete">Delete project</button>
+      <span class="ep-none">Renaming saves as you type.</span>
+    </div>
+  </div>
+
+  <div class="hint" id="hint" hidden>
+    Edit mode is on. Drag the handle at the left of a project name to reorder lanes. Click a project name to rename it, add dates or delete it. Click a lane to place a date, drag a diamond to move it, click a diamond to remove it.
+  </div>
+
+  <div class="legend">
+    <div><span class="swatch diamond"></span>Client requested date</div>
+    <div><span class="swatch line"></span>Today</div>
+  </div>
+
+  <div class="scroller" id="scroller">
+    <div class="chart" id="chart"></div>
+  </div>
+
+  <div class="export" id="export" hidden>
+    <p>Paste this over the PROJECTS list in the file to save the meeting&rsquo;s changes back to GitHub.</p>
+    <textarea id="export-text" readonly aria-label="Project data to copy"></textarea>
+    <div style="margin-top:8px;display:flex;gap:8px;">
+      <button type="button" class="primary" id="btn-copy">Copy to clipboard</button>
+      <button type="button" id="btn-download">Download as file</button>
+      <button type="button" id="btn-export-close">Close</button>
+    </div>
+  </div>
+
+  <footer>
+    Changes are kept in this browser only. Use Export to save them back into the file on GitHub.
+    Print at 36 by 24 inches, landscape, with background graphics turned on.
+  </footer>
+
+</div>
+
+<script>
+/* =========================================================================
+   STARTING PROJECTS
+
+   This list is the roadmap's starting point. Anything added or moved in
+   Edit mode lives in the browser until you press Export and paste the
+   result back over this list.
+
+     name        shown at the left of the lane
+     client      optional, small grey type under the name
+     milestones  array of "YYYY-MM-DD" dates — each renders as a diamond
+     phases      optional bars, if you ever want to show duration:
+                 { type:"design"|"build"|"review", label, start, end }
+
+   A lane with no milestones and no phases renders empty, ready to be
+   sequenced during the meeting.
+   ========================================================================= */
+
+const RANGE_START = "2026-09-01";   // left edge of the timeline
+const RANGE_END   = "2027-06-30";   // right edge — end of FY27
+const WEEK_WIDTH  = 26;             // pixels per week on screen
+const BLANK_ROWS  = 4;              // empty lanes at the bottom for write-ins
+
+const DEFAULT_PROJECTS = [
+  { name:"ASUF-SDR website refresh, phase 1", client:"ASU Foundation",           milestones:["2026-09-15"] },
+  { name:"Mayo Clinic alumni site updates",   client:"Mayo Clinic",              milestones:["2026-09-15"] },
+  { name:"ASUF EGP general contact page",     client:"ASU Foundation",           milestones:["2026-09-18"] },
+  { name:"ASUplates.com webpage redesign",    client:"ASU Enterprise Partners",  milestones:["2026-11-02"] },
+  { name:"Flat Sparky landing page",          client:"ASU Enterprise Partners",  milestones:["2026-11-05"] },
+  { name:"ASUEP-OH website redesign",         client:"ASU Enterprise Partners",  milestones:["2027-04-30"] },
+  { name:"ASURE website redesign",            client:"ASURE" },
+  { name:"UK site updates, phase 2",          client:"ASU Enterprise Partners" },
+  { name:"CF site updates, phase 2",          client:"Changing Futures" },
+  { name:"SDR app desktop version",           client:"ASU Foundation" },
+  { name:"Alumni.asu.edu site redesign",      client:"ASU Alumni Association" },
+  { name:"Prompt of the month",               client:"Outreach Hub" }
+];
+
+/* ============ Nothing below here needs editing ============ */
+
+const DAY = 86400000;
+const STORE_KEY = "oh-roadmap-v1";
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const toDate = x => typeof x === "string" ? new Date(x + "T00:00:00") : x;
+const start  = toDate(RANGE_START);
+const end    = toDate(RANGE_END);
+const span   = end - start;
+const pct    = x => ((toDate(x) - start) / span) * 100;
+const iso    = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+const short  = s => { const d = toDate(s); return (d.getMonth()+1) + "/" + d.getDate(); };
+const esc    = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+
+/* Turn a horizontal position (0–1 of the track) into a snapped date */
+function dateAt(frac){
+  const t = start.getTime() + Math.min(1, Math.max(0, frac)) * span;
+  const d = new Date(t);
+  d.setHours(0,0,0,0);
+  return iso(d);
+}
+
+/* --- State --- */
+let state = { projects: null, showToday: true, editing: false, printview: false, weekWidth: WEEK_WIDTH, selected: null };
+
+function normalise(list){
+  return list.map(p => ({
+    name: p.name,
+    client: p.client || "",
+    milestones: (p.milestones || (p.milestone ? [p.milestone.date] : [])).slice().sort(),
+    phases: p.phases || undefined
+  }));
+}
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw){
+      const saved = JSON.parse(raw);
+      if (Array.isArray(saved.projects)){
+        state.projects = normalise(saved.projects);
+        if (typeof saved.showToday === "boolean") state.showToday = saved.showToday;
+        return;
+      }
+    }
+  } catch(e){ /* storage unavailable — carry on in memory */ }
+  state.projects = normalise(DEFAULT_PROJECTS);
+}
+
+function save(){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify({ projects: state.projects, showToday: state.showToday }));
+  } catch(e){ /* storage unavailable — changes stay in memory for this session */ }
+}
+
+/* --- Time scaffolding --- */
+const weeks = [];
+let w = new Date(start);
+w.setDate(w.getDate() - ((w.getDay() + 6) % 7));
+while (w <= end){ weeks.push(new Date(w)); w.setDate(w.getDate() + 7); }
+
+const months = [];
+let m = new Date(start.getFullYear(), start.getMonth(), 1);
+while (m <= end){
+  const next = new Date(m.getFullYear(), m.getMonth() + 1, 1);
+  months.push({ date:new Date(m), next });
+  m = next;
+}
+
+function band(from, to){
+  const l = Math.max(0, pct(from));
+  const r = Math.min(100, pct(to));
+  return { left:l, width:Math.max(0, r - l) };
+}
+
+const gridlines =
+  weeks.map(wk => { const p = pct(wk); return (p<0||p>100) ? "" : `<div class="gl" style="left:${p}%"></div>`; }).join("") +
+  months.map(mo => { const p = pct(mo.date); return (p<0||p>100) ? "" : `<div class="gl month" style="left:${p}%"></div>`; }).join("");
+
+/* --- Render --- */
+const chartEl = document.getElementById("chart");
+const today = new Date();
+
+function render(){
+  let html = "";
+
+  html += `<div class="row head-months"><div class="label"></div><div class="track">` +
+    months.map(mo => {
+      const b = band(mo.date, mo.next);
+      const label = mo.date.getMonth() === 0
+        ? MONTH_NAMES[0] + " " + mo.date.getFullYear()
+        : MONTH_NAMES[mo.date.getMonth()];
+      return `<div class="mo" style="left:${b.left}%;width:${b.width}%">${label}</div>`;
+    }).join("") + `</div></div>`;
+
+  html += `<div class="row head-weeks"><div class="label"></div><div class="track">` +
+    weeks.map(wk => {
+      const b = band(wk, new Date(wk.getTime() + 7*DAY));
+      if (b.width <= 0) return "";
+      return `<div class="wk" style="left:${b.left}%;width:${b.width}%" title="Week of ${MONTH_NAMES[wk.getMonth()]} ${wk.getDate()}">${wk.getDate()}</div>`;
+    }).join("") + `</div></div>`;
+
+  state.projects.forEach((p, pi) => {
+    let content = gridlines;
+
+    (p.phases || []).forEach(ph => {
+      const b = band(ph.start, new Date(toDate(ph.end).getTime() + DAY));
+      content += `<div class="bar ${ph.type}" style="left:${b.left}%;width:${b.width}%">${esc(ph.label)}</div>`;
+    });
+
+    p.milestones.forEach((d, mi) => {
+      content += `<div class="milestone" data-p="${pi}" data-m="${mi}" style="left:${pct(d)}%" title="${esc(d)}">` +
+                 `<span class="dot"></span><span class="ms-label">${short(d)}</span></div>`;
+    });
+
+    html += `<div class="row proj${state.selected === pi ? " selected" : ""}" data-p="${pi}">` +
+      `<div class="label">` +
+      `<button type="button" class="handle" data-handle="${pi}" title="Drag to reorder" aria-label="Reorder ${esc(p.name)}">&#9783;</button>` +
+      `<span class="name">${esc(p.name)}</span>` +
+      (p.client ? `<span class="client">${esc(p.client)}</span>` : "") +
+      `<button type="button" class="del" data-del="${pi}" title="Remove this project" aria-label="Remove ${esc(p.name)}">&times;</button>` +
+      `</div><div class="track" data-p="${pi}">${content}</div></div>`;
+  });
+
+  for (let i = 0; i < BLANK_ROWS; i++){
+    html += `<div class="row proj blank"><div class="label"><span class="name">Add a project</span></div>` +
+            `<div class="track">${gridlines}</div></div>`;
+  }
+
+  let overlay = `<div class="overlay">`;
+  if (state.showToday && today >= start && today <= end)
+    overlay += `<div class="today" style="left:${pct(today)}%"></div>`;
+  overlay += `</div>`;
+
+  chartEl.innerHTML = html + overlay;
+}
+
+/* --- Toolbar --- */
+const btnToday  = document.getElementById("btn-today");
+const btnPrint  = document.getElementById("btn-print");
+const btnEdit   = document.getElementById("btn-edit");
+const btnAdd    = document.getElementById("btn-add");
+const addbar    = document.getElementById("addbar");
+const hint      = document.getElementById("hint");
+
+function syncChrome(){
+  btnToday.classList.toggle("on", state.showToday);
+  btnEdit.classList.toggle("on", state.editing);
+  btnPrint.classList.toggle("on", state.printview);
+  document.body.classList.toggle("editing", state.editing);
+  document.body.classList.toggle("printview", state.printview);
+  hint.hidden = !state.editing;
+  if (!state.editing){
+    addbar.hidden = true;
+    if (state.selected !== null){ state.selected = null; panel.hidden = true; render(); }
+  }
+}
+
+btnToday.addEventListener("click", () => { state.showToday = !state.showToday; save(); render(); syncChrome(); });
+
+btnPrint.addEventListener("click", () => {
+  state.printview = !state.printview;
+  if (state.printview) state.editing = false;   // no accidental edits while presenting
+  syncChrome();
+});
+
+btnEdit.addEventListener("click", () => {
+  state.editing = !state.editing;
+  if (state.editing) state.printview = false;
+  syncChrome();
+});
+
+btnAdd.addEventListener("click", () => {
+  state.editing = true;
+  syncChrome();
+  addbar.hidden = false;
+  document.getElementById("new-name").focus();
+});
+
+document.getElementById("btn-add-cancel").addEventListener("click", () => { addbar.hidden = true; });
+
+function addProject(){
+  const nameEl = document.getElementById("new-name");
+  const clientEl = document.getElementById("new-client");
+  const name = nameEl.value.trim();
+  if (!name){ nameEl.focus(); return; }
+  state.projects.push({ name, client: clientEl.value.trim(), milestones: [] });
+  nameEl.value = ""; clientEl.value = "";
+  save(); render();
+  nameEl.focus();
+}
+document.getElementById("btn-add-confirm").addEventListener("click", addProject);
+addbar.addEventListener("keydown", e => { if (e.key === "Enter") addProject(); });
+
+/* --- Per-project editor --- */
+const panel     = document.getElementById("editpanel");
+const epTitle   = document.getElementById("ep-title");
+const epName    = document.getElementById("ep-name");
+const epClient  = document.getElementById("ep-client");
+const epDate    = document.getElementById("ep-date");
+const epChips   = document.getElementById("ep-chips");
+const epWarn    = document.getElementById("ep-warn");
+
+epDate.min = RANGE_START;
+epDate.max = RANGE_END;
+
+function warn(msg){
+  epWarn.textContent = msg || "";
+  epWarn.hidden = !msg;
+}
+
+function closeEditor(){
+  state.selected = null;
+  panel.hidden = true;
+  warn("");
+  render();
+}
+
+function openEditor(i){
+  state.selected = i;
+  const p = state.projects[i];
+  epTitle.textContent = "Editing: " + p.name;
+  epName.value = p.name;
+  epClient.value = p.client || "";
+  epDate.value = "";
+  warn("");
+  panel.hidden = false;
+  renderChips();
+  render();
+  epName.focus();
+}
+
+function renderChips(){
+  const p = state.projects[state.selected];
+  if (!p) return;
+  epChips.innerHTML = p.milestones.length
+    ? p.milestones.map((d, i) =>
+        `<span class="chip">${short(d)}<button type="button" data-chip="${i}" title="Remove ${esc(d)}" aria-label="Remove ${esc(d)}">&times;</button></span>`
+      ).join("")
+    : `<span class="ep-none">No dates yet</span>`;
+}
+
+epName.addEventListener("input", () => {
+  const p = state.projects[state.selected];
+  if (!p) return;
+  p.name = epName.value;
+  epTitle.textContent = "Editing: " + (p.name || "untitled");
+  const el = document.querySelector(`.row.proj[data-p="${state.selected}"] .label .name`);
+  if (el) el.textContent = p.name;
+  save();
+});
+
+epClient.addEventListener("input", () => {
+  const p = state.projects[state.selected];
+  if (!p) return;
+  p.client = epClient.value;
+  save();
+  render();
+});
+
+function addDateFromInput(){
+  const p = state.projects[state.selected];
+  if (!p) return;
+  const d = epDate.value;
+  if (!d){ warn("Pick a date first."); epDate.focus(); return; }
+  if (d < RANGE_START || d > RANGE_END){
+    warn("That date sits outside the timeline, which runs " + short(RANGE_START) + " to " + short(RANGE_END) + ".");
+    return;
+  }
+  if (p.milestones.includes(d)){ warn("That date is already on this lane."); return; }
+  p.milestones.push(d);
+  p.milestones.sort();
+  epDate.value = "";
+  warn("");
+  save(); render(); renderChips();
+}
+
+document.getElementById("ep-add-date").addEventListener("click", addDateFromInput);
+epDate.addEventListener("keydown", e => { if (e.key === "Enter") addDateFromInput(); });
+
+epChips.addEventListener("click", e => {
+  const btn = e.target.closest("button[data-chip]");
+  if (!btn) return;
+  state.projects[state.selected].milestones.splice(Number(btn.dataset.chip), 1);
+  save(); render(); renderChips();
+});
+
+document.getElementById("ep-delete").addEventListener("click", () => {
+  const p = state.projects[state.selected];
+  if (!p) return;
+  if (!confirm("Remove " + p.name + " from the roadmap?")) return;
+  state.projects.splice(state.selected, 1);
+  save();
+  closeEditor();
+});
+
+document.getElementById("ep-close").addEventListener("click", closeEditor);
+
+/* --- Reordering ---------------------------------------------------------
+   Both the sort button and a drag move projects around, so the editor's
+   selected index has to follow its project rather than stay put.          */
+
+function reorder(mutate){
+  const sel = state.selected !== null ? state.projects[state.selected] : null;
+  mutate();
+  state.selected = sel ? state.projects.indexOf(sel) : null;
+  if (state.selected === -1) state.selected = null;
+  save(); render();
+  if (state.selected !== null) renderChips(); else panel.hidden = true;
+}
+
+/* Earliest date first, undated lanes below in their existing order */
+document.getElementById("btn-sort").addEventListener("click", () => {
+  reorder(() => {
+    const dated   = state.projects.filter(p => p.milestones.length);
+    const undated = state.projects.filter(p => !p.milestones.length);
+    dated.sort((a, b) => a.milestones[0] < b.milestones[0] ? -1
+                       : a.milestones[0] > b.milestones[0] ?  1 : 0);
+    state.projects = dated.concat(undated);
+  });
+});
+
+/* Drag a lane by its handle */
+let lift = null;
+
+chartEl.addEventListener("pointerdown", e => {
+  if (!state.editing) return;
+  const handle = e.target.closest(".handle");
+  if (!handle) return;
+  e.preventDefault();
+
+  const rows = [...chartEl.querySelectorAll(".row.proj:not(.blank)")];
+  const from = Number(handle.dataset.handle);
+
+  lift = {
+    from, to: from, handle,
+    rows: rows.map(r => { const b = r.getBoundingClientRect(); return { top:b.top, mid:b.top + b.height/2, bottom:b.bottom }; }),
+    chartTop: chartEl.getBoundingClientRect().top,
+    marker: null
+  };
+
+  rows[from].classList.add("lifting");
+  handle.setPointerCapture(e.pointerId);
+});
+
+chartEl.addEventListener("pointermove", e => {
+  if (!lift) return;
+
+  // Count the rows the pointer has passed, ignoring the one being dragged —
+  // it is about to be lifted out, so it no longer occupies a slot.
+  let to = lift.rows.filter((r, i) => i !== lift.from && e.clientY > r.mid).length;
+  to = Math.min(Math.max(to, 0), lift.rows.length - 1);
+  lift.to = to;
+
+  if (!lift.marker){
+    lift.marker = document.createElement("div");
+    lift.marker.className = "droptarget";
+    lift.marker.style.width = "100%";
+    chartEl.appendChild(lift.marker);
+  }
+  const edge = to <= lift.from ? lift.rows[to].top : lift.rows[to].bottom;
+  lift.marker.style.top = (edge - lift.chartTop) + "px";
+});
+
+chartEl.addEventListener("pointerup", () => {
+  if (!lift) return;
+  const { from, to, marker } = lift;
+  if (marker) marker.remove();
+  chartEl.querySelectorAll(".lifting").forEach(r => r.classList.remove("lifting"));
+  lift.handle.dataset.moved = "1";
+  lift = null;
+  if (to === from){ render(); return; }
+  reorder(() => {
+    const [moved] = state.projects.splice(from, 1);
+    state.projects.splice(to, 0, moved);
+  });
+});
+
+/* --- Zoom --- */
+const zoomButtons = document.querySelectorAll("button.zoom");
+function setWidth(px){
+  state.weekWidth = px;
+  document.documentElement.style.setProperty("--track-w", (weeks.length * px) + "px");
+  zoomButtons.forEach(b => b.classList.toggle("on", Number(b.dataset.w) === px));
+}
+zoomButtons.forEach(b => b.addEventListener("click", () => setWidth(Number(b.dataset.w))));
+
+/* --- Editing on the chart --- */
+chartEl.addEventListener("click", e => {
+  if (!state.editing) return;
+
+  const del = e.target.closest(".del");
+  if (del){
+    const i = Number(del.dataset.del);
+    if (confirm("Remove " + state.projects[i].name + " from the roadmap?")){
+      state.projects.splice(i, 1);
+      save(); render();
+    }
+    return;
+  }
+
+  const handle = e.target.closest(".handle");
+  if (handle){ delete handle.dataset.moved; return; }
+
+  const label = e.target.closest(".label");
+  if (label){
+    const row = label.closest(".row.proj");
+    if (row && row.dataset.p !== undefined) openEditor(Number(row.dataset.p));
+    return;
+  }
+
+  const ms = e.target.closest(".milestone");
+  if (ms){
+    if (ms.dataset.moved === "1"){ delete ms.dataset.moved; return; }  // finished a drag
+    const pi = Number(ms.dataset.p), mi = Number(ms.dataset.m);
+    state.projects[pi].milestones.splice(mi, 1);
+    save(); render();
+    if (state.selected !== null) renderChips();
+    return;
+  }
+
+  const track = e.target.closest(".track");
+  if (track && track.dataset.p !== undefined){
+    const rect = track.getBoundingClientRect();
+    const d = dateAt((e.clientX - rect.left) / rect.width);
+    const list = state.projects[Number(track.dataset.p)].milestones;
+    if (!list.includes(d)){
+      list.push(d); list.sort(); save(); render();
+      if (state.selected !== null) renderChips();
+    }
+  }
+});
+
+/* --- Drag a milestone to a new date --- */
+let drag = null;
+
+chartEl.addEventListener("pointerdown", e => {
+  if (!state.editing) return;
+  const ms = e.target.closest(".milestone");
+  if (!ms) return;
+  const track = ms.closest(".track");
+  drag = { el:ms, rect:track.getBoundingClientRect(), startX:e.clientX, moved:false,
+           pi:Number(ms.dataset.p), mi:Number(ms.dataset.m) };
+  ms.setPointerCapture(e.pointerId);
+  ms.classList.add("dragging");
+});
+
+chartEl.addEventListener("pointermove", e => {
+  if (!drag) return;
+  if (Math.abs(e.clientX - drag.startX) > 3) drag.moved = true;
+  const frac = (e.clientX - drag.rect.left) / drag.rect.width;
+  const d = dateAt(frac);
+  drag.el.style.left = pct(d) + "%";
+  drag.el.querySelector(".ms-label").textContent = short(d);
+  drag.date = d;
+});
+
+chartEl.addEventListener("pointerup", e => {
+  if (!drag) return;
+  const { el, pi, mi, moved, date } = drag;
+  el.classList.remove("dragging");
+  drag = null;
+  if (!moved || !date) return;
+  el.dataset.moved = "1";                       // stop the click handler deleting it
+  const list = state.projects[pi].milestones;
+  list[mi] = date;
+  list.sort();
+  save(); render();
+  if (state.selected !== null) renderChips();
+});
+
+/* --- Export --- */
+const exportPanel = document.getElementById("export");
+const exportText  = document.getElementById("export-text");
+
+function projectSource(){
+  const lines = state.projects.map(p => {
+    let s = `  { name:${JSON.stringify(p.name)}`;
+    if (p.client) s += `, client:${JSON.stringify(p.client)}`;
+    if (p.milestones.length) s += `, milestones:[${p.milestones.map(d => JSON.stringify(d)).join(", ")}]`;
+    if (p.phases) s += `, phases:${JSON.stringify(p.phases)}`;
+    return s + " }";
+  });
+  return "const DEFAULT_PROJECTS = [\n" + lines.join(",\n") + "\n];";
+}
+
+document.getElementById("btn-export").addEventListener("click", () => {
+  exportText.value = projectSource();
+  exportPanel.hidden = false;
+  if (exportText.scrollIntoView) exportText.scrollIntoView({ behavior:"smooth", block:"nearest" });
+});
+document.getElementById("btn-export-close").addEventListener("click", () => { exportPanel.hidden = true; });
+
+document.getElementById("btn-copy").addEventListener("click", async () => {
+  const btn = document.getElementById("btn-copy");
+  try{
+    await navigator.clipboard.writeText(exportText.value);
+    btn.textContent = "Copied";
+  } catch(err){
+    exportText.select();
+    btn.textContent = "Press Ctrl+C";
+  }
+  setTimeout(() => { btn.textContent = "Copy to clipboard"; }, 2000);
+});
+
+document.getElementById("btn-download").addEventListener("click", () => {
+  const blob = new Blob([projectSource()], { type:"text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "roadmap-projects.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("btn-reset").addEventListener("click", () => {
+  if (!confirm("Discard all changes and return to the list saved in the file?")) return;
+  try{ localStorage.removeItem(STORE_KEY); } catch(e){}
+  state.projects = normalise(DEFAULT_PROJECTS);
+  state.showToday = true;
+  state.selected = null;
+  panel.hidden = true;
+  save(); render(); syncChrome();
+});
+
+/* --- Start --- */
+load();
+setWidth(WEEK_WIDTH);
+render();
+syncChrome();
+
+document.getElementById("updated").textContent =
+  "Updated " + today.toLocaleDateString("en-US", { month:"long", day:"numeric", year:"numeric" });
+
+const scroller = document.getElementById("scroller");
+requestAnimationFrame(() => {
+  if (today >= start && today <= end){
+    const x = (pct(today)/100) * (scroller.scrollWidth - 300);
+    scroller.scrollLeft = Math.max(0, x - 120);
+  }
+});
+</script>
+</body>
+</html>
