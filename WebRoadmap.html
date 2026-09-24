@@ -16,7 +16,7 @@
     --gray6:#E8E8E8;
     --gray7:#FAFAFA;
     --label-col:300px;
-    --row-h:72px;
+    --row-h:56px;
     --track-w:1800px;
   }
 
@@ -238,7 +238,7 @@
   /* ---------- Print view (toggled on screen, and real printing) ---------- */
   @page{ size:36in 24in; margin:0.75in; }
 
-  body.printview{--track-w:2900px;--row-h:104px;--label-col:340px;}
+  body.printview{--track-w:2900px;--row-h:60px;--label-col:340px;}
   body.printview .toolbar,
   body.printview .addbar,
   body.printview .hint,
@@ -254,7 +254,7 @@
   body.printview .del{display:none !important;}
 
   @media print{
-    :root{--track-w:2900px;--row-h:104px;--label-col:340px;}
+    :root{--track-w:2900px;--row-h:60px;--label-col:340px;}
     .toolbar,.addbar,.hint,.export,footer,.del{display:none !important;}
     .scroller{overflow:visible;border:none;}
     .chart{width:auto;}
@@ -393,22 +393,46 @@
 const RANGE_START = "2026-09-01";   // left edge of the timeline
 const RANGE_END   = "2027-06-30";   // right edge — end of FY27
 const WEEK_WIDTH  = 26;             // pixels per week on screen
-const BLANK_ROWS  = 4;              // empty lanes at the bottom for write-ins
+const BLANK_ROWS  = 2;              // empty lanes at the bottom for write-ins
 
 const DEFAULT_PROJECTS = [
   { name:"ASUF-SDR website refresh, phase 1", client:"ASU Foundation", milestones:["2026-09-15"] },
-  { name:"Mayo Clinic alumni site updates", client:"Mayo Clinic", milestones:["2026-09-15"] },
+  { name:"Mayo Clinic alumni site updates", client:"ASU Alumni Association", milestones:["2026-09-15"] },
   { name:"ASUF EGP general contact page", client:"ASU Foundation", milestones:["2026-09-18"] },
   { name:"ASUplates.com webpage redesign", client:"ASU Enterprise Partners", milestones:["2026-11-02"] },
-  { name:"Flat Sparky landing page", client:"ASU Enterprise Partners", milestones:["2026-11-05"] },
-  { name:"SDGW Landing Page", client:"ASUF-DR", milestones:["2026-11-05"] },
+  { name:"Flat Sparky landing page", client:"Changing Futures", milestones:["2026-11-05"] },
   { name:"ASUEP-OH website redesign", client:"ASU Enterprise Partners", milestones:["2027-04-30"] },
+
   { name:"ASURE website redesign", client:"ASURE" },
-  { name:"UK site updates, phase 2", client:"ASU Enterprise Partners" },
+  { name:"UK site updates, phase 2", client:"ASU Foundation UK" },
   { name:"CF site updates, phase 2", client:"Changing Futures" },
   { name:"SDR app desktop version", client:"ASU Foundation" },
   { name:"Alumni.asu.edu site redesign", client:"ASU Alumni Association" },
-  { name:"Prompt of the month", client:"Outreach Hub" }
+  { name:"Prompt of the month", client:"Outreach Hub" },
+
+  { name:"Ongoing fund updates", client:"ASU Foundation" },
+  { name:"Endowment report landing page and charts", client:"ASU Foundation" },
+  { name:"Ways to give landing page", client:"ASU Foundation" },
+  { name:"Scholarships landing page", client:"ASU Foundation" },
+  { name:"ASUF checkout wireframes", client:"ASU Foundation" },
+  { name:"Prefilled checkout links", client:"ASU Foundation" },
+  { name:"Payroll deduction double the donation page", client:"ASU Foundation" },
+  { name:"Impact report web reporting", client:"ASU Foundation" },
+
+  { name:"Sun Devil regalia form", client:"ASU Alumni Association" },
+  { name:"Alumni chapter sign-up Salesforce integration", client:"ASU Alumni Association" },
+  { name:"Hayden Library 60th sweepstakes", client:"ASU Alumni Association" },
+  { name:"Alumni association web reporting", client:"ASU Alumni Association" },
+  { name:"Travel and towns update and refresh", client:"ASU Alumni Association" },
+  { name:"Notable alumni refresh", client:"ASU Alumni Association" },
+
+  { name:"Molly's momentum page updates", client:"SDC" },
+  { name:"Football facility page updates", client:"SDC" },
+
+  { name:"InvestU theme fix", client:"InvestU" },
+  { name:"Webform and Stova GA4 integration" },
+  { name:"ASU Health landing page" },
+  { name:"ASU Events international time zones" }
 ];
 
 /* ============ Nothing below here needs editing ============ */
@@ -435,7 +459,7 @@ function dateAt(frac){
 }
 
 /* --- State --- */
-let state = { projects: null, showToday: true, editing: false, printview: false, weekWidth: WEEK_WIDTH, selected: null };
+let state = { projects: null, showToday: true, editing: false, printview: false, weekWidth: WEEK_WIDTH, selected: null, fileUpdated: false };
 
 function normalise(list){
   return list.map(p => ({
@@ -446,15 +470,24 @@ function normalise(list){
   }));
 }
 
+/* A fingerprint of the list in the file. Saved alongside your edits so the
+   page can tell whether the file itself has changed since you last saved. */
+const BASELINE = JSON.stringify(normalise(DEFAULT_PROJECTS));
+
 function load(){
   try{
     const raw = localStorage.getItem(STORE_KEY);
     if (raw){
       const saved = JSON.parse(raw);
       if (Array.isArray(saved.projects)){
-        state.projects = normalise(saved.projects);
-        if (typeof saved.showToday === "boolean") state.showToday = saved.showToday;
-        return;
+        // If the file's list has changed since these edits were saved, the
+        // file is newer — a commit has landed — so it wins.
+        if (saved.baseline === BASELINE){
+          state.projects = normalise(saved.projects);
+          if (typeof saved.showToday === "boolean") state.showToday = saved.showToday;
+          return;
+        }
+        state.fileUpdated = true;
       }
     }
   } catch(e){ /* storage unavailable — carry on in memory */ }
@@ -463,7 +496,11 @@ function load(){
 
 function save(){
   try{
-    localStorage.setItem(STORE_KEY, JSON.stringify({ projects: state.projects, showToday: state.showToday }));
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      projects: state.projects,
+      showToday: state.showToday,
+      baseline: BASELINE
+    }));
   } catch(e){ /* storage unavailable — changes stay in memory for this session */ }
 }
 
