@@ -16,9 +16,13 @@
     --gray6:#E8E8E8;
     --gray7:#FAFAFA;
     --label-col:300px;
-    --row-h:56px;
+    --row-h:72px;
     --track-w:1800px;
+    --notes-w:0px;
+    --link-w:0px;
   }
+  body.notes-on{--notes-w:250px;}
+  body.links-on{--link-w:170px;}
 
   *{box-sizing:border-box;}
 
@@ -118,7 +122,7 @@
 
   /* ---------- Timeline ---------- */
   .scroller{overflow-x:auto;border:1px solid var(--gray5);border-radius:4px;}
-  .chart{width:calc(var(--label-col) + var(--track-w));position:relative;}
+  .chart{width:calc(var(--label-col) + var(--notes-w) + var(--link-w) + var(--track-w));position:relative;}
 
   .row{display:flex;align-items:stretch;}
 
@@ -163,6 +167,46 @@
     position:absolute;left:0;height:3px;background:var(--maroon);
     z-index:7;pointer-events:none;
   }
+
+  .notes{
+    width:var(--notes-w);min-width:var(--notes-w);
+    position:sticky;left:var(--label-col);z-index:3;
+    background:var(--white);
+    border-right:1px solid var(--gray5);
+    padding:8px 12px;font-size:12px;color:var(--gray);
+    display:flex;align-items:center;overflow:hidden;
+  }
+  body:not(.notes-on) .notes{display:none;}
+  .notes span{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .notes.empty{color:var(--gray4);}
+  .editing .proj .notes{cursor:pointer;}
+  .editing .proj .notes:hover{background:var(--gray7);}
+  .proj.selected .notes{background:var(--gray6);}
+  .head-months .notes,.head-weeks .notes{color:var(--black);font-weight:bold;font-size:11px;}
+  .head-months .notes{background:var(--gray7);border-bottom:1px solid var(--gray5);}
+  .head-weeks .notes{border-bottom:2px solid var(--maroon);}
+
+  .linkcell{
+    width:var(--link-w);min-width:var(--link-w);
+    position:sticky;left:calc(var(--label-col) + var(--notes-w));z-index:3;
+    background:var(--white);
+    border-right:1px solid var(--gray5);
+    padding:8px 12px;font-size:12px;
+    display:flex;align-items:center;overflow:hidden;
+  }
+  body:not(.links-on) .linkcell{display:none;}
+  .linkcell a{
+    color:var(--maroon);text-decoration:underline;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .linkcell a:hover{color:var(--black);}
+  .linkcell.empty{color:var(--gray4);}
+  .editing .proj .linkcell{cursor:pointer;}
+  .editing .proj .linkcell:hover{background:var(--gray7);}
+  .proj.selected .linkcell{background:var(--gray6);}
+  .head-months .linkcell,.head-weeks .linkcell{color:var(--black);font-weight:bold;font-size:11px;}
+  .head-months .linkcell{background:var(--gray7);border-bottom:1px solid var(--gray5);}
+  .head-weeks .linkcell{border-bottom:2px solid var(--maroon);}
 
   .track{width:var(--track-w);min-width:var(--track-w);position:relative;}
   .editing .proj .track{cursor:crosshair;}
@@ -222,7 +266,7 @@
     content:"Today";position:absolute;bottom:4px;left:5px;
     font-size:10px;color:var(--maroon);font-weight:bold;background:var(--white);padding:0 3px;
   }
-  .overlay{position:absolute;left:var(--label-col);top:0;bottom:0;width:var(--track-w);pointer-events:none;}
+  .overlay{position:absolute;left:calc(var(--label-col) + var(--notes-w) + var(--link-w));top:0;bottom:0;width:var(--track-w);pointer-events:none;}
 
   footer{margin-top:26px;border-top:1px solid var(--gray5);padding-top:14px;font-size:12px;color:var(--gray);}
 
@@ -293,6 +337,8 @@
     <div class="divider"></div>
     <div class="group">
       <button type="button" id="btn-today">Today line</button>
+      <button type="button" id="btn-notes">Notes</button>
+      <button type="button" id="btn-links">Links</button>
       <button type="button" id="btn-print">Print view</button>
     </div>
     <div class="divider"></div>
@@ -326,6 +372,15 @@
       </label>
       <label>Client
         <input class="client" id="ep-client" type="text">
+      </label>
+      <label style="flex:1;min-width:280px;">Note
+        <input id="ep-note" type="text" placeholder="Sequencing note, dependency, blocker" style="width:100%;">
+      </label>
+      <label style="flex:1;min-width:280px;">Link
+        <input id="ep-link" type="text" placeholder="wrike.com/open.htm?id=..." style="width:100%;">
+      </label>
+      <label>Link text
+        <input id="ep-linktext" type="text" placeholder="optional" style="width:150px;">
       </label>
     </div>
     <div class="ep-dates">
@@ -459,12 +514,15 @@ function dateAt(frac){
 }
 
 /* --- State --- */
-let state = { projects: null, showToday: true, editing: false, printview: false, weekWidth: WEEK_WIDTH, selected: null, fileUpdated: false };
+let state = { projects: null, showToday: true, editing: false, printview: false, weekWidth: WEEK_WIDTH, selected: null, fileUpdated: false, showNotes: true, showLinks: true };
 
 function normalise(list){
   return list.map(p => ({
     name: p.name,
     client: p.client || "",
+    note: p.note || "",
+    link: p.link || "",
+    linkText: p.linkText || "",
     milestones: (p.milestones || (p.milestone ? [p.milestone.date] : [])).slice().sort(),
     phases: p.phases || undefined
   }));
@@ -484,7 +542,9 @@ function load(){
         // file is newer — a commit has landed — so it wins.
         if (saved.baseline === BASELINE){
           state.projects = normalise(saved.projects);
-          if (typeof saved.showToday === "boolean") state.showToday = saved.showToday;
+            if (typeof saved.showToday === "boolean") state.showToday = saved.showToday;
+          if (typeof saved.showNotes === "boolean") state.showNotes = saved.showNotes;
+          if (typeof saved.showLinks === "boolean") state.showLinks = saved.showLinks;
           return;
         }
         state.fileUpdated = true;
@@ -499,6 +559,8 @@ function save(){
     localStorage.setItem(STORE_KEY, JSON.stringify({
       projects: state.projects,
       showToday: state.showToday,
+      showNotes: state.showNotes,
+      showLinks: state.showLinks,
       baseline: BASELINE
     }));
   } catch(e){ /* storage unavailable — changes stay in memory for this session */ }
@@ -528,6 +590,38 @@ const gridlines =
   weeks.map(wk => { const p = pct(wk); return (p<0||p>100) ? "" : `<div class="gl" style="left:${p}%"></div>`; }).join("") +
   months.map(mo => { const p = pct(mo.date); return (p<0||p>100) ? "" : `<div class="gl month" style="left:${p}%"></div>`; }).join("");
 
+/* --- Links ---------------------------------------------------------------
+   Only http and https are allowed through, so a pasted javascript: or data:
+   URL can never become a clickable link on the page.                       */
+
+function safeUrl(raw){
+  const v = (raw || "").trim();
+  if (!v) return "";
+  const withScheme = /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(v) ? v : "https://" + v;
+  try{
+    const u = new URL(withScheme);
+    return (u.protocol === "http:" || u.protocol === "https:") ? u.href : "";
+  } catch(e){ return ""; }
+}
+
+/* ASU style: descriptive text, lowercase, no protocol and no www */
+function linkText(p){
+  if (p.linkText) return p.linkText;
+  const href = safeUrl(p.link);
+  if (!href) return "";
+  try{
+    return new URL(href).hostname.replace(/^www\./, "").toLowerCase();
+  } catch(e){ return "link"; }
+}
+
+function linkCell(p, pi){
+  const href = safeUrl(p.link);
+  const inner = href
+    ? `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer" title="${esc(href)}">${esc(linkText(p))}</a>`
+    : "&mdash;";
+  return `<div class="linkcell${href ? "" : " empty"}" data-link="${pi}">${inner}</div>`;
+}
+
 /* --- Render --- */
 const chartEl = document.getElementById("chart");
 const today = new Date();
@@ -535,7 +629,7 @@ const today = new Date();
 function render(){
   let html = "";
 
-  html += `<div class="row head-months"><div class="label"></div><div class="track">` +
+  html += `<div class="row head-months"><div class="label"></div><div class="notes">Notes</div><div class="linkcell">Link</div><div class="track">` +
     months.map(mo => {
       const b = band(mo.date, mo.next);
       const label = mo.date.getMonth() === 0
@@ -544,7 +638,7 @@ function render(){
       return `<div class="mo" style="left:${b.left}%;width:${b.width}%">${label}</div>`;
     }).join("") + `</div></div>`;
 
-  html += `<div class="row head-weeks"><div class="label"></div><div class="track">` +
+  html += `<div class="row head-weeks"><div class="label"></div><div class="notes"></div><div class="linkcell"></div><div class="track">` +
     weeks.map(wk => {
       const b = band(wk, new Date(wk.getTime() + 7*DAY));
       if (b.width <= 0) return "";
@@ -570,12 +664,15 @@ function render(){
       `<span class="name">${esc(p.name)}</span>` +
       (p.client ? `<span class="client">${esc(p.client)}</span>` : "") +
       `<button type="button" class="del" data-del="${pi}" title="Remove this project" aria-label="Remove ${esc(p.name)}">&times;</button>` +
-      `</div><div class="track" data-p="${pi}">${content}</div></div>`;
+      `</div>` +
+      `<div class="notes${p.note ? "" : " empty"}" data-note="${pi}" title="${esc(p.note || "")}"><span>${esc(p.note || "—")}</span></div>` +
+      linkCell(p, pi) +
+      `<div class="track" data-p="${pi}">${content}</div></div>`;
   });
 
   for (let i = 0; i < BLANK_ROWS; i++){
     html += `<div class="row proj blank"><div class="label"><span class="name">Add a project</span></div>` +
-            `<div class="track">${gridlines}</div></div>`;
+            `<div class="notes empty"></div><div class="linkcell empty"></div><div class="track">${gridlines}</div></div>`;
   }
 
   let overlay = `<div class="overlay">`;
@@ -588,6 +685,8 @@ function render(){
 
 /* --- Toolbar --- */
 const btnToday  = document.getElementById("btn-today");
+const btnNotes  = document.getElementById("btn-notes");
+const btnLinks  = document.getElementById("btn-links");
 const btnPrint  = document.getElementById("btn-print");
 const btnEdit   = document.getElementById("btn-edit");
 const btnAdd    = document.getElementById("btn-add");
@@ -596,6 +695,10 @@ const hint      = document.getElementById("hint");
 
 function syncChrome(){
   btnToday.classList.toggle("on", state.showToday);
+  btnNotes.classList.toggle("on", state.showNotes);
+  document.body.classList.toggle("notes-on", state.showNotes);
+  btnLinks.classList.toggle("on", state.showLinks);
+  document.body.classList.toggle("links-on", state.showLinks);
   btnEdit.classList.toggle("on", state.editing);
   btnPrint.classList.toggle("on", state.printview);
   document.body.classList.toggle("editing", state.editing);
@@ -608,6 +711,10 @@ function syncChrome(){
 }
 
 btnToday.addEventListener("click", () => { state.showToday = !state.showToday; save(); render(); syncChrome(); });
+
+btnNotes.addEventListener("click", () => { state.showNotes = !state.showNotes; save(); syncChrome(); });
+
+btnLinks.addEventListener("click", () => { state.showLinks = !state.showLinks; save(); syncChrome(); });
 
 btnPrint.addEventListener("click", () => {
   state.printview = !state.printview;
@@ -648,6 +755,9 @@ const panel     = document.getElementById("editpanel");
 const epTitle   = document.getElementById("ep-title");
 const epName    = document.getElementById("ep-name");
 const epClient  = document.getElementById("ep-client");
+const epNote    = document.getElementById("ep-note");
+const epLink    = document.getElementById("ep-link");
+const epLinkText= document.getElementById("ep-linktext");
 const epDate    = document.getElementById("ep-date");
 const epChips   = document.getElementById("ep-chips");
 const epWarn    = document.getElementById("ep-warn");
@@ -673,6 +783,9 @@ function openEditor(i){
   epTitle.textContent = "Editing: " + p.name;
   epName.value = p.name;
   epClient.value = p.client || "";
+  epNote.value = p.note || "";
+  epLink.value = p.link || "";
+  epLinkText.value = p.linkText || "";
   epDate.value = "";
   warn("");
   panel.hidden = false;
@@ -699,6 +812,28 @@ epName.addEventListener("input", () => {
   const el = document.querySelector(`.row.proj[data-p="${state.selected}"] .label .name`);
   if (el) el.textContent = p.name;
   save();
+});
+
+epNote.addEventListener("input", () => {
+  const p = state.projects[state.selected];
+  if (!p) return;
+  p.note = epNote.value;
+  save(); render();
+});
+
+epLink.addEventListener("input", () => {
+  const p = state.projects[state.selected];
+  if (!p) return;
+  p.link = epLink.value;
+  warn(epLink.value.trim() && !safeUrl(epLink.value) ? "That does not look like a web address, so no link will show." : "");
+  save(); render();
+});
+
+epLinkText.addEventListener("input", () => {
+  const p = state.projects[state.selected];
+  if (!p) return;
+  p.linkText = epLinkText.value;
+  save(); render();
 });
 
 epClient.addEventListener("input", () => {
@@ -853,6 +988,22 @@ chartEl.addEventListener("click", e => {
   const handle = e.target.closest(".handle");
   if (handle){ delete handle.dataset.moved; return; }
 
+  if (e.target.closest(".linkcell a")) return;   // let the link open
+
+  const linkCellEl = e.target.closest(".linkcell[data-link]");
+  if (linkCellEl){
+    openEditor(Number(linkCellEl.dataset.link));
+    epLink.focus();
+    return;
+  }
+
+  const noteCell = e.target.closest(".notes[data-note]");
+  if (noteCell){
+    openEditor(Number(noteCell.dataset.note));
+    epNote.focus();
+    return;
+  }
+
   const label = e.target.closest(".label");
   if (label){
     const row = label.closest(".row.proj");
@@ -928,6 +1079,9 @@ function projectSource(){
   const lines = state.projects.map(p => {
     let s = `  { name:${JSON.stringify(p.name)}`;
     if (p.client) s += `, client:${JSON.stringify(p.client)}`;
+    if (p.note) s += `, note:${JSON.stringify(p.note)}`;
+    if (p.link) s += `, link:${JSON.stringify(p.link)}`;
+    if (p.linkText) s += `, linkText:${JSON.stringify(p.linkText)}`;
     if (p.milestones.length) s += `, milestones:[${p.milestones.map(d => JSON.stringify(d)).join(", ")}]`;
     if (p.phases) s += `, phases:${JSON.stringify(p.phases)}`;
     return s + " }";
