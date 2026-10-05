@@ -569,37 +569,201 @@ async function runSummaries() {
 const X_BTN = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Sync Now';
 
 async function runProxy() {
+  if (document.getElementById('x-sync-btn').disabled) return;
+
   setBtnLoading('x-sync-btn', true, X_BTN);
   setDot('x-dot', 'run');
-  setStatus('x-status', 'Syncing…');
+  setStatus('x-status', 'Preparing sync…');
   clearScroll('x-scroll', '<div class="log"></div>');
-  appendLog('x-scroll', 'Starting Wrike → Notion DB sync…', 'info');
-  try {
-    let start = 0, batch = 0, totalCreated = 0, totalUpdated = 0, totalSkipped = 0, totalErrors = 0;
-    while (true) {
-      batch++;
-      const res  = await fetch(`${WORKERS.sync}/sync?key=${SYNC_KEY}&start=${start}&limit=20`);
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error || 'Sync failed');
-      const created = data.created ?? 0;
-      const updated = data.updated ?? 0;
-      const skipped = data.skipped ?? 0;
-      const errors  = data.errorCount ?? 0;
-      totalCreated += created; totalUpdated += updated;
-      totalSkipped += skipped; totalErrors  += errors;
-      appendLog('x-scroll', `Batch ${batch}: ${data.processed} processed — ${created} created, ${updated} updated, ${skipped} skipped${errors ? ', ⚠ ' + errors + ' error(s)' : ''}`, errors ? 'bad' : 'info');
-      if (data.nextStart === null || data.remaining === 0) break;
-      start = data.nextStart;
+
+  const log = (message, type = 'info') => {
+    const safe = String(message)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    appendLog('x-scroll', safe, type);
+  };
+
+  async function callSync(path) {
+    const res = await fetch(WORKERS.sync + path, {
+      headers: {
+        Accept: 'application/json',
+        'x-sync-key': SYNC_KEY,
+      },
+      cache: 'no-store',
+    });
+
+    const raw = await res.text();
+    let data;
+
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      throw new Error(
+        `Worker returned non-JSON (${res.status}): ${raw.slice(0, 200)}`
+      );
     }
-    appendLog('x-scroll', `Done — ${totalCreated} created, ${totalUpdated} updated, ${totalSkipped} skipped, ${totalErrors} errors`, totalErrors ? 'bad' : 'ok');
-    setDot('x-dot', totalErrors ? 'bad' : 'ok');
-    setStatus('x-status', `✓ Synced at ${ts()}`);
-  } catch(e) {
-    appendLog('x-scroll', 'Error: ' + e.message, 'bad');
-    setDot('x-dot', 'bad');
-    setStatus('x-status', '⚠ Error');
+
+    if (!res.ok || !data?.ok) {
+      throw new Error(
+        data?.error || `Sync request failed (${res.status})`
+      );
+    }
+
+    return data;
   }
-  setBtnLoading('x-sync-btn', false, X_BTN);
+
+  let totalCreated = 0;
+  let totalUpdated = 0;
+  let totalSkipped = 0;
+  let totalClosed = 0;
+  let totalErrors = 0;
+  let totalWarnings = 0;
+
+  function reportIssues(data) {
+    const errors = Array.isArray(data.errors)
+      ? data.errors
+      : [];
+
+    const warnings = [
+      ...(Array.isArray(data.sourceWarnings)
+        ? data.sourceWarnings
+        : []),
+      ...(Array.isArray(data.unresolved)
+        ? data.unresolved
+        : []),
+    ];
+
+    totalErrors += Math.max(
+      data.errorCount || 0,
+      errors.length
+    );
+
+    totalWarnings += warnings.length;
+
+    for (const item of errors) {
+      log(
+        `Error for ${item.title || item.wrikeId || 'project'}: ${item.error}`,
+        'bad'
+      );
+    }
+
+    for (const item of warnings) {
+      log(
+        `Review ${item.wrikeId || 'project'}: ${item.warning || item.reason}`,
+        'bad'
+      );
+    }
+  }
+
+  log('Starting Wrike → Notion sync…');
+
+  try {
+    const plan = await callSync('/sync-plan');
+
+    if (
+      !Array.isArray(plan.syncIds) ||
+      !Array.isArray(plan.reconcileIds)
+    ) {
+      throw new Error(
+        'The Worker did not return a valid sync plan. Check its deployed code.'
+      );
+    }
+
+    log(
+      `${plan.syncIds.length} open projects; ` +
+      `${plan.reconcileIds.length} existing Notion projects ` +
+      'to check for completion/cancellation.'
+    );
+
+    const limit = 20;
+    let batch = 0;
+
+    // Sync current open projects.
+    for (let i = 0; i < plan.syncIds.length; i += limit) {
+      setStatus('x-status', 'Syncing open projects…');
+
+      const ids = plan.syncIds.slice(i, i + limit);
+
+      const data = await callSync(
+        '/sync?ids=' +
+        encodeURIComponent(ids.join(',')) +
+        '&limit=' + limit
+      );
+
+      const created = data.created || 0;
+      const updated = data.updated || 0;
+      const skipped = data.skipped || 0;
+
+      totalCreated += created;
+      totalUpdated += updated;
+      totalSkipped += skipped;
+
+      log(
+        `Batch ${++batch}: ${data.processed} checked — ` +
+        `${created} created, ${updated} updated, ` +
+        `${skipped} unchanged`
+      );
+
+      reportIssues(data);
+    }
+
+    // Give newly completed/cancelled projects their final Notion update.
+    let statusBatch = 0;
+
+    for (let i = 0; i < plan.reconcileIds.length; i += limit) {
+      setStatus(
+        'x-status',
+        'Checking completed/cancelled projects…'
+      );
+
+      const ids = plan.reconcileIds.slice(i, i + limit);
+
+      const data = await callSync(
+        '/reconcile?ids=' +
+        encodeURIComponent(ids.join(','))
+      );
+
+      totalClosed += data.closed || 0;
+
+      log(
+        `Status check ${++statusBatch}: ${data.processed} checked — ` +
+        `${data.closed || 0} marked inactive in Notion, ` +
+        `${data.stillOpen || 0} still open`
+      );
+
+      reportIssues(data);
+    }
+
+    const hasIssues =
+      totalErrors > 0 || totalWarnings > 0;
+
+    log(
+      `Done — ${totalCreated} created, ` +
+      `${totalUpdated} updated, ${totalSkipped} unchanged, ` +
+      `${totalClosed} marked inactive, ${totalErrors} errors, ` +
+      `${totalWarnings} items to review`,
+      hasIssues ? 'bad' : 'ok'
+    );
+
+    setDot('x-dot', hasIssues ? 'bad' : 'ok');
+
+    setStatus(
+      'x-status',
+      hasIssues
+        ? '⚠ Finished — review log'
+        : `✓ Synced at ${ts()}`
+    );
+  } catch (e) {
+    log('Error: ' + e.message, 'bad');
+    setDot('x-dot', 'bad');
+    setStatus('x-status', '⚠ Error — review log');
+  } finally {
+    setBtnLoading('x-sync-btn', false, X_BTN);
+  }
 }
 
 // ── FIELD AUDITOR ────────────────────────────────────────────────
