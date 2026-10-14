@@ -655,7 +655,7 @@ html, body {
           Download HTML
         </button>
 
-        <button class="btn" id="w-copy-btn" onclick="openForOutlook(WORKERS.web)" disabled>
+        <button class="btn" id="w-copy-btn" onclick="openWebForOutlook()" disabled>
           <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
           Open for Outlook
         </button>
@@ -893,37 +893,39 @@ async function downloadExport(base, filename) {
   }
 }
 
-// Outlook pastes raw markup from the clipboard, so open the export in a
-// new tab with a Ctrl+A / Ctrl+C banner instead.
-async function openForOutlook(base) {
-  const tab = window.open('', '_blank');
-  try {
-    const res = await fetch(base + '/api/export');
-    if (!res.ok) throw new Error('Export failed (' + res.status + ')');
-    const html = await res.text();
+function exportPriority() {
+  if (priorityData) downloadExport(WORKERS.priority, 'top-priority-projects.html');
+}
 
-    const banner = `<div style="position:sticky;top:0;z-index:999;background:#fffbe6;border-bottom:2px solid #FFC627;padding:10px 20px;font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a;display:flex;align-items:center;gap:12px;">
+// Top Priority — original, proven "Open for Outlook" flow (unchanged)
+async function copyPriority() {
+  if (!priorityData) return;
+
+  const res = await fetch(WORKERS.priority + '/api/export');
+  const html = await res.text();
+
+  const banner = `<div style="position:sticky;top:0;z-index:999;background:#fffbe6;border-bottom:2px solid #FFC627;padding:10px 20px;font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a;display:flex;align-items:center;gap:12px;">
     <span style="font-size:18px;">📋</span>
     <span><strong>To copy for Outlook:</strong> Press <kbd style="background:#eee;border:1px solid #ccc;border-radius:3px;padding:1px 5px;">Ctrl+A</kbd> to select all, then <kbd style="background:#eee;border:1px solid #ccc;border-radius:3px;padding:1px 5px;">Ctrl+C</kbd> to copy, then paste into your Outlook email.</span>
     <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;color:#888;">✕</button>
   </div>`;
 
-    const injected = html.replace('<div style="max-width', banner + '<div style="max-width');
-    const url = URL.createObjectURL(new Blob([injected], { type: 'text/html' }));
-    if (tab) tab.location = url; else window.open(url, '_blank');
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
-  } catch (e) {
-    if (tab) tab.close();
-    alert('Could not open the export: ' + e.message);
-  }
+  const injected = html
+    .replace('<body', '<body')
+    .replace('<div style="max-width', banner + '<div style="max-width');
+
+  const blob = new Blob([injected], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 
-function exportPriority() {
-  if (priorityData) downloadExport(WORKERS.priority, 'top-priority-projects.html');
-}
-
-function copyPriority() {
-  if (priorityData) openForOutlook(WORKERS.priority);
+// Web Projects — the worker serves the Outlook-ready page itself,
+// so the tab opens instantly on click (nothing for the browser to block).
+function openWebForOutlook() {
+  if (!webData) return;
+  window.open(WORKERS.web + '/api/export?view=outlook', '_blank', 'noopener');
 }
 
 // ── WEB PROJECTS ─────────────────────────────────────────────────
