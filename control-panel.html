@@ -1,5 +1,4 @@
 <!doctype html>
-<!-- Retry Pages deployment: 2026-10-05 -->
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -506,58 +505,14 @@ html, body {
   margin-top: 3px;
 }
 
-.field-row {
-  display: flex;
-  gap: 6px;
-  flex-shrink: 0;
+.badge-hold {
+  background: rgba(255,140,60,0.10);
+  color: rgba(255,170,110,0.9);
+  border-color: rgba(255,140,60,0.3);
 }
 
-.field-input {
-  flex: 1;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 13px;
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-.field-input::placeholder {
-  color: var(--muted);
-}
-
-.field-input:focus {
-  border-color: var(--gold-border);
-}
-
-.digest-frame-wrap {
-  flex: 1;
-  min-height: 0;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  position: relative;
-}
-
-.digest-frame-wrap iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-  background: #0f1117;
-}
-
-.digest-launch-hint {
-  position: absolute;
-  bottom: 10px;
-  right: 12px;
-  font-size: 10px;
-  color: var(--muted);
-  font-family: var(--mono);
-  pointer-events: none;
+.stats.five {
+  grid-template-columns: repeat(5,1fr);
 }
 
 @keyframes spin {
@@ -609,17 +564,11 @@ html, body {
     <button class="tab active" onclick="switchTab('priority',this)">
       <span class="tab-dot"></span><span class="tab-icon">🔴</span> Top Priority
     </button>
-    <button class="tab" onclick="switchTab('summaries',this)">
-      <span class="tab-dot"></span><span class="tab-icon">📋</span> Summaries
+    <button class="tab" onclick="switchTab('web',this)">
+      <span class="tab-dot"></span><span class="tab-icon">🌐</span> Web Projects
     </button>
     <button class="tab" onclick="switchTab('proxy',this)">
       <span class="tab-dot"></span><span class="tab-icon">📁</span> Project List
-    </button>
-    <button class="tab" onclick="switchTab('auditor',this)">
-      <span class="tab-dot"></span><span class="tab-icon">🔍</span> Field Auditor
-    </button>
-    <button class="tab" onclick="switchTab('digest',this)">
-      <span class="tab-dot"></span><span class="tab-icon">📊</span> Project Digest
     </button>
   </div>
 
@@ -678,26 +627,44 @@ html, body {
       </div>
     </div>
 
-    <!-- PROJECT SUMMARIES -->
-    <div class="panel" id="panel-summaries">
+    <!-- WEB PROJECTS -->
+    <div class="panel" id="panel-web">
       <div class="panel-hdr">
         <div class="panel-title">
-          <div class="dot" id="s-dot"></div>Project Summaries → Notion
+          <div class="dot" id="w-dot"></div>Web Projects
         </div>
-        <span class="panel-status" id="s-status">Not synced</span>
+        <span class="panel-status" id="w-status">Not synced</span>
+      </div>
+
+      <div class="stats five">
+        <div class="stat"><span class="n" id="w-total">—</span><span class="l">Total</span></div>
+        <div class="stat"><span class="n" id="w-exec">—</span><span class="l">Execution</span></div>
+        <div class="stat"><span class="n" id="w-plan">—</span><span class="l">Planning</span></div>
+        <div class="stat"><span class="n" id="w-hold">—</span><span class="l">On Hold</span></div>
+        <div class="stat"><span class="n" id="w-backlog">—</span><span class="l">Backlog</span></div>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" id="s-sync-btn" onclick="runSummaries()">
+        <button class="btn btn-primary" id="w-sync-btn" onclick="syncWeb()">
           <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          Run Sync
+          Sync from Wrike
+        </button>
+
+        <button class="btn btn-gold" id="w-dl-btn" onclick="downloadExport(WORKERS.web, 'web-projects.html')" disabled>
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Download HTML
+        </button>
+
+        <button class="btn" id="w-copy-btn" onclick="openForOutlook(WORKERS.web)" disabled>
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          Open for Outlook
         </button>
       </div>
 
-      <div class="scroll" id="s-scroll">
+      <div class="scroll" id="w-scroll">
         <div class="log-empty">
-          <span class="ico">📋</span>
-          Generates AI summaries for your Wrike projects and syncs them to Notion.
+          <span class="ico">🌐</span>
+          Click Sync from Wrike to load Web projects in Execution, Planning, On Hold, and Portfolio Backlog.
         </div>
       </div>
     </div>
@@ -726,86 +693,20 @@ html, body {
       </div>
     </div>
 
-    <!-- FIELD AUDITOR -->
-    <div class="panel" id="panel-auditor">
-      <div class="panel-hdr">
-        <div class="panel-title">
-          <div class="dot" id="a-dot"></div>Custom Field Auditor
-        </div>
-        <span class="panel-status" id="a-status">Ready</span>
-      </div>
-
-      <div class="field-row">
-        <input
-          class="field-input"
-          id="a-input"
-          type="text"
-          placeholder="Enter custom field name to look up…"
-          onkeydown="if(event.key==='Enter')runAuditor()"
-        >
-        <button class="btn btn-primary" id="a-btn" onclick="runAuditor()">
-          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/></svg>
-          Look Up
-        </button>
-      </div>
-
-      <div class="scroll" id="a-scroll">
-        <div class="log-empty">
-          <span class="ico">🔍</span>
-          Search for a Wrike custom field by name to see where it's used across your space.
-        </div>
-      </div>
-    </div>
-
-    <!-- PROJECT DIGEST -->
-    <div class="panel" id="panel-digest">
-      <div class="panel-hdr">
-        <div class="panel-title">
-          <div class="dot ok" id="d-dot"></div>Project Digest
-        </div>
-
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="panel-status" id="d-status">AI-powered status &amp; action items</span>
-          <a
-            href="https://wrike-project-digest.dustinjsmith.workers.dev"
-            target="_blank"
-            rel="noopener"
-            class="btn btn-gold"
-            style="padding:4px 10px;font-size:11px;text-decoration:none;"
-          >
-            <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Open Full View
-          </a>
-        </div>
-      </div>
-
-      <div class="digest-frame-wrap">
-        <iframe
-          id="digest-frame"
-          src="about:blank"
-          title="Project Digest"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-        ></iframe>
-        <span class="digest-launch-hint">wrike-project-digest.dustinjsmith.workers.dev</span>
-      </div>
-    </div>
-
   </div>
 </div>
 
 <script>
 const WORKERS = {
-  priority:  'https://wrike-top-priority.dustinjsmith.workers.dev',
-  summaries: 'https://wrike-project-summaries.dustinjsmith.workers.dev',
-  sync:      'https://wrike-notion-sync.dustinjsmith.workers.dev',
-  auditor:   'https://wrike-field-auditor.dustinjsmith.workers.dev',
-  digest:    'https://wrike-project-digest.dustinjsmith.workers.dev',
+  priority: 'https://wrike-top-priority.dustinjsmith.workers.dev',
+  web:      'https://wrike-web-projects.dustinjsmith.workers.dev',
+  sync:     'https://wrike-notion-sync.dustinjsmith.workers.dev',
 };
 
 const SYNC_KEY = 'dustin-sync-2026-keep-this-private-839214';
 
 let priorityData = null;
-let digestLoaded = false;
+let webData = null;
 
 function switchTab(id, btn) {
   document.querySelectorAll('.panel').forEach(
@@ -817,16 +718,6 @@ function switchTab(id, btn) {
 
   document.getElementById('panel-' + id).classList.add('active');
   btn.classList.add('active');
-
-  if (id === 'digest' && !digestLoaded) {
-    const frame = document.getElementById('digest-frame');
-    frame.src = WORKERS.digest;
-    digestLoaded = true;
-    setStatus('d-status', 'Loading…');
-    frame.onload = function() {
-      setStatus('d-status', 'AI-powered status & action items');
-    };
-  }
 }
 
 function ts() {
@@ -980,102 +871,122 @@ function renderPriority(data) {
     '</div>';
 }
 
-async function exportPriority() {
-  if (!priorityData) return;
-
-  const res = await fetch(WORKERS.priority + '/api/export');
-  const blob = await res.blob();
-  const a = document.createElement('a');
-
-  a.href = URL.createObjectURL(blob);
-  a.download = 'top-priority-projects.html';
-  document.body.appendChild(a);
-  a.click();
-
-  setTimeout(() => {
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
-  }, 1000);
+function escHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-async function copyPriority() {
-  if (!priorityData) return;
+async function downloadExport(base, filename) {
+  try {
+    const res = await fetch(base + '/api/export');
+    if (!res.ok) throw new Error('Export failed (' + res.status + ')');
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 1000);
+  } catch (e) {
+    alert('Download failed: ' + e.message);
+  }
+}
 
-  const res = await fetch(WORKERS.priority + '/api/export');
-  const html = await res.text();
+// Outlook pastes raw markup from the clipboard, so open the export in a
+// new tab with a Ctrl+A / Ctrl+C banner instead.
+async function openForOutlook(base) {
+  const tab = window.open('', '_blank');
+  try {
+    const res = await fetch(base + '/api/export');
+    if (!res.ok) throw new Error('Export failed (' + res.status + ')');
+    const html = await res.text();
 
-  const banner = `<div style="position:sticky;top:0;z-index:999;background:#fffbe6;border-bottom:2px solid #FFC627;padding:10px 20px;font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a;display:flex;align-items:center;gap:12px;">
+    const banner = `<div style="position:sticky;top:0;z-index:999;background:#fffbe6;border-bottom:2px solid #FFC627;padding:10px 20px;font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a;display:flex;align-items:center;gap:12px;">
     <span style="font-size:18px;">📋</span>
     <span><strong>To copy for Outlook:</strong> Press <kbd style="background:#eee;border:1px solid #ccc;border-radius:3px;padding:1px 5px;">Ctrl+A</kbd> to select all, then <kbd style="background:#eee;border:1px solid #ccc;border-radius:3px;padding:1px 5px;">Ctrl+C</kbd> to copy, then paste into your Outlook email.</span>
     <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;color:#888;">✕</button>
   </div>`;
 
-  const injected = html
-    .replace('<body', '<body')
-    .replace('<div style="max-width', banner + '<div style="max-width');
-
-  const blob = new Blob([injected], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-
-  window.open(url, '_blank');
-  setTimeout(() => URL.revokeObjectURL(url), 30000);
+    const injected = html.replace('<div style="max-width', banner + '<div style="max-width');
+    const url = URL.createObjectURL(new Blob([injected], { type: 'text/html' }));
+    if (tab) tab.location = url; else window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  } catch (e) {
+    if (tab) tab.close();
+    alert('Could not open the export: ' + e.message);
+  }
 }
 
-// ── PROJECT SUMMARIES ────────────────────────────────────────────
+function exportPriority() {
+  if (priorityData) downloadExport(WORKERS.priority, 'top-priority-projects.html');
+}
 
-const S_BTN = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Run Sync';
+function copyPriority() {
+  if (priorityData) openForOutlook(WORKERS.priority);
+}
 
-async function runSummaries() {
-  setBtnLoading('s-sync-btn', true, S_BTN);
-  setDot('s-dot', 'run');
-  setStatus('s-status', 'Running…');
-  clearScroll('s-scroll', '<div class="log"></div>');
-  appendLog('s-scroll', 'Starting project summaries sync…', 'info');
+// ── WEB PROJECTS ─────────────────────────────────────────────────
+
+const W_BTN = P_BTN;
+
+async function syncWeb() {
+  setBtnLoading('w-sync-btn', true, W_BTN);
+  setDot('w-dot', 'run');
+  setStatus('w-status', 'Syncing…');
+  clearScroll('w-scroll', '<div class="log-empty"><span class="ico">⏳</span>Fetching from Wrike…</div>');
 
   try {
-    const res = await fetch(WORKERS.summaries + '/run');
-    const text = await res.text();
-    let data;
+    const res = await fetch(WORKERS.web + '/api/web-projects', { cache: 'no-store' });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Unknown error');
 
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { raw: text };
-    }
-
-    if (data.raw) {
-      appendLog(
-        's-scroll',
-        'Sync triggered — check Notion for updated summaries.',
-        'ok'
-      );
-      setDot('s-dot', 'ok');
-      setStatus('s-status', `✓ Done at ${ts()}`);
-    } else {
-      if (Array.isArray(data.log)) {
-        data.log.forEach(l => appendLog('s-scroll', l, 'info'));
-      }
-
-      const added = data.added ?? data.synced ?? data.created ?? '?';
-      const skipped = data.skipped ?? data.existing ?? '?';
-      const errors = data.errors ?? data.errorCount ?? 0;
-
-      appendLog(
-        's-scroll',
-        `Done — ${added} added/updated, ${skipped} skipped, ${errors} errors`,
-        errors ? 'bad' : 'ok'
-      );
-
-      setDot('s-dot', errors ? 'bad' : 'ok');
-      setStatus('s-status', `✓ Synced at ${ts()}`);
-    }
-  } catch(e) {
-    appendLog('s-scroll', 'Error: ' + e.message, 'bad');
-    setDot('s-dot', 'bad');
-    setStatus('s-status', '⚠ Error');
+    webData = data;
+    renderWeb(data);
+    setDot('w-dot', 'ok');
+    setStatus('w-status', '✓ Synced at ' + ts());
+    document.getElementById('w-dl-btn').disabled = false;
+    document.getElementById('w-copy-btn').disabled = false;
+  } catch (e) {
+    setDot('w-dot', 'bad');
+    setStatus('w-status', '⚠ Error');
+    clearScroll('w-scroll', `<div class="log-empty"><span class="ico">⚠️</span>${escHtml(e.message)}</div>`);
   }
 
-  setBtnLoading('s-sync-btn', false, S_BTN);
+  setBtnLoading('w-sync-btn', false, W_BTN);
+}
+
+function renderWeb(data) {
+  const projs = data.projects || [];
+  const c = data.counts || {};
+  document.getElementById('w-total').textContent   = c.total ?? projs.length;
+  document.getElementById('w-exec').textContent    = c.exec ?? 0;
+  document.getElementById('w-plan').textContent    = c.plan ?? 0;
+  document.getElementById('w-hold').textContent    = c.hold ?? 0;
+  document.getElementById('w-backlog').textContent = c.backlog ?? 0;
+
+  if (!projs.length) {
+    clearScroll('w-scroll', '<div class="log-empty"><span class="ico">✅</span>No Web projects in Execution, Planning, On Hold, or Portfolio Backlog.</div>');
+    return;
+  }
+
+  const badgeFor = { exec: 'badge-exec', plan: 'badge-plan', hold: 'badge-hold', backlog: 'badge-other' };
+
+  document.getElementById('w-scroll').innerHTML =
+    '<div class="proj-list">' +
+    projs.map((p, i) => {
+      const dtBadge = isOv(p.dueDate)
+        ? `<span class="badge badge-ov">⚠ Due ${fmtDate(p.dueDate)} (overdue)</span>`
+        : `<span class="badge badge-due">Due ${fmtDate(p.dueDate) || 'TBD'}</span>`;
+      return `<div class="proj-item" style="animation-delay:${i * 0.04}s">
+        <div class="proj-num">${i + 1}</div>
+        <div class="proj-body">
+          <a class="proj-name" href="${escHtml(p.openUrl)}" target="_blank" rel="noopener">${escHtml(p.title)}</a>
+          <div class="proj-tags">${dtBadge}<span class="badge ${badgeFor[p.statusKey] || 'badge-other'}">${escHtml(p.statusLabel)}</span></div>
+        </div>
+      </div>`;
+    }).join('') +
+    '</div>';
 }
 
 // ── PROJECT LIST ─────────────────────────────────────────────────
@@ -1321,103 +1232,6 @@ async function runProxy() {
   }
 }
 
-// ── FIELD AUDITOR ────────────────────────────────────────────────
-
-const A_BTN = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/></svg> Look Up';
-
-async function runAuditor() {
-  const q = document.getElementById('a-input').value.trim();
-
-  if (!q) {
-    document.getElementById('a-input').focus();
-    return;
-  }
-
-  setBtnLoading('a-btn', true, A_BTN);
-  setDot('a-dot', 'run');
-  setStatus('a-status', 'Searching…');
-  clearScroll('a-scroll', '<div class="log"></div>');
-  appendLog('a-scroll', `Looking up: "${q}"…`, 'info');
-
-  try {
-    const res = await fetch(
-      WORKERS.auditor + '/api/audit?field=' + encodeURIComponent(q)
-    );
-
-    const text = await res.text();
-    let data;
-
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { raw: text };
-    }
-
-    if (data.raw || (!res.ok && !data.ok)) {
-      appendLog(
-        'a-scroll',
-        `Unexpected response (${res.status}) — check the auditor worker endpoint.`,
-        'bad'
-      );
-      appendLog('a-scroll', text.slice(0, 150), '');
-      setDot('a-dot', 'bad');
-      setStatus('a-status', '⚠ Check endpoint');
-    } else {
-      const f = data.field || data.customField || null;
-
-      if (!f) {
-        appendLog('a-scroll', `"${q}" not found in your space.`, 'bad');
-        setDot('a-dot', 'bad');
-        setStatus('a-status', 'Not found');
-      } else {
-        appendLog(
-          'a-scroll',
-          `Found: "${f.title || f.name}" (ID: ${f.id})`,
-          'ok'
-        );
-
-        appendLog(
-          'a-scroll',
-          `Type: ${f.type || '?'} · Scope: ${f.scope || 'account'}`,
-          'info'
-        );
-
-        const used = data.projects || data.usedIn || data.folders || [];
-
-        if (used.length) {
-          appendLog(
-            'a-scroll',
-            `Used in ${used.length} project(s):`,
-            'info'
-          );
-
-          used.slice(0, 15).forEach(p =>
-            appendLog('a-scroll', `  · ${p.title || p.name}`, '')
-          );
-
-          if (used.length > 15) {
-            appendLog(
-              'a-scroll',
-              `  …and ${used.length - 15} more`,
-              ''
-            );
-          }
-        } else {
-          appendLog('a-scroll', 'Not used in any active projects.', '');
-        }
-
-        setDot('a-dot', 'ok');
-        setStatus('a-status', `Found · ${ts()}`);
-      }
-    }
-  } catch(e) {
-    appendLog('a-scroll', 'Error: ' + e.message, 'bad');
-    setDot('a-dot', 'bad');
-    setStatus('a-status', '⚠ Error');
-  }
-
-  setBtnLoading('a-btn', false, A_BTN);
-}
 </script>
 </body>
 </html>
