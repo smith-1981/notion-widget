@@ -473,19 +473,19 @@ html, body {
   border-color: var(--border);
 }
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4,1fr);
-  gap: 6px;
-  flex-shrink: 0;
-}
-
 .stat {
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 8px 10px;
   text-align: center;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .stat .n {
@@ -513,6 +513,94 @@ html, body {
 
 .stats.five {
   grid-template-columns: repeat(5,1fr);
+}
+
+/* ── Upcoming Sends ─────────────────────────── */
+
+.badge-done {
+  background: rgba(0,220,130,0.10);
+  color: rgba(90,230,160,0.9);
+  border-color: rgba(0,220,130,0.3);
+}
+
+.badge-email {
+  background: rgba(140,29,64,0.22);
+  color: rgba(255,170,195,0.92);
+  border-color: rgba(140,29,64,0.6);
+}
+
+.badge-sms {
+  background: rgba(255,198,39,0.10);
+  color: rgba(255,198,39,0.9);
+  border-color: rgba(255,198,39,0.35);
+}
+
+.day-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 4px 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.day-hdr:first-child {
+  padding-top: 2px;
+}
+
+.day-hdr .cnt {
+  font-family: var(--mono);
+  font-weight: 400;
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.day-chip {
+  font-size: 9px;
+  font-weight: 600;
+  color: #1a1a1a;
+  background: var(--gold);
+  border-radius: 999px;
+  padding: 1px 7px;
+  margin-left: 6px;
+  letter-spacing: 0.06em;
+}
+
+.proj-ico {
+  font-size: 12px;
+  background: var(--maroon-dim);
+  border: 1px solid var(--maroon-border);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.proj-sub {
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.proj-sub a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: rgba(255,255,255,0.2);
+}
+
+.proj-sub a:hover {
+  color: var(--gold);
 }
 
 @keyframes spin {
@@ -567,6 +655,9 @@ html, body {
     <button class="tab" onclick="switchTab('web',this)">
       <span class="tab-dot"></span><span class="tab-icon">🌐</span> Web Projects
     </button>
+    <button class="tab" onclick="switchTab('sends',this)">
+      <span class="tab-dot"></span><span class="tab-icon">📨</span> Upcoming Sends
+    </button>
     <button class="tab" onclick="switchTab('proxy',this)">
       <span class="tab-dot"></span><span class="tab-icon">📁</span> Project List
     </button>
@@ -613,7 +704,7 @@ html, body {
           Download HTML
         </button>
 
-        <button class="btn" id="p-copy-btn" onclick="copyPriority()" disabled>
+        <button class="btn" id="p-copy-btn" onclick="openPriorityForOutlook()" disabled>
           <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
           Open for Outlook
         </button>
@@ -669,6 +760,47 @@ html, body {
       </div>
     </div>
 
+    <!-- UPCOMING SENDS -->
+    <div class="panel" id="panel-sends">
+      <div class="panel-hdr">
+        <div class="panel-title">
+          <div class="dot" id="s-dot"></div>Upcoming Email &amp; SMS Sends
+        </div>
+        <span class="panel-status" id="s-status">Not synced</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span class="n" id="s-total">—</span><span class="l">Total Sends</span></div>
+        <div class="stat"><span class="n" id="s-email">—</span><span class="l">Email</span></div>
+        <div class="stat"><span class="n" id="s-sms">—</span><span class="l">SMS</span></div>
+        <div class="stat"><span class="n" id="s-done">—</span><span class="l">Done</span></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="s-sync-btn" onclick="syncSends()">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Sync from Wrike
+        </button>
+
+        <button class="btn btn-gold" id="s-dl-btn" onclick="downloadExport(WORKERS.sends, 'upcoming-sends.html')" disabled>
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Download HTML
+        </button>
+
+        <button class="btn" id="s-copy-btn" onclick="openSendsForOutlook()" disabled>
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          Open for Outlook
+        </button>
+      </div>
+
+      <div class="scroll" id="s-scroll">
+        <div class="log-empty">
+          <span class="ico">📨</span>
+          Click Sync from Wrike to load Email and SMS sends due in the next 10 days.
+        </div>
+      </div>
+    </div>
+
     <!-- PROJECT LIST -->
     <div class="panel" id="panel-proxy">
       <div class="panel-hdr">
@@ -700,6 +832,7 @@ html, body {
 const WORKERS = {
   priority: 'https://wrike-top-priority.dustinjsmith.workers.dev',
   web:      'https://wrike-web-projects.dustinjsmith.workers.dev',
+  sends:    'https://wrike-upcoming-sends.dustinjsmith.workers.dev',
   sync:     'https://wrike-notion-sync.dustinjsmith.workers.dev',
 };
 
@@ -707,6 +840,7 @@ const SYNC_KEY = 'dustin-sync-2026-keep-this-private-839214';
 
 let priorityData = null;
 let webData = null;
+let sendsData = null;
 
 function switchTab(id, btn) {
   document.querySelectorAll('.panel').forEach(
@@ -897,35 +1031,23 @@ function exportPriority() {
   if (priorityData) downloadExport(WORKERS.priority, 'top-priority-projects.html');
 }
 
-// Top Priority — original, proven "Open for Outlook" flow (unchanged)
-async function copyPriority() {
-  if (!priorityData) return;
-
-  const res = await fetch(WORKERS.priority + '/api/export');
-  const html = await res.text();
-
-  const banner = `<div style="position:sticky;top:0;z-index:999;background:#fffbe6;border-bottom:2px solid #FFC627;padding:10px 20px;font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a;display:flex;align-items:center;gap:12px;">
-    <span style="font-size:18px;">📋</span>
-    <span><strong>To copy for Outlook:</strong> Press <kbd style="background:#eee;border:1px solid #ccc;border-radius:3px;padding:1px 5px;">Ctrl+A</kbd> to select all, then <kbd style="background:#eee;border:1px solid #ccc;border-radius:3px;padding:1px 5px;">Ctrl+C</kbd> to copy, then paste into your Outlook email.</span>
-    <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;color:#888;">✕</button>
-  </div>`;
-
-  const injected = html
-    .replace('<body', '<body')
-    .replace('<div style="max-width', banner + '<div style="max-width');
-
-  const blob = new Blob([injected], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-
-  window.open(url, '_blank');
-  setTimeout(() => URL.revokeObjectURL(url), 30000);
+// "Open for Outlook" — each worker serves its own Outlook-ready page at
+// /api/export?view=outlook, so the tab opens instantly on click.
+// (Opening a tab after waiting on a fetch gets blocked inside the Notion embed.)
+function openForOutlook(base) {
+  window.open(base + '/api/export?view=outlook', '_blank', 'noopener');
 }
 
-// Web Projects — the worker serves the Outlook-ready page itself,
-// so the tab opens instantly on click (nothing for the browser to block).
+function openPriorityForOutlook() {
+  if (priorityData) openForOutlook(WORKERS.priority);
+}
+
 function openWebForOutlook() {
-  if (!webData) return;
-  window.open(WORKERS.web + '/api/export?view=outlook', '_blank', 'noopener');
+  if (webData) openForOutlook(WORKERS.web);
+}
+
+function openSendsForOutlook() {
+  if (sendsData) openForOutlook(WORKERS.sends);
 }
 
 // ── WEB PROJECTS ─────────────────────────────────────────────────
@@ -989,6 +1111,89 @@ function renderWeb(data) {
       </div>`;
     }).join('') +
     '</div>';
+}
+
+// ── UPCOMING SENDS ───────────────────────────────────────────────
+
+const S_BTN = P_BTN;
+
+async function syncSends() {
+  setBtnLoading('s-sync-btn', true, S_BTN);
+  setDot('s-dot', 'run');
+  setStatus('s-status', 'Syncing…');
+  clearScroll('s-scroll', '<div class="log-empty"><span class="ico">⏳</span>Fetching from Wrike…</div>');
+
+  try {
+    const res = await fetch(WORKERS.sends + '/api/sends', { cache: 'no-store' });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Unknown error');
+
+    sendsData = data;
+    renderSends(data);
+    setDot('s-dot', 'ok');
+    setStatus('s-status', '✓ Synced at ' + ts());
+    document.getElementById('s-dl-btn').disabled = false;
+    document.getElementById('s-copy-btn').disabled = false;
+  } catch (e) {
+    setDot('s-dot', 'bad');
+    setStatus('s-status', '⚠ Error');
+    clearScroll('s-scroll', `<div class="log-empty"><span class="ico">⚠️</span>${escHtml(e.message)}</div>`);
+  }
+
+  setBtnLoading('s-sync-btn', false, S_BTN);
+}
+
+function renderSends(data) {
+  const c = data.counts || {};
+  const groups = data.groups || [];
+  document.getElementById('s-total').textContent = c.total ?? 0;
+  document.getElementById('s-email').textContent = c.email ?? 0;
+  document.getElementById('s-sms').textContent   = c.sms ?? 0;
+  document.getElementById('s-done').textContent  = c.done ?? 0;
+
+  if (!groups.length) {
+    const win = data.window?.label ? ' (' + escHtml(data.window.label) + ')' : '';
+    clearScroll('s-scroll', `<div class="log-empty"><span class="ico">✅</span>No email or SMS sends due in the next 10 days${win}.</div>`);
+    return;
+  }
+
+  const statusBadge = { done: 'badge-done', progress: 'badge-exec', todo: 'badge-plan', other: 'badge-other' };
+  let n = 0;
+
+  const html = groups.map(g => {
+    const chip = g.isToday ? '<span class="day-chip">Today</span>'
+               : g.isTomorrow ? '<span class="day-chip">Tomorrow</span>' : '';
+    const count = g.sends.length;
+
+    const items = g.sends.map(s => {
+      const delay = Math.min(n++ * 0.03, 0.6);
+      const tags = [
+        `<span class="badge ${s.type === 'SMS' ? 'badge-sms' : 'badge-email'}">${s.type === 'SMS' ? 'SMS' : 'Email'}</span>`,
+        `<span class="badge ${statusBadge[s.statusKind] || 'badge-other'}">${escHtml(s.statusLabel)}</span>`,
+        s.deployTime ? `<span class="badge badge-other">🕘 ${escHtml(s.deployTime)}</span>` : '',
+        s.sfmcInstance ? `<span class="badge badge-other">SFMC: ${escHtml(s.sfmcInstance)}</span>` : '',
+      ].join('');
+
+      const sub = [
+        s.projectTitle ? `<a href="${escHtml(s.projectUrl)}" target="_blank" rel="noopener">${escHtml(s.projectTitle)}</a>` : '',
+        s.audience ? 'Audience: ' + escHtml(s.audience) : '',
+        (s.assignees || []).length ? escHtml(s.assignees.join(', ')) : '',
+      ].filter(Boolean).join(' · ');
+
+      return `<div class="proj-item" style="animation-delay:${delay}s">
+        <div class="proj-ico">${s.type === 'SMS' ? '📱' : '✉️'}</div>
+        <div class="proj-body">
+          <a class="proj-name" href="${escHtml(s.openUrl)}" target="_blank" rel="noopener" title="${escHtml(s.title)}">${escHtml(s.title)}</a>
+          <div class="proj-tags">${tags}</div>
+          ${sub ? `<div class="proj-sub" title="${escHtml(sub.replace(/<[^>]+>/g, ''))}">${sub}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="day-hdr"><span>${escHtml(g.label)}${chip}</span><span class="cnt">${count} send${count !== 1 ? 's' : ''}</span></div>` + items;
+  }).join('');
+
+  document.getElementById('s-scroll').innerHTML = '<div class="proj-list">' + html + '</div>';
 }
 
 // ── PROJECT LIST ─────────────────────────────────────────────────
