@@ -515,6 +515,16 @@ html, body {
   grid-template-columns: repeat(5,1fr);
 }
 
+.stats.six {
+  grid-template-columns: repeat(6,1fr);
+}
+
+.badge-backlog {
+  background: rgba(120,150,190,0.12);
+  color: rgba(160,190,230,0.9);
+  border-color: rgba(120,150,190,0.35);
+}
+
 /* ── Upcoming Sends ─────────────────────────── */
 
 .badge-done {
@@ -769,11 +779,12 @@ html, body {
         <span class="panel-status" id="s-status">Not synced</span>
       </div>
 
-      <div class="stats five">
+      <div class="stats six">
         <div class="stat"><span class="n" id="s-total">—</span><span class="l">Total Sends</span></div>
         <div class="stat"><span class="n" id="s-email">—</span><span class="l">Email</span></div>
         <div class="stat"><span class="n" id="s-sms">—</span><span class="l">SMS</span></div>
         <div class="stat"><span class="n" id="s-done">—</span><span class="l">Done</span></div>
+        <div class="stat"><span class="n" id="s-backlog">—</span><span class="l">Backlog</span></div>
         <div class="stat"><span class="n" id="s-hold">—</span><span class="l">On Hold</span></div>
       </div>
 
@@ -797,7 +808,7 @@ html, body {
       <div class="scroll" id="s-scroll">
         <div class="log-empty">
           <span class="ico">📨</span>
-          Click Sync from Wrike to load Email and SMS sends due in the next 10 days, including On Hold sends.
+          Click Sync from Wrike to load Email and SMS sends due in the next 10 days, including Backlog and On Hold sends.
         </div>
       </div>
     </div>
@@ -1151,7 +1162,8 @@ function renderSends(data) {
   document.getElementById('s-email').textContent = c.email ?? 0;
   document.getElementById('s-sms').textContent   = c.sms ?? 0;
   document.getElementById('s-done').textContent  = c.done ?? 0;
-  document.getElementById('s-hold').textContent  = c.hold ?? 0;
+  document.getElementById('s-backlog').textContent = c.backlog ?? 0;
+  document.getElementById('s-hold').textContent    = c.hold ?? 0;
 
   if (!groups.length) {
     const win = data.window?.label ? ' (' + escHtml(data.window.label) + ')' : '';
@@ -1159,7 +1171,7 @@ function renderSends(data) {
     return;
   }
 
-  const statusBadge = { done: 'badge-done', progress: 'badge-exec', todo: 'badge-plan', hold: 'badge-hold', other: 'badge-other' };
+  const statusBadge = { done: 'badge-done', progress: 'badge-exec', todo: 'badge-plan', backlog: 'badge-backlog', hold: 'badge-hold', other: 'badge-other' };
   let n = 0;
 
   const html = groups.map(g => {
